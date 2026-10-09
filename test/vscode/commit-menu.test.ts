@@ -197,7 +197,8 @@ describe('native squash menu workflow', () => {
         ],
         ['tag-from-commit', 'menu-created-tag', 'refs/tags/menu-created-tag'],
       ] as const) {
-        await rows.last().click();
+        // A reference popup may overlap this row after the previous native picker.
+        await rows.last().press('Enter');
         await expect(frame.locator('#details')).toHaveAttribute(
           'aria-busy',
           'false',
