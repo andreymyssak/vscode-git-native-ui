@@ -17,19 +17,19 @@ import type {
 import type { GitAdapter } from '../git/adapter';
 import type { ActionPrompts } from './actions';
 import {
+  isHistoryRewrite,
   offerBranchRestore,
   PanelActions,
   publishOperationResult,
 } from './actions';
-import type { AuthorPicker } from './authors';
-import { chooseHistoryAuthors } from './authors';
+import { type AuthorPicker, chooseHistoryAuthors } from './authors';
 import { PanelDetails } from './details';
 import { PanelHistory } from './history';
 import type { NavigationPrompts } from './navigate';
 import { PanelNavigator } from './navigate';
 import { parseRequest } from './protocol';
-import type { FileHandle } from './queries';
-import { QuerySession } from './queries';
+import { type FileHandle, QuerySession } from './queries';
+import { DeferredRepositoryRefresh } from './repository-refresh';
 import { reconcileSelection } from './selection';
 import { openSelectedWorktree, type WorktreeOpening } from './worktrees';
 
@@ -66,6 +66,7 @@ export class PanelController {
   private subscription: Disposable | null = null;
   private closed = false;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly repositoryRefresh = new DeferredRepositoryRefresh();
   private refreshRestore: {
     repositoryId: string;
     selection: Selection | null;
@@ -457,10 +458,14 @@ export class PanelController {
     this.subscription?.dispose();
     this.session.begin(id);
     this.input = { scope: { kind: 'head' }, text: '', cursor: null };
-    this.subscription = this.options.adapter!.subscribe(id, () => {
+    const changed = () => {
+      if (this.closed || this.session.repositoryId !== id) return;
+      if (this.repositoryRefresh.defer(id, changed)) return;
       if (this.refreshTimer) clearTimeout(this.refreshTimer);
       this.refreshTimer = setTimeout(() => {
         this.refreshTimer = null;
+        if (this.closed || this.session.repositoryId !== id) return;
+        if (this.repositoryRefresh.defer(id, changed)) return;
         void this.refresh().catch((error) =>
           this.send({
             kind: 'error',
@@ -468,7 +473,9 @@ export class PanelController {
           }),
         );
       }, 50);
-    });
+    };
+
+    this.subscription = this.options.adapter!.subscribe(id, changed);
     await this.historyQuery!.load(this.input, 'select-repository', null);
   }
 
@@ -540,75 +547,83 @@ export class PanelController {
     const operation = reviewed.action;
 
     if (!operation) return;
-    if (
-      operation.kind === 'edit-commit-message' &&
-      (!this.session.current(request.repositoryId, request.generation) ||
-        reviewed.context?.aborted)
-    )
-      throw new Error(
-        'The history changed before the commit message could be saved. Select the commit again.',
-      );
-    const result = await this.options.adapter!.operate(
-      request.repositoryId,
-      operation,
-      reviewed.context,
-    );
+    const rewritesHistory = isHistoryRewrite(action);
+    const pause = rewritesHistory
+      ? this.repositoryRefresh.pause(request.repositoryId)
+      : null;
 
-    if (
-      !this.closed &&
-      (action.kind === 'edit-commit-message' ||
-        action.kind === 'squash-commits' ||
-        action.kind === 'drop-commits' ||
-        action.kind === 'cherry-pick-commits') &&
-      result.kind === 'cancelled'
-    )
-      await this.options.reportActionError?.(
-        'The history operation was cancelled because the Git Native UI context changed. The commits were left unchanged.',
-      );
-    if (
-      action.kind === 'squash-commits' ||
-      action.kind === 'drop-commits' ||
-      action.kind === 'edit-commit-message'
-    ) {
+    try {
       if (
-        this.closed ||
-        !this.session.current(request.repositoryId, request.generation) ||
-        this.session.rangeRevision !== rangeRevision ||
-        reviewed.context?.aborted
-      ) {
-        if (result.kind === 'error' || result.kind === 'conflict')
-          await this.options.reportActionError?.(result.message);
+        operation.kind === 'edit-commit-message' &&
+        (!this.session.current(request.repositoryId, request.generation) ||
+          reviewed.context?.aborted)
+      )
+        throw new Error(
+          'The history changed before the commit message could be saved. Select the commit again.',
+        );
+      const result = await this.options.adapter!.operate(
+        request.repositoryId,
+        operation,
+        reviewed.context,
+      );
 
-        return;
+      if (
+        !this.closed &&
+        (rewritesHistory || action.kind === 'cherry-pick-commits') &&
+        result.kind === 'cancelled'
+      )
+        await this.options.reportActionError?.(
+          'The history operation was cancelled because the Git Native UI context changed. The commits were left unchanged.',
+        );
+      if (rewritesHistory) {
+        if (
+          this.closed ||
+          !this.session.current(request.repositoryId, request.generation) ||
+          this.session.rangeRevision !== rangeRevision ||
+          reviewed.context?.aborted
+        ) {
+          if (result.kind === 'error' || result.kind === 'conflict')
+            await this.options.reportActionError?.(result.message);
+
+          return;
+        }
+
+        if (result.kind === 'success' && result.replacementSha)
+          this.session.selection = {
+            sha: result.replacementSha,
+            parentSha: null,
+            filePath: null,
+          };
       }
 
-      if (result.kind === 'success' && result.replacementSha)
-        this.session.selection = {
-          sha: result.replacementSha,
-          parentSha: null,
-          filePath: null,
-        };
+      const current = () =>
+        !this.closed && this.session.repositoryId === request.repositoryId;
+      const deletionReported = offerBranchRestore(
+        result,
+        request.repositoryId,
+        {
+          ...this.options,
+          adapter: this.options.adapter!,
+          current,
+          refresh: () => this.refresh(),
+        },
+      );
+
+      await publishOperationResult(result, action.kind, {
+        current,
+        refresh: () => this.refresh(),
+        send: (result) =>
+          this.send({ kind: 'operation', result }, request.requestId),
+        reportError: deletionReported
+          ? undefined
+          : this.options.reportActionError,
+        reportInfo: deletionReported
+          ? undefined
+          : this.options.reportActionInfo,
+      });
+    } finally {
+      pause?.dispose();
     }
-
-    const deletionReported = offerBranchRestore(result, request.repositoryId, {
-      ...this.options,
-      adapter: this.options.adapter!,
-      current: () =>
-        !this.closed && this.session.repositoryId === request.repositoryId,
-      refresh: () => this.refresh(),
-    });
-
-    await publishOperationResult(result, action.kind, {
-      current: () =>
-        !this.closed && this.session.repositoryId === request.repositoryId,
-      refresh: () => this.refresh(),
-      send: (result) =>
-        this.send({ kind: 'operation', result }, request.requestId),
-      reportError: deletionReported
-        ? undefined
-        : this.options.reportActionError,
-      reportInfo: deletionReported ? undefined : this.options.reportActionInfo,
-    });
   }
 
   private async reload(
@@ -737,6 +752,7 @@ export class PanelController {
     const id = this.session.repositoryId;
 
     if (!id) return;
+    this.repositoryRefresh.clear(id);
     const pending =
       this.refreshRestore?.repositoryId === id ? this.refreshRestore : null;
     const desired = this.session.selection ?? pending?.selection ?? null;

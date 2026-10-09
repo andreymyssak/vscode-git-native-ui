@@ -422,7 +422,27 @@ describe('native squash menu workflow', () => {
           exact: true,
         });
 
-        await expect(button).toBeVisible();
+        await expect(button)
+          .toBeVisible()
+          .catch(async (error: unknown) => {
+            const state = {
+              choice,
+              context,
+              currentContext: await rows
+                .first()
+                .getAttribute('data-vscode-context'),
+              status: await frame!.locator('#status').textContent(),
+              busy: await frame!.locator('#history').getAttribute('inert'),
+              workbench: (await workbench.locator('body').innerText()).slice(
+                -3000,
+              ),
+            };
+
+            throw new Error(
+              `Drop review did not open: ${JSON.stringify(state)}`,
+              { cause: error },
+            );
+          });
         await button.evaluate((node) => (node as HTMLElement).click());
         await pending;
         assert.equal(

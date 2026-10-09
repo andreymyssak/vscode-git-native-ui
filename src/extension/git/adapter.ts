@@ -88,6 +88,10 @@ export async function createGitAdapter(
     string,
     Set<ReturnType<typeof historyChangeFilter>>
   >();
+  const settleHistoryEvents = (id: string) =>
+    Promise.all(
+      [...(observations.get(id) ?? [])].map((observer) => observer.settled()),
+    );
   const services = squash
     ? {
         runtime: { ...squash.runtime },
@@ -117,9 +121,7 @@ export async function createGitAdapter(
     repositories: () => access.repositories(),
     references: (id) => readReferences(access, id, cli),
     history: async (id, input, signal) => {
-      await Promise.all(
-        [...(observations.get(id) ?? [])].map((observer) => observer.settled()),
-      );
+      await settleHistoryEvents(id);
 
       return history.page(id, input, signal);
     },
@@ -136,7 +138,12 @@ export async function createGitAdapter(
           return { kind: 'error', backend: null, message: recoveryFailure };
       }
 
-      return operate(id, action, context);
+      const result = await operate(id, action, context);
+
+      // Deliver the write's queued history events before the panel reloads it.
+      await settleHistoryEvents(id);
+
+      return result;
     },
     prepareMessageEdit: async (id, sha, branch, headSha) => {
       if (sha !== headSha) {

@@ -48,6 +48,14 @@ export interface ActionPrompts extends WorktreeCreationPrompts {
   reportActionInfo?: (message: string) => void | Promise<void>;
 }
 
+export function isHistoryRewrite(action: GitAction | UserAction): boolean {
+  return (
+    action.kind === 'edit-commit-message' ||
+    action.kind === 'squash-commits' ||
+    action.kind === 'drop-commits'
+  );
+}
+
 /** Report Update outcomes immediately, independently of the panel's refresh. */
 export async function publishOperationResult(
   result: OperationResult,

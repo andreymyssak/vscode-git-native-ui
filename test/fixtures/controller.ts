@@ -40,6 +40,8 @@ export function fixture(
   const editors: unknown[] = [];
   let repositoryEvent = () => {};
 
+  let historyEvent = () => {};
+
   const adapter: GitAdapter = {
     invalidateHistory: () => {},
     authors: async () => [],
@@ -75,7 +77,15 @@ export function fixture(
 
       return { kind: 'success', backend: 'api' };
     },
-    subscribe: () => ({ dispose() {} }),
+    subscribe: (_id, changed) => {
+      historyEvent = changed;
+
+      return {
+        dispose() {
+          if (historyEvent === changed) historyEvent = () => {};
+        },
+      };
+    },
     subscribeRepositories: (changed) => {
       repositoryEvent = changed;
 
@@ -110,5 +120,6 @@ export function fixture(
     editors,
     request,
     fireRepositoryEvent: () => repositoryEvent(),
+    fireHistoryEvent: () => historyEvent(),
   };
 }

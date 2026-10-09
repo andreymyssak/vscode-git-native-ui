@@ -1,4 +1,4 @@
-import { assert, expect, test } from 'vitest';
+import { assert, expect, test, vi } from 'vitest';
 
 import type { ControllerOptions } from '../../src/extension/panel/controller';
 import { a, b, fixture, page } from '../fixtures/controller';
@@ -69,6 +69,93 @@ test('a valid unchanged combined draft submits one reviewed squash and selects t
       ({ body }) => body.kind === 'selection' && body.sha === replacement,
     ),
   ).toBe(true);
+});
+
+test('a rewrite history event waits for the replacement selection before refreshing', async (t) => {
+  vi.useFakeTimers();
+  t.onTestFinished(() => {
+    vi.useRealTimers();
+  });
+  const f = await setup({ askSquashMessage: async (message) => message });
+
+  t.onTestFinished(() => f.controller.dispose());
+  let started!: () => void;
+  let finish!: () => void;
+  const ready = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const write = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  let signal: AbortSignal | undefined;
+
+  f.adapter.operate = async (_id, _action, context) => {
+    signal = context;
+    f.adapter.history = async () => page([replacement, c]);
+    f.fireHistoryEvent();
+    started();
+    await write;
+
+    return { kind: 'success', backend: 'cli', replacementSha: replacement };
+  };
+
+  const action = f.controller.handle(
+    f.request({ kind: 'action', action: squash }),
+  );
+
+  t.onTestFinished(async () => {
+    finish();
+    await action;
+  });
+  await ready;
+  await vi.advanceTimersByTimeAsync(100);
+  const abortedDuringWrite = signal?.aborted;
+
+  finish();
+  await action;
+  expect(abortedDuringWrite).toBe(false);
+  expect(
+    f.sent.filter(({ body }) => body.kind === 'selection').at(-1)?.body,
+  ).toMatchObject({ kind: 'selection', sha: replacement });
+});
+
+test('repository changes during native message review still cancel the write', async (t) => {
+  vi.useFakeTimers();
+  t.onTestFinished(() => {
+    vi.useRealTimers();
+  });
+  let opened!: () => void;
+  let apply!: (message: string) => void;
+  const ready = new Promise<void>((resolve) => {
+    opened = resolve;
+  });
+  const draft = new Promise<string>((resolve) => {
+    apply = resolve;
+  });
+  const f = await setup({
+    askSquashMessage: async () => {
+      opened();
+
+      return draft;
+    },
+  });
+
+  t.onTestFinished(() => f.controller.dispose());
+  const action = f.controller.handle(
+    f.request({ kind: 'action', action: squash }),
+  );
+
+  t.onTestFinished(async () => {
+    apply('Reviewed');
+    await action;
+  });
+  await ready;
+  f.fireHistoryEvent();
+  await vi.advanceTimersByTimeAsync(100);
+  apply('Reviewed');
+  await action;
+  expect(f.writes).toHaveLength(0);
+  expect(f.sent.some(({ body }) => body.kind === 'error')).toBe(true);
 });
 
 test(
