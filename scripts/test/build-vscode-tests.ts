@@ -7,6 +7,8 @@ const files = await Array.fromAsync(
   glob(['test/vscode/**/*.test.ts', 'test/vscode/**/*.scenario.ts']),
 );
 
+files.push('test/fixtures/native-setup.ts');
+
 if (files.length)
   await build({
     entryPoints: files,

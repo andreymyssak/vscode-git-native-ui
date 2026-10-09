@@ -34,6 +34,10 @@ const base = {
     reporter: process.env.CI ? 'json-stream' : 'spec',
   },
 };
+const nativeMocha = {
+  ...base.mocha,
+  require: resolve('dist/test/fixtures/native-setup.cjs'),
+};
 
 const untrustedProfile = mkdtempSync(join(tmpdir(), 'gnu-trust-'));
 const nativeProfile = mkdtempSync(join(tmpdir(), 'gnu-native-'));
@@ -72,6 +76,7 @@ export default defineConfig([
   {
     ...base,
     label: 'native',
+    mocha: nativeMocha,
     workspaceFolder: nativeWorkspace,
     files: 'dist/test/vscode/*.test.cjs',
     env: { ...base.env, VSCODE_TEST_DEBUG_PORT: String(port) },
@@ -85,6 +90,7 @@ export default defineConfig([
   {
     ...base,
     label: 'installed',
+    mocha: nativeMocha,
     files: [
       'dist/test/vscode/package.test.cjs',
       'dist/test/vscode/commit-menu.test.cjs',
