@@ -41,6 +41,7 @@ export async function createFixture(options: {
       ).stdout;
 
     await runGit(['init', '--initial-branch=main']);
+    await runGit(['config', 'core.autocrlf', 'false']);
     await runGit(['config', 'commit.gpgsign', 'false']);
     await runGit(['config', 'user.name', 'Fixture']);
     await runGit(['config', 'user.email', 'fixture@example.test']);

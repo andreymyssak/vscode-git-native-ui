@@ -18,7 +18,9 @@ const cases = JSON.parse(
 
 test.each(cases)('$name', async (item) => {
   const config = resolve('.dependency-cruiser.cjs');
-  const cli = resolve('node_modules/.bin/depcruise');
+  const cli = resolve(
+    'node_modules/dependency-cruiser/bin/dependency-cruiser.mjs',
+  );
   const root = await mkdtemp(join(tmpdir(), 'git-native-ui-fsd-case-'));
 
   try {
@@ -59,8 +61,9 @@ test.each(cases)('$name', async (item) => {
     }
 
     const result = spawnSync(
-      cli,
+      process.execPath,
       [
+        cli,
         'src',
         '--config',
         config,
@@ -74,8 +77,9 @@ test.each(cases)('$name', async (item) => {
 
     expect(result.error).toBeUndefined();
     const validation = spawnSync(
-      cli,
+      process.execPath,
       [
+        cli,
         'src',
         '--config',
         config,
@@ -123,8 +127,13 @@ test.each(cases)('$name', async (item) => {
 
     if (fsdRule || !item.rule) {
       const fsd = spawnSync(
-        resolve('node_modules/.bin/steiger'),
-        ['src/webview', '--reporter', 'json'],
+        process.execPath,
+        [
+          resolve('node_modules/steiger/dist/cli.mjs'),
+          'src/webview',
+          '--reporter',
+          'json',
+        ],
         { cwd: root, encoding: 'utf8' },
       );
 

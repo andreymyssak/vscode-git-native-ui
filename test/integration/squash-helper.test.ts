@@ -204,7 +204,7 @@ test('the exact UTF-8 byte limit is accepted without changing its bytes', async 
   const { inputPath, targetPath } = await files(squashInput(shas, message));
 
   await runSquashEditor('message', inputPath, targetPath);
-  expect(await readFile(targetPath)).toStrictEqual(Buffer.from(message));
+  expect((await readFile(targetPath)).equals(Buffer.from(message))).toBe(true);
 });
 
 test('probe identifies the standalone helper without changing the global environment', async () => {
@@ -316,9 +316,11 @@ test('oversized private inputs and todos reject without modifying Git targets', 
         targetPath,
       ),
     ).rejects.toThrow(/8 MiB/);
-    expect(await readFile(targetPath)).toStrictEqual(
-      part === 'input' ? Buffer.from('unchanged') : oversized,
-    );
+    expect(
+      (await readFile(targetPath)).equals(
+        part === 'input' ? Buffer.from('unchanged') : oversized,
+      ),
+    ).toBe(true);
   }
 });
 

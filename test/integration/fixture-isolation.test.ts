@@ -38,7 +38,9 @@ test.each([
 
     onTestFinished(() => fixture.dispose());
     expect(
-      (await fixture.runGit(['rev-parse', '--show-toplevel'])).trim(),
+      await realpath(
+        (await fixture.runGit(['rev-parse', '--show-toplevel'])).trim(),
+      ),
     ).toBe(await realpath(fixture.root));
     expect((await fixture.runGit(['status', '--porcelain'])).trim()).toBe('');
     expect(await other.runGit(['rev-parse', 'HEAD'])).toBe(before);

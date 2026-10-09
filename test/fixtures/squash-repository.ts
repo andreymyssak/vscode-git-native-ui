@@ -78,6 +78,7 @@ export async function createSquashFixture(
       `--object-format=${objectFormat}`,
     ]);
     await runGit(['config', 'commit.gpgsign', 'false']);
+    await runGit(['config', 'core.autocrlf', 'false']);
     await runGit(['config', 'user.name', 'Squash Fixture']);
     await runGit(['config', 'user.email', 'fixture@example.test']);
 

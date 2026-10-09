@@ -226,7 +226,7 @@ describe('large native history', () => {
       );
     } finally {
       try {
-        if (frame && !frame.isDetached())
+        if (frame && !frame.isDetached()) {
           await frame.evaluate(() => {
             const stop = Reflect.get(window, 'stopPerformanceObservation') as
               (() => void) | undefined;
@@ -234,6 +234,17 @@ describe('large native history', () => {
             stop?.();
             Reflect.deleteProperty(window, 'stopPerformanceObservation');
           });
+          const search = frame.getByRole('searchbox', {
+            name: 'Text or hash',
+          });
+
+          await search.fill('');
+          await search.press('Enter');
+          await expect(frame.locator('#history-pane')).toHaveAttribute(
+            'aria-busy',
+            'false',
+          );
+        }
       } finally {
         // The native driver owns the window and CDP lifetime; closing a connected
         // default context would also close its webview targets.

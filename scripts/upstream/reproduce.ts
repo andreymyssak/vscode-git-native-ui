@@ -65,8 +65,14 @@ export async function reproduce(
         .digest('hex') !== patch.sha256
     )
       throw new Error(`Patch hash mismatch: ${patch.path}`);
-    await execute('git', ['apply', '--check', path], { cwd: outputRoot });
-    await execute('git', ['apply', path], { cwd: outputRoot });
+    await execute(
+      'git',
+      ['-c', 'core.autocrlf=false', 'apply', '--check', path],
+      { cwd: outputRoot },
+    );
+    await execute('git', ['-c', 'core.autocrlf=false', 'apply', path], {
+      cwd: outputRoot,
+    });
   }
 
   for (const output of manifest.outputs) {

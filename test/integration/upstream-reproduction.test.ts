@@ -4,14 +4,20 @@ import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
-import { assert, expect, test } from 'vitest';
+import { assert, expect, onTestFinished, test, vi } from 'vitest';
 
 import { reproduce } from '../../scripts/upstream/reproduce.ts';
 import { verify } from '../../scripts/upstream/verify.ts';
 
 const manifest = resolve('upstream/vscode/manifest.json');
 
-test('same inputs reproduce same bytes', async () => {
+test('same inputs reproduce same bytes even when Git converts line endings', async () => {
+  onTestFinished(() => {
+    vi.unstubAllEnvs();
+  });
+  vi.stubEnv('GIT_CONFIG_COUNT', '1');
+  vi.stubEnv('GIT_CONFIG_KEY_0', 'core.autocrlf');
+  vi.stubEnv('GIT_CONFIG_VALUE_0', 'true');
   const output = await mkdtemp(join(tmpdir(), 'git-native-ui-repro-'));
 
   try {

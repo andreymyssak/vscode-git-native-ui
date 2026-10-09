@@ -326,7 +326,13 @@ describe('history filters against real Git', () => {
       included,
       `[user]\nname = ${alice.name}\nemail = ${alice.email}\n`,
     );
-    await writeFile(global, `[include]\npath = ${included}\n`);
+    await fixture.runGit([
+      'config',
+      '--file',
+      global,
+      'include.path',
+      included,
+    ]);
     const reader = query();
 
     try {

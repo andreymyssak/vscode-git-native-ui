@@ -99,7 +99,7 @@ test('tangled demo includes real two- and three-parent differences, an empty par
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
-});
+}, 60000);
 test('the demo generator ignores inherited Git routing and leaves another repository untouched', async () => {
   const other = await createFixture({
     prefix: 'git-native-ui-demo-isolation-',
