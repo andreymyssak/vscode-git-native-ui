@@ -43,6 +43,7 @@ export async function runInstalledActions({
   const profile = mkdtempSync(join(tmpdir(), 'gnu-actions-'));
   const driver = mkdtempSync(resolve('.artifacts/installed-actions-driver-'));
   const resultPath = join(driver, 'result.json');
+  const progressPath = join(driver, 'progress.txt');
 
   mkdirSync(join(profile, 'User'));
   writeFileSync(
@@ -71,8 +72,11 @@ export async function runInstalledActions({
       const fs = require('node:fs');
       let result;
       try {
+        fs.writeFileSync(${JSON.stringify(progressPath)}, 'branch update scenarios');
+        const updates = await require(${JSON.stringify(resolve('dist/test/vscode/acceptance/branch-update.scenario.cjs'))}).run();
+        fs.writeFileSync(${JSON.stringify(progressPath)}, 'branch integration and worktree scenarios');
         const passed = [
-          ...await require(${JSON.stringify(resolve('dist/test/vscode/acceptance/branch-update.scenario.cjs'))}).run(),
+          ...updates,
           ...await require(${JSON.stringify(resolve('dist/test/vscode/acceptance/branch-actions.scenario.cjs'))}).run(),
         ];
         result = { passed };
@@ -104,7 +108,9 @@ export async function runInstalledActions({
   child.once('error', (error) => {
     startupError = error;
   });
-  const deadline = Date.now() + 120000;
+  // A passing Windows run takes about 110 seconds for all fifteen Git scenarios.
+  // Allow startup and slower runners without extending individual UI assertions.
+  const deadline = Date.now() + 300000;
 
   try {
     while (Date.now() < deadline) {
@@ -137,7 +143,15 @@ export async function runInstalledActions({
       await delay(250);
     }
 
-    throw new Error('Installed branch action tests timed out.');
+    const progress = await readFile(progressPath, 'utf8').catch((error) => {
+      if (!hasErrorCode(error, 'ENOENT')) throw error;
+
+      return 'driver activation';
+    });
+
+    throw new Error(
+      `Installed branch action tests timed out during ${progress}.`,
+    );
   } finally {
     child.kill();
   }
