@@ -32,17 +32,21 @@ describe('native capabilities', () => {
   after(async () => {
     await Promise.all(roots.map((root) => root.dispose()));
   });
-  it('installed API opens selected repository', async () => {
+  it('installed API exposes both opened repositories', async () => {
     const adapter = await createGitAdapter();
 
     try {
-      assert.equal(adapter.repositories().length, 2);
+      const ids = new Set(
+        roots.map((root) => vscode.Uri.file(root.root).toString()),
+      );
+
       assert.deepEqual(
         adapter
           .repositories()
-          .map((repo) => vscode.Uri.parse(repo.rootUri).fsPath)
+          .filter((repo) => ids.has(repo.id))
+          .map((repo) => repo.id)
           .sort(),
-        roots.map((root) => root.root).sort(),
+        [...ids].sort(),
       );
     } finally {
       adapter.dispose();

@@ -61,7 +61,10 @@ describe('existing worktrees', () => {
       assert.deepEqual(calls[0]?.options, { forceNewWindow: true });
       await openWorktree(detachedInfo, 'current', capture);
       assert.deepEqual(calls[1]?.options, { forceReuseWindow: true });
-      assert.equal(calls[1]?.uri.toString(), detachedInfo.rootUri);
+      assert.equal(
+        calls[1]?.uri.fsPath,
+        vscode.Uri.parse(detachedInfo.rootUri).fsPath,
+      );
       await rm(detached, { recursive: true, force: true, maxRetries: 5 });
       const missing = await adapter.worktrees(
         vscode.Uri.file(f.root).toString(),

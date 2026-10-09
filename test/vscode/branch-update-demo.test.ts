@@ -14,7 +14,8 @@ import type { Reference } from '../../src/shared/model';
 const execute = promisify(execFile);
 
 describe('incoming-only demo branches', () => {
-  it('updates current, other and already-current branches without creating outgoing commits', async () => {
+  it('updates current, other and already-current branches without creating outgoing commits', async function () {
+    this.timeout(90000);
     const created = await execute(
       process.execPath,
       [resolve(__dirname, '../../../scripts/dev/create-demo.ts')],

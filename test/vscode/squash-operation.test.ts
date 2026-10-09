@@ -80,7 +80,7 @@ describe('queued squash through the installed Git API and bundled runtime', () =
   afterEach(async () => {
     adapter?.dispose();
     await fixture?.dispose();
-    if (owned) await rm(owned, { recursive: true, force: true });
+    if (owned) await rm(owned, { recursive: true, force: true, maxRetries: 5 });
   });
 
   it('preflights then performs one replacement with the literal message, oldest author and unchanged other refs', async () => {

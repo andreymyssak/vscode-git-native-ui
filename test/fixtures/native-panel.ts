@@ -8,6 +8,13 @@ declare global {
   var gitNativeUINativeTestBrowser: Browser | undefined;
 }
 export async function nativeBrowser(): Promise<Browser> {
+  const extension = vscode.extensions.getExtension(
+    'git-native-ui.git-native-ui',
+  );
+
+  if (!extension)
+    throw new Error('Git Native UI is not installed in the test host.');
+  await extension.activate();
   globalThis.gitNativeUINativeTestBrowser ??= await chromium.connectOverCDP(
     `http://127.0.0.1:${process.env.VSCODE_TEST_DEBUG_PORT ?? ''}`,
   );
@@ -68,7 +75,7 @@ export async function selectNativeRepository(
           for (const candidate of page.frames())
             if (
               !candidate.isDetached() &&
-              (await candidate.locator('#branches').count())
+              (await candidate.locator('#log-tab').count())
             ) {
               frame = candidate;
 
@@ -77,9 +84,34 @@ export async function selectNativeRepository(
 
       return false;
     })
-    .toBe(true);
+    .toBe(true)
+    .catch(async (error: unknown) => {
+      const documents = await Promise.all(
+        browser.contexts().flatMap((context) =>
+          context.pages().flatMap((page) =>
+            page.frames().map(async (candidate) => ({
+              url: candidate.url().replace(/\?.*$/, ''),
+              content: await candidate
+                .evaluate(() => ({
+                  ready: document.readyState,
+                  text: document.body?.innerText.slice(0, 600),
+                  scripts: [...document.scripts].map((script) => script.src),
+                }))
+                .catch(() => null),
+            })),
+          ),
+        ),
+      );
+
+      throw new Error(
+        `Native Git view did not load: ${JSON.stringify(documents)}`,
+        { cause: error },
+      );
+    });
 
   if (!frame) throw new Error('Native Git history panel did not load.');
+  await frame.page().bringToFront();
+  await frame.getByRole('tab', { name: 'Log', exact: true }).click();
   await vscode.commands.executeCommand('notifications.hideToasts');
   const picker = frame.getByRole('button', {
     name: 'Select repository',
