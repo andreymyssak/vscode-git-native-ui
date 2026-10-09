@@ -12,7 +12,7 @@ import { createFixture } from '../fixtures/repository';
 describe('private package', () => {
   it('registered extension activates on the tested VS Code runtime', async () => {
     const extension = vscode.extensions.getExtension(
-      'local-git-native-ui.git-native-ui',
+      'git-native-ui.git-native-ui',
     );
 
     assert.ok(extension);

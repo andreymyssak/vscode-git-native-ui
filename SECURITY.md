@@ -2,9 +2,9 @@
 
 ## Report a vulnerability privately
 
-Open the repository's [security page](https://github.com/andreymyssak/git-native-ui/security) and choose **Advisories → Report a vulnerability** when private reporting is enabled. GitHub sends the report privately to the maintainers.
+Open the repository's [security page](https://github.com/andreymyssak/vscode-git-native-ui/security) and choose **Advisories → Report a vulnerability** when private reporting is enabled. GitHub sends the report privately to the maintainers.
 
-If that button is unavailable, [open an issue](https://github.com/andreymyssak/git-native-ui/issues) asking for a private security contact. Include only that request. Wait for a private channel before sending vulnerability details.
+If that button is unavailable, [open an issue](https://github.com/andreymyssak/vscode-git-native-ui/issues) asking for a private security contact. Include only that request. Wait for a private channel before sending vulnerability details.
 
 Keep exploit details and proposed security fixes out of public issues and pull requests until disclosure is coordinated with the maintainers. Ordinary bugs and feature requests can use public issues and pull requests.
 

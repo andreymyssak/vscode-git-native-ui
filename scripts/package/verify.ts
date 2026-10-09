@@ -143,18 +143,18 @@ export function verifyReleaseManifest(manifest: unknown): void {
     manifest.repository,
     {
       type: 'git',
-      url: 'https://github.com/andreymyssak/git-native-ui.git',
+      url: 'https://github.com/andreymyssak/vscode-git-native-ui.git',
     },
     'Release repository must identify the intended personal source repository',
   );
   assert.equal(
     manifest.homepage,
-    'https://github.com/andreymyssak/git-native-ui#readme',
+    'https://github.com/andreymyssak/vscode-git-native-ui#readme',
     'Release homepage must link to project documentation',
   );
   assert.equal(
     isRecord(manifest.bugs) ? manifest.bugs.url : undefined,
-    'https://github.com/andreymyssak/git-native-ui/issues',
+    'https://github.com/andreymyssak/vscode-git-native-ui/issues',
     'Release bugs URL must identify the issue tracker',
   );
   assert.ok(

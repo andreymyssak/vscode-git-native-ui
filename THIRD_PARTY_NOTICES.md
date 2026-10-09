@@ -17,6 +17,12 @@ VSCode Elements is a community project. File theme icons and fonts are supplied 
 
 Both complete license texts are included in `dist/UI_LICENSES.txt`.
 
+## Git logo
+
+The icons in `assets/git-native-ui.svg` and `assets/marketplace-icon.png` are adapted from Git Logo by Jason Long, available from [Git's logo downloads](https://git-scm.com/community/logos), under [Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/).
+
+The Marketplace icon uses a navy diamond and white branch symbol. The panel icon uses the current VS Code theme color. Git and the Git logo are trademarks of Software Freedom Conservancy, Inc.
+
 ## Copied VS Code code
 
 The portable Git graph, graph test assertions, and public Git API structural declarations derive from [Microsoft Visual Studio Code](https://github.com/microsoft/vscode) under the MIT license below. Source paths, hashes, adaptations, and adopted revisions are recorded in [the source manifest](upstream/vscode/manifest.json).

@@ -2,15 +2,15 @@
   "name": "git-native-ui",
   "version": "0.1.0",
   "private": true,
-  "description": "Browse Git history, branches and worktrees in VS Code.",
+  "description": "Finally, a proper Git UI for VS Code. Inspired by JetBrains IDEs.",
   "icon": "assets/marketplace-icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andreymyssak/git-native-ui.git"
+    "url": "https://github.com/andreymyssak/vscode-git-native-ui.git"
   },
-  "homepage": "https://github.com/andreymyssak/git-native-ui#readme",
+  "homepage": "https://github.com/andreymyssak/vscode-git-native-ui#readme",
   "bugs": {
-    "url": "https://github.com/andreymyssak/git-native-ui/issues"
+    "url": "https://github.com/andreymyssak/vscode-git-native-ui/issues"
   },
   "keywords": [
     "git",
@@ -124,7 +124,7 @@
     "fsevents": false
   },
   "displayName": "Git Native UI",
-  "publisher": "local-git-native-ui",
+  "publisher": "git-native-ui",
   "main": "./dist/extension.cjs",
   "engines": {
     "vscode": "^1.140.0"

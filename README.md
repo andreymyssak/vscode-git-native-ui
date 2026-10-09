@@ -2,9 +2,13 @@
 
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
-Browse branches, commit history, changed files, and worktrees together in VS Code. Git Native UI puts them in a bottom panel, with comparisons opening in VS Code's native diff editors.
+**Finally, a proper Git UI for VS Code.**
 
-Inspired by the Git tool window in JetBrains' [IntelliJ IDEA Community Edition](https://github.com/JetBrains/intellij-community), with VS Code's graph, controls, and themes.
+Git Native UI is a free, focused alternative to [GitLens](https://github.com/gitkraken/vscode-gitlens) for browsing history, managing branches and worktrees, and inspecting changes. It uses familiar VS Code styling, follows your chosen theme, and opens file comparisons in VS Code's native diff editor.
+
+Inspired by the Git tool window in JetBrains' [IntelliJ IDEA Community Edition](https://github.com/JetBrains/intellij-community).
+
+**Completely free and open source. No subscriptions or paid tiers.**
 
 ![Git Native UI in VS Code's Dark Modern theme, showing branches, a commit graph, and changed files](assets/readme/log-dark.png)
 
@@ -28,21 +32,11 @@ The panel follows your VS Code theme. Here it is in Light Modern:
 
 ![Git Native UI in VS Code's Light Modern theme](assets/readme/log-light.png)
 
-## Install
-
-The first public release is in preparation. **Marketplace listing: coming soon.**
-
-<!-- Replace the Marketplace placeholder with the final listing URL after publication.
-Add Marketplace version and install-count badges using the final publisher ID.
-Until then, avoid badges that imply a published release or an install count. -->
-
-For now, [build a VSIX from source](docs/development.md#build-and-run), then run **Extensions: Install from VSIX...** in VS Code.
+## Get started
 
 1. Open a local Git repository in VS Code.
 2. Run **View: Open View...** from the Command Palette and choose **Git Native UI**.
 3. Select a commit, or double-click a branch to browse its history. Browsing a branch keeps your checkout unchanged.
-
-Requires VS Code 1.140.0 or newer, Git, an enabled built-in Git extension, and workspace trust for Git operations.
 
 ## Your repositories stay yours
 
@@ -50,7 +44,7 @@ Git Native UI has no account, cloud backend, or analytics service. Fetch connect
 
 ## Feedback and contributions
 
-[Report a bug or suggest a feature](https://github.com/andreymyssak/git-native-ui/issues). To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
+[Report a bug or suggest a feature](https://github.com/andreymyssak/vscode-git-native-ui/issues). To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 For security vulnerabilities, follow the private reporting instructions in [SECURITY.md](SECURITY.md).
 

@@ -23,7 +23,7 @@ describe('installed file icon themes', () => {
     const previousIcon = configuration.inspect('iconTheme')?.globalValue;
     const previousColor = configuration.inspect('colorTheme')?.globalValue;
     const extension = vscode.extensions.getExtension(
-      'local-git-native-ui.git-native-ui',
+      'git-native-ui.git-native-ui',
     );
 
     try {

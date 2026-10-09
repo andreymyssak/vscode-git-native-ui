@@ -55,7 +55,7 @@ describe('historical changes', () => {
       const id = vscode.Uri.file(fixture.root).toString();
 
       await vscode.extensions
-        .getExtension('local-git-native-ui.git-native-ui')!
+        .getExtension('git-native-ui.git-native-ui')!
         .activate();
       const access = await getGitApi();
       const parent = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();

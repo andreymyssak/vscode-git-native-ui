@@ -1,6 +1,6 @@
 # Contributing
 
-Use [issues](https://github.com/andreymyssak/git-native-ui/issues) for bugs and feature requests. For vulnerabilities, follow the private reporting instructions in [SECURITY.md](SECURITY.md).
+Use [issues](https://github.com/andreymyssak/vscode-git-native-ui/issues) for bugs and feature requests. For vulnerabilities, follow the private reporting instructions in [SECURITY.md](SECURITY.md).
 
 ## Make a change
 

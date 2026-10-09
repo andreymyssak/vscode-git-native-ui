@@ -3,7 +3,7 @@ description: Describe a reproducible problem in Git Native UI.
 body:
   - type: markdown
     attributes:
-      value: For security vulnerabilities, follow [the security policy](https://github.com/andreymyssak/git-native-ui/security/policy). Keep exploit details and security fixes out of this public form.
+      value: For security vulnerabilities, follow [the security policy](https://github.com/andreymyssak/vscode-git-native-ui/security/policy). Keep exploit details and security fixes out of this public form.
   - type: textarea
     id: behavior
     attributes:

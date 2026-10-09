@@ -31,7 +31,7 @@ describe('native squash menu workflow', () => {
         vscode.ConfigurationTarget.Global,
       );
       const extension = vscode.extensions.getExtension(
-        'local-git-native-ui.git-native-ui',
+        'git-native-ui.git-native-ui',
       );
 
       assert.ok(extension);

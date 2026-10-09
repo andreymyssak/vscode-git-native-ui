@@ -61,7 +61,7 @@ export async function runInstalledActions({
       engines: { vscode: '^1.140.0' },
       main: './extension.cjs',
       activationEvents: ['onStartupFinished'],
-      extensionDependencies: ['local-git-native-ui.git-native-ui'],
+      extensionDependencies: ['git-native-ui.git-native-ui'],
     }),
   );
   writeFileSync(
