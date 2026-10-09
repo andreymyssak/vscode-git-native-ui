@@ -131,14 +131,14 @@ describe('native parent comparisons', () => {
             ? {
                 original: JSON.parse(input.original.query).ref as string,
                 modified: JSON.parse(input.modified.query).ref as string,
-                path: input.modified.path,
+                path: input.modified.fsPath,
               }
             : null;
         })
         .toEqual({
           original: merge,
           modified: octopus,
-          path: vscode.Uri.joinPath(rootUri, 'docs.txt').path,
+          path: vscode.Uri.joinPath(rootUri, 'docs.txt').fsPath,
         });
 
       await frame

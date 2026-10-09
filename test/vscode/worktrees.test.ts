@@ -129,7 +129,9 @@ describe('existing worktrees', () => {
       const cells = row.getByRole('gridcell');
 
       await expect(cells).toHaveCount(3);
-      await expect(cells.nth(2)).toHaveText(await realpath(linked));
+      await expect(cells.nth(2)).toHaveText(
+        (await realpath(linked)).replaceAll('\\', '/'),
+      );
       const toolbar = frame.getByRole('toolbar', { name: 'Worktree actions' });
 
       assert.deepEqual(

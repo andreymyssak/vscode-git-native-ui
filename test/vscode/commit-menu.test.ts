@@ -59,6 +59,8 @@ describe('native squash menu workflow', () => {
       const frame = await nativePanel(id);
 
       workbench = frame.page();
+      const contextMenu = workbench.locator('.monaco-menu');
+
       await workbench.bringToFront();
       await refreshNativeHistory(frame, id);
       const rows = frame.locator('[data-commit-row]');
@@ -72,12 +74,12 @@ describe('native squash menu workflow', () => {
       await rows.first().click();
       await rows.first().click({ button: 'right' });
       for (const name of singleActions)
-        await expect(workbench.getByRole('menuitem', { name })).toBeVisible();
+        await expect(contextMenu.getByRole('menuitem', { name })).toBeVisible();
       await expect(
-        workbench.getByRole('menuitem', { name: /^Squash Commits/ }),
+        contextMenu.getByRole('menuitem', { name: /^Squash Commits/ }),
       ).toHaveCount(0);
       await workbench.keyboard.press('Escape');
-      await expect(workbench.getByRole('menuitem')).toHaveCount(0);
+      await expect(contextMenu.getByRole('menuitem')).toHaveCount(0);
       await rows.nth(1).click({ modifiers: ['Shift'] });
       await expect(
         frame.locator('[data-commit-row][aria-selected="true"]'),
@@ -92,14 +94,16 @@ describe('native squash menu workflow', () => {
         })
         .toBe(true);
       await rows.first().click({ button: 'right' });
-      const squash = workbench.getByRole('menuitem', {
+      const squash = contextMenu.getByRole('menuitem', {
         name: /^Squash Commits/,
       });
 
       await expect(squash).toBeVisible();
       await expect(squash).toBeEnabled();
       for (const name of singleActions)
-        await expect(workbench.getByRole('menuitem', { name })).toHaveCount(0);
+        await expect(contextMenu.getByRole('menuitem', { name })).toHaveCount(
+          0,
+        );
     } finally {
       try {
         if (workbench) await workbench.keyboard.press('Escape');
