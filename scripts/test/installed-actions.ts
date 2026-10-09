@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
@@ -39,7 +40,7 @@ export async function runInstalledActions({
   env: NodeJS.ProcessEnv;
 }) {
   // macOS limits the length of VS Code's IPC socket path inside this profile.
-  const profile = mkdtempSync(resolve('.artifacts/actions-profile-'));
+  const profile = mkdtempSync(join(tmpdir(), 'gnu-actions-'));
   const driver = mkdtempSync(resolve('.artifacts/installed-actions-driver-'));
   const resultPath = join(driver, 'result.json');
 

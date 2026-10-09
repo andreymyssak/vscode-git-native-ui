@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
 import { downloadAndUnzipVSCode } from '@vscode/test-electron';
@@ -140,7 +141,7 @@ if (prepared.kind === 'restricted') {
   });
 } else {
   mkdirSync('.artifacts', { recursive: true });
-  const profile = mkdtempSync(resolve('.artifacts/installed-profile-'));
+  const profile = mkdtempSync(join(tmpdir(), 'gnu-installed-'));
   const extensions = mkdtempSync(resolve('.artifacts/installed-extensions-'));
   // Electron's Node mode invokes the installation CLI without a shell wrapper.
   const cliScript =

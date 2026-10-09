@@ -77,6 +77,7 @@ describe('native squash menu workflow', () => {
         workbench.getByRole('menuitem', { name: /^Squash Commits/ }),
       ).toHaveCount(0);
       await workbench.keyboard.press('Escape');
+      await expect(workbench.getByRole('menuitem')).toHaveCount(0);
       await rows.nth(1).click({ modifiers: ['Shift'] });
       await expect(
         frame.locator('[data-commit-row][aria-selected="true"]'),

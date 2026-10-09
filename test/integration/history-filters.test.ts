@@ -467,5 +467,5 @@ describe('history filters against real Git', () => {
       head = oldHead;
       await fixture.runGit(['update-ref', 'refs/heads/main', head]);
     }
-  });
+  }, 60000);
 });

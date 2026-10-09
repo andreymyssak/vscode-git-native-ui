@@ -1,6 +1,7 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { defineConfig } from '@vscode/test-cli';
 
@@ -26,10 +27,14 @@ const base = {
     '--disable-workspace-trust',
     '--disable-gpu',
   ],
-  mocha: { ui: 'bdd', timeout: 30000 },
+  mocha: {
+    ui: 'bdd',
+    timeout: 30000,
+    reporter: process.env.CI ? 'json-stream' : 'spec',
+  },
 };
 
-const untrustedProfile = mkdtempSync(resolve('.artifacts/trust-profile-'));
+const untrustedProfile = mkdtempSync(join(tmpdir(), 'gnu-trust-'));
 const untrustedWorkspace = resolve('.artifacts/untrusted-workspace');
 const nativeWorkspace = mkdtempSync(resolve('.artifacts/native-workspace-'));
 

@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
@@ -16,9 +16,10 @@ export interface Fixture {
 export async function createFixture(options: {
   prefix: string;
 }): Promise<Fixture> {
-  const root = await mkdtemp(join(tmpdir(), options.prefix));
+  const directory = await mkdtemp(join(tmpdir(), options.prefix));
 
   try {
+    const root = await realpath(directory);
     const globalConfig = join(root, 'isolated-gitconfig');
 
     await writeFile(globalConfig, '');
@@ -53,10 +54,10 @@ export async function createFixture(options: {
     return {
       root,
       runGit,
-      dispose: () => rm(root, { recursive: true, force: true }),
+      dispose: () => rm(root, { recursive: true, force: true, maxRetries: 5 }),
     };
   } catch (error) {
-    await rm(root, { recursive: true, force: true });
+    await rm(directory, { recursive: true, force: true, maxRetries: 5 });
     throw error;
   }
 }

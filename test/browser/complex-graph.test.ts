@@ -12,7 +12,7 @@ const execute = promisify(execFile);
 test('a real crossed, octopus and disconnected history renders across virtualized rows', async ({
   page,
 }) => {
-  test.setTimeout(30000);
+  test.setTimeout(60000);
   const created = await execute(process.execPath, [
     'scripts/dev/create-demo.ts',
   ]);

@@ -13,7 +13,11 @@ import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
 import { openWorktree } from '../../src/extension/native/worktrees';
-import { nativeBrowser, refreshNativeHistory } from '../fixtures/native-panel';
+import {
+  nativeBrowser,
+  refreshNativeHistory,
+  selectNativeRepository,
+} from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('existing worktrees', () => {
@@ -100,17 +104,7 @@ describe('existing worktrees', () => {
       await vscode.commands.executeCommand('gitNativeUI.log.focus');
       const browser = await nativeBrowser();
 
-      for (let attempt = 0; attempt < 100 && !frame; attempt++) {
-        for (const page of browser
-          .contexts()
-          .flatMap((context) => context.pages()))
-          for (const candidate of page.frames())
-            if (await candidate.locator('#worktrees-view').count())
-              frame = candidate;
-        if (!frame) await new Promise((resolve) => setTimeout(resolve, 50));
-      }
-
-      assert.ok(frame);
+      frame = await selectNativeRepository(uri.toString());
       await frame.page().bringToFront();
       await vscode.commands.executeCommand('notifications.hideToasts');
       await frame
@@ -237,14 +231,7 @@ describe('existing worktrees', () => {
         return undefined;
       };
 
-      await expect
-        .poll(async () => {
-          frame = await findFrame();
-
-          return !!frame;
-        })
-        .toBe(true);
-      assert.ok(frame);
+      frame = await selectNativeRepository(uri.toString());
       await frame.page().bringToFront();
       await refreshNativeHistory(frame, uri.toString());
       await frame.getByRole('tab', { name: 'Worktrees', exact: true }).click();
@@ -427,18 +414,7 @@ describe('existing worktrees', () => {
       await vscode.commands.executeCommand('gitNativeUI.log.focus');
       const browser = await nativeBrowser();
 
-      await expect
-        .poll(async () => {
-          for (const context of browser.contexts())
-            for (const page of context.pages())
-              for (const candidate of page.frames())
-                if (await candidate.locator('#worktrees-view').count())
-                  frame = candidate;
-
-          return !!frame;
-        })
-        .toBe(true);
-      assert.ok(frame);
+      frame = await selectNativeRepository(uri.toString());
       await frame.page().bringToFront();
       await refreshNativeHistory(frame, uri.toString());
       await frame.getByRole('tab', { name: 'Worktrees', exact: true }).click();
