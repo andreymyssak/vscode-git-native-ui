@@ -142,6 +142,12 @@ if (prepared.kind === 'restricted') {
 } else {
   mkdirSync('.artifacts', { recursive: true });
   const profile = mkdtempSync(join(tmpdir(), 'gnu-installed-'));
+
+  mkdirSync(join(profile, 'User'));
+  writeFileSync(
+    join(profile, 'User/settings.json'),
+    JSON.stringify({ 'window.menuStyle': 'custom' }),
+  );
   const extensions = mkdtempSync(resolve('.artifacts/installed-extensions-'));
   // Electron's Node mode invokes the installation CLI without a shell wrapper.
   const cliScript =

@@ -62,7 +62,7 @@ describe('existing worktrees', () => {
       await openWorktree(detachedInfo, 'current', capture);
       assert.deepEqual(calls[1]?.options, { forceReuseWindow: true });
       assert.equal(calls[1]?.uri.toString(), detachedInfo.rootUri);
-      await rm(detached, { recursive: true, force: true });
+      await rm(detached, { recursive: true, force: true, maxRetries: 5 });
       const missing = await adapter.worktrees(
         vscode.Uri.file(f.root).toString(),
       );
@@ -78,8 +78,8 @@ describe('existing worktrees', () => {
       assert.equal(calls.length, 2);
     } finally {
       adapter?.dispose();
-      await rm(linked, { recursive: true, force: true });
-      await rm(detached, { recursive: true, force: true });
+      await rm(linked, { recursive: true, force: true, maxRetries: 5 });
+      await rm(detached, { recursive: true, force: true, maxRetries: 5 });
       await f.dispose();
     }
   });
@@ -188,9 +188,9 @@ describe('existing worktrees', () => {
           .getByRole('tab', { name: 'Log', exact: true })
           .click({ timeout: 1000 })
           .catch(() => {});
-      await rm(linked, { recursive: true, force: true });
-      await rm(second, { recursive: true, force: true });
-      await rm(created, { recursive: true, force: true });
+      await rm(linked, { recursive: true, force: true, maxRetries: 5 });
+      await rm(second, { recursive: true, force: true, maxRetries: 5 });
+      await rm(created, { recursive: true, force: true, maxRetries: 5 });
       await fixture.dispose();
     }
   });
@@ -378,7 +378,7 @@ describe('existing worktrees', () => {
             .getByRole('tab', { name: 'Log', exact: true })
             .click({ timeout: 1000 })
             .catch(() => {});
-        await rm(linked, { recursive: true, force: true });
+        await rm(linked, { recursive: true, force: true, maxRetries: 5 });
         await f.dispose();
       }
     }
@@ -487,8 +487,8 @@ describe('existing worktrees', () => {
           .getByRole('tab', { name: 'Log', exact: true })
           .click({ timeout: 1000 })
           .catch(() => {});
-      await rm(alpha, { recursive: true, force: true });
-      await rm(beta, { recursive: true, force: true });
+      await rm(alpha, { recursive: true, force: true, maxRetries: 5 });
+      await rm(beta, { recursive: true, force: true, maxRetries: 5 });
       await f.dispose();
     }
   });

@@ -35,10 +35,16 @@ const base = {
 };
 
 const untrustedProfile = mkdtempSync(join(tmpdir(), 'gnu-trust-'));
+const nativeProfile = mkdtempSync(join(tmpdir(), 'gnu-native-'));
 const untrustedWorkspace = resolve('.artifacts/untrusted-workspace');
 const nativeWorkspace = mkdtempSync(resolve('.artifacts/native-workspace-'));
 
 mkdirSync(untrustedWorkspace, { recursive: true });
+mkdirSync(join(nativeProfile, 'User'));
+writeFileSync(
+  join(nativeProfile, 'User/settings.json'),
+  JSON.stringify({ 'window.menuStyle': 'custom' }),
+);
 mkdirSync(resolve(untrustedProfile, 'User'), { recursive: true });
 writeFileSync(
   resolve(untrustedProfile, 'User/settings.json'),
@@ -68,7 +74,12 @@ export default defineConfig([
     workspaceFolder: nativeWorkspace,
     files: 'dist/test/vscode/*.test.cjs',
     env: { ...base.env, VSCODE_TEST_DEBUG_PORT: String(port) },
-    launchArgs: [...base.launchArgs, `--remote-debugging-port=${port}`],
+    launchArgs: [
+      ...base.launchArgs,
+      '--user-data-dir',
+      nativeProfile,
+      `--remote-debugging-port=${port}`,
+    ],
   },
   {
     ...base,
