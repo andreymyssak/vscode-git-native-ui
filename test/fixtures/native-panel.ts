@@ -18,6 +18,13 @@ export async function nativeBrowser(): Promise<Browser> {
   globalThis.gitNativeUINativeTestBrowser ??= await chromium.connectOverCDP(
     `http://127.0.0.1:${process.env.VSCODE_TEST_DEBUG_PORT ?? ''}`,
   );
+  const workbench = globalThis.gitNativeUINativeTestBrowser
+    .contexts()
+    .flatMap((context) => context.pages())
+    .find((page) => page.url().includes('/workbench/workbench.html'));
+
+  if (!workbench) throw new Error('Native VS Code workbench did not load.');
+  await workbench.bringToFront();
 
   return globalThis.gitNativeUINativeTestBrowser;
 }
@@ -94,17 +101,38 @@ export async function selectNativeRepository(
               content: await candidate
                 .evaluate(() => ({
                   ready: document.readyState,
+                  visibility: document.visibilityState,
+                  focused: document.hasFocus(),
                   text: document.body?.innerText.slice(0, 600),
                   scripts: [...document.scripts].map((script) => script.src),
+                  iframes: [...document.querySelectorAll('iframe')].map(
+                    (iframe) => ({
+                      src: iframe.src.replace(/\?.*$/, ''),
+                      title: iframe.title,
+                    }),
+                  ),
                 }))
                 .catch(() => null),
             })),
           ),
         ),
       );
+      const session = await browser.newBrowserCDPSession();
+      let targets: unknown;
+
+      try {
+        targets = await session.send('Target.getTargets').then((result) =>
+          result.targetInfos.map(({ type, url }) => ({
+            type,
+            url: url.replace(/\?.*$/, ''),
+          })),
+        );
+      } finally {
+        await session.detach();
+      }
 
       throw new Error(
-        `Native Git view did not load: ${JSON.stringify(documents)}`,
+        `Native Git view did not load: ${JSON.stringify({ documents, targets })}`,
         { cause: error },
       );
     });

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import { expect, type Frame } from '@playwright/test';
 import * as vscode from 'vscode';
@@ -194,7 +195,10 @@ describe('native header controls', () => {
       assert.equal((await fixture.runGit(['rev-parse', 'HEAD'])).trim(), head);
     } catch (error) {
       await writeFile(
-        '.artifacts/header-native-failure.json',
+        join(
+          process.env.GIT_NATIVE_UI_TEST_ARTIFACTS ?? '.artifacts',
+          'header-native-failure.json',
+        ),
         JSON.stringify(
           {
             stage,

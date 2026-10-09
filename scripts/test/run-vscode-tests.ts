@@ -5,7 +5,10 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-import { downloadAndUnzipVSCode } from '@vscode/test-electron';
+import {
+  downloadAndUnzipVSCode,
+  resolveCliPathFromVSCodeExecutablePath,
+} from '@vscode/test-electron';
 
 import { isRecord } from '../shared/validation.ts';
 import { runInstalledActions } from './installed-actions.ts';
@@ -149,15 +152,10 @@ if (prepared.kind === 'restricted') {
     JSON.stringify({ 'window.menuStyle': 'custom' }),
   );
   const extensions = mkdtempSync(resolve('.artifacts/installed-extensions-'));
-  // Electron's Node mode invokes the installation CLI without a shell wrapper.
-  const cliScript =
-    process.platform === 'darwin'
-      ? resolve(dirname(executable), '../Resources/app/out/cli.js')
-      : resolve(dirname(executable), 'resources/app/out/cli.js');
+  const cli = resolveCliPathFromVSCodeExecutablePath(executable);
   const installation = spawnSync(
-    executable,
+    process.platform === 'win32' ? `"${cli}"` : cli,
     [
-      cliScript,
       '--install-extension',
       resolve('.artifacts/git-native-ui.vsix'),
       '--extensions-dir',
@@ -167,9 +165,10 @@ if (prepared.kind === 'restricted') {
       '--force',
     ],
     {
-      env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
+      env: prepared.env,
       encoding: 'utf8',
       timeout: 60000,
+      shell: process.platform === 'win32',
     },
   );
 
