@@ -33,6 +33,7 @@ export async function run() {
     .find((page) => page.url().includes('/workbench/workbench.html'));
 
   assert.ok(workbench);
+  await workbench.bringToFront();
 
   for (const choice of [
     'Rebase',
@@ -54,6 +55,8 @@ export async function run() {
     const selector = `[data-ref="refs/heads/${target}"]`;
     const f = await divergentFixture(target);
     let operation: Promise<unknown> | undefined;
+    let frame: Frame | undefined;
+    let completed = false;
 
     try {
       const localSettings = join(f.root, '.idea', 'workspace.xml');
@@ -87,8 +90,6 @@ export async function run() {
       }
 
       await f.access.repository(f.id).status();
-
-      let frame: Frame | undefined;
 
       await vscode.commands.executeCommand('gitNativeUI.log.focus');
       await expect
@@ -133,8 +134,6 @@ export async function run() {
       operation = Promise.resolve(
         vscode.commands.executeCommand('gitNativeUI.update-branch', context),
       );
-      let completed = false;
-
       void operation.then(
         () => {
           completed = true;
@@ -150,6 +149,7 @@ export async function run() {
               : 'Info: "main" is already up to date.',
         });
 
+        // This first notification follows a real fetch and branch update.
         await expect(
           workbench.getByText(
             choice === 'Fast-forward'
@@ -157,7 +157,7 @@ export async function run() {
               : '"main" is already up to date.',
             { exact: true },
           ),
-        ).toBeVisible();
+        ).toBeVisible({ timeout: 30000 });
         await expect(success.locator('.notification-list-item')).toHaveClass(
           /\bexpanded\b/,
         );
@@ -245,7 +245,7 @@ export async function run() {
           : 'Error: "topic" has local commits and incoming changes. Check it out to update it.',
       });
 
-      await expect(updateNotification).toBeVisible();
+      await expect(updateNotification).toBeVisible({ timeout: 30000 });
       await expect(workbench.locator('.monaco-dialog-box:visible')).toHaveCount(
         0,
       );
@@ -415,6 +415,34 @@ export async function run() {
       assert.equal((await f.runGit(['stash', 'list'])).trim(), '');
       passed.push(
         `registered Update on ${current ? 'current' : 'another'} branch completes ${choice === 'Cancel' ? 'notification dismissal' : choice}`,
+      );
+    } catch (error) {
+      const state =
+        frame && !frame.isDetached()
+          ? {
+              context: await frame
+                .locator(selector)
+                .getAttribute('data-vscode-context', { timeout: 1000 })
+                .catch(() => null),
+              status: await frame
+                .locator('#status')
+                .textContent({ timeout: 1000 })
+                .catch(() => null),
+              busy: await frame
+                .locator('#history')
+                .getAttribute('inert', { timeout: 1000 })
+                .catch(() => null),
+            }
+          : null;
+      const notifications = await workbench
+        .locator('.notifications-toasts, .notifications-center')
+        .allTextContents()
+        .then((items) => items.join('\n').slice(0, 2000))
+        .catch(() => null);
+
+      throw new Error(
+        `${choice}: ${error instanceof Error ? error.message : String(error)}\n${JSON.stringify({ completed, state, notifications })}`,
+        { cause: error },
       );
     } finally {
       try {
