@@ -116,6 +116,7 @@ describe('native squash menu workflow', () => {
     }
   });
 
+  // Six native actions and real Git verification need extra time on Windows.
   it('registered commands route named refs, Squash and Drop through the bundled native operation', async () => {
     const browser = await nativeBrowser();
     const workbench = browser
@@ -449,5 +450,5 @@ describe('native squash menu workflow', () => {
         await Promise.all([drafts.dispose(), fixture.dispose()]);
       }
     }
-  });
+  }).timeout(60000);
 });

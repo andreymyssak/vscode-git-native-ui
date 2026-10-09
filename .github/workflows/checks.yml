@@ -9,7 +9,7 @@ jobs:
   check:
     name: ${{ matrix.os }} / VS Code ${{ matrix.vscode }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:

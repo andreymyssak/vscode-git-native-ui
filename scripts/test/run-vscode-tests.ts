@@ -201,7 +201,7 @@ if (prepared.kind === 'restricted') {
       profile,
     ],
     env,
-    timeout: 120000,
+    timeout: 300000,
   });
   if (process.exitCode === 0)
     await runInstalledActions({
