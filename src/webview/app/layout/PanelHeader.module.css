@@ -1,0 +1,91 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--vscode-panel-border, #454545);
+  height: 28px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.header [role='tablist'] {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+  max-width: 70%;
+}
+.header [role='tab'] {
+  height: 100%;
+  padding: 0 10px;
+  border-radius: 0;
+}
+.header [role='tab'][aria-selected='true'] {
+  border-bottom: 2px solid var(--vscode-panelTitle-activeBorder, #007fd4);
+}
+.context {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.repository {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  max-width: 240px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--vscode-descriptionForeground, #aaa);
+}
+.repository span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.logTab {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 480px;
+}
+.tabName {
+  flex-shrink: 0;
+  white-space: pre;
+}
+.tabContext {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.header [role='tab']:not(.logTab) {
+  flex-shrink: 0;
+}
+.status {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--vscode-descriptionForeground, #aaa);
+  font-size: 11px;
+}
+.loading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  flex-shrink: 0;
+}

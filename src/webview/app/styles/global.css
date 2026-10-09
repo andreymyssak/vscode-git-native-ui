@@ -1,0 +1,54 @@
+:root {
+  color-scheme: light dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--vscode-foreground, #ccc);
+  background: var(--vscode-editor-background, #181818);
+  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+button {
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 2px 6px;
+  background: transparent;
+  cursor: pointer;
+}
+button:hover,
+summary:hover {
+  background: var(--vscode-toolbar-hoverBackground, #333);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder, #007fd4);
+  outline-offset: -1px;
+}
+[hidden] {
+  display: none !important;
+}
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 620px;
+  overflow: hidden;
+}
+input {
+  background: var(--vscode-input-background, #333);
+  color: var(--vscode-input-foreground, #fff);
+  border: 1px solid var(--vscode-input-border, #666);
+  border-radius: 2px;
+}

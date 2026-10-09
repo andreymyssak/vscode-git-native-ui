@@ -1,0 +1,15 @@
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+  display: flex;
+  width: 14px;
+  height: 14px;
+  color: var(--vscode-descriptionForeground, #aaa);
+  pointer-events: none;
+}
+.icon :global(.codicon) {
+  font-size: 14px;
+  line-height: 14px;
+}

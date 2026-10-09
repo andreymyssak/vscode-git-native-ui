@@ -1,0 +1,34 @@
+name: Agent setup
+
+on:
+  pull_request:
+    paths:
+      - apm.yml
+      - apm.lock.yaml
+      - .github/workflows/ai-setup.yml
+  push:
+    paths:
+      - apm.yml
+      - apm.lock.yaml
+      - .github/workflows/ai-setup.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install pinned APM in an isolated environment
+        run: |
+          python3 -m venv .artifacts/apm-venv
+          .artifacts/apm-venv/bin/python -m pip install apm-cli==0.33.0
+      - name: Verify locked deployment and content integrity
+        run: |
+          .artifacts/apm-venv/bin/apm install --frozen
+          .artifacts/apm-venv/bin/apm audit --ci

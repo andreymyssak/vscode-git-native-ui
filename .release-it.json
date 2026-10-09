@@ -1,0 +1,22 @@
+{
+  "git": {
+    "requireUpstream": false,
+    "commit": false,
+    "tag": false,
+    "push": false,
+    "tagName": "v${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md",
+      "strictSemVer": true
+    }
+  },
+  "hooks": {
+    "after:beforeRelease": "prettier CHANGELOG.md --write"
+  }
+}

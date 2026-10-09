@@ -1,0 +1,286 @@
+.viewport {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.history-content {
+  position: relative;
+  width: 100%;
+}
+
+.history-column-handles {
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+}
+
+.history-column-resizer {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  cursor: col-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.history-column-resizer::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  width: 1px;
+  height: 100%;
+  background: var(--vscode-panel-border, #454545);
+  opacity: 0.45;
+}
+
+.history-column-resizer:hover::after,
+.history-column-resizer:focus-visible::after,
+.history-column-resizer.dragging::after {
+  background: var(--vscode-focusBorder, #007fd4);
+  opacity: 1;
+}
+
+.commit-row {
+  --graph-row-background: var(--vscode-editor-background, #1e1e1e);
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: grid;
+  height: 22px;
+  line-height: 22px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.commit-row:hover {
+  --graph-row-background: var(--vscode-list-hoverBackground, #2a2d2e);
+  background: var(--graph-row-background);
+  outline: 1px solid var(--vscode-list-hoverOutline, transparent);
+  outline-offset: -1px;
+}
+
+.commit-row:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder, #007fd4);
+  outline-offset: -1px;
+}
+
+.commit-graph svg circle {
+  stroke: var(--graph-row-background);
+}
+
+.commit-graph[data-graph-kind='HEAD'] svg circle:last-child {
+  fill: var(--graph-row-background);
+}
+
+.commit-row:hover .commit-graph svg circle:first-of-type,
+.commit-row[aria-selected='true']:focus .commit-graph svg circle:first-of-type {
+  stroke: transparent;
+}
+
+.commit-row > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.history-cell {
+  overflow: visible;
+  display: flex;
+  align-items: center;
+}
+
+.commit-graph {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.commit-row .subject {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 106px;
+  gap: 6px;
+  padding-right: 6px;
+}
+
+.subject-message {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.references {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  padding-right: 6px;
+  flex: 0 1 auto;
+  max-width: 40%;
+  margin-left: auto;
+}
+
+.ref-summary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--vscode-descriptionForeground, #aaa);
+}
+
+.ref-stack {
+  position: relative;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ref-stack .ref-symbol {
+  position: absolute;
+  top: 0;
+  clip-path: inset(0 11px 0 0);
+}
+
+.ref-stack .ref-symbol:last-child {
+  clip-path: none;
+}
+
+.ref-tooltip {
+  z-index: 1000;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: max-content;
+  max-width: min(520px, calc(100vw - 16px));
+  max-height: min(320px, calc(100vh - 16px));
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--vscode-editorHoverWidget-border, #454545);
+  border-radius: 5px;
+  background: var(--vscode-editorHoverWidget-background, #252526);
+  color: var(--vscode-editorHoverWidget-foreground, #ccc);
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0006);
+  font: inherit;
+  line-height: 22px;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.ref-tooltip-entry {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.ref-tooltip-name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.ref-tooltip-kind {
+  padding-left: 8px;
+  color: var(--vscode-descriptionForeground, #aaa);
+  font-size: 11px;
+}
+
+.ref-head {
+  color: var(--vscode-charts-yellow, #cca700);
+}
+
+.ref-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ref-local {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #81b88b);
+}
+
+.ref-remote {
+  color: var(--vscode-charts-purple, #b180d7);
+}
+
+.ref-tag {
+  color: var(--vscode-charts-yellow, #cca700);
+}
+
+.ref-current .ref-label {
+  color: var(--vscode-foreground, #ccc);
+  font-weight: 600;
+}
+
+.commit-row .author,
+.commit-row .date {
+  color: var(--vscode-descriptionForeground, #aaa);
+  padding-left: 8px;
+}
+
+.commit-row .date {
+  font-variant-numeric: tabular-nums;
+}
+
+.continuation {
+  margin-left: 6px;
+}
+.revision {
+  font-family: var(--vscode-editor-font-family, monospace);
+  color: var(--vscode-descriptionForeground, #aaa);
+  padding-left: 8px;
+}
+
+.commit-row.current-branch {
+  --graph-row-background: color-mix(
+    in srgb,
+    var(--vscode-list-activeSelectionBackground, #094771) 24%,
+    var(--vscode-editor-background, #1e1e1e)
+  );
+  background: var(--graph-row-background);
+}
+
+.commit-row.current-branch:hover {
+  --graph-row-background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+.mine .author {
+  font-weight: 600;
+  color: var(--vscode-foreground, #ccc);
+}
+.merge .subject-message,
+.merge .author,
+.merge .date,
+.merge .revision {
+  color: var(--vscode-disabledForeground, #888);
+}
+.commit-row[aria-selected='true'] {
+  --graph-row-background: var(
+    --vscode-list-inactiveSelectionBackground,
+    #37373d
+  );
+  background: var(--graph-row-background);
+  color: var(
+    --vscode-list-inactiveSelectionForeground,
+    var(--vscode-foreground, #ccc)
+  );
+}
+
+.viewport:focus-within .commit-row[aria-selected='true'] {
+  --graph-row-background: var(--vscode-list-activeSelectionBackground, #094771);
+  color: var(--vscode-list-activeSelectionForeground, #fff);
+}
+.commit-row[aria-selected='true'] .subject-message,
+.commit-row[aria-selected='true'] .author,
+.commit-row[aria-selected='true'] .date,
+.commit-row[aria-selected='true'] .revision {
+  color: inherit;
+}
+.ref-symbol {
+  display: inline-flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+}

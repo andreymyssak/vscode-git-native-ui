@@ -1,0 +1,189 @@
+.pane {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: 30px minmax(0, 1fr);
+  overflow: hidden;
+}
+.search {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  min-height: var(--log-header-min-height);
+  display: flex;
+  align-items: start;
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--vscode-panel-border, #454545);
+}
+.searchField {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.searchIcon {
+  composes: icon from '../search/SearchIcon.module.css';
+}
+.search input {
+  width: 100%;
+  min-width: 0;
+  height: var(--log-control-height);
+  padding: 1px 6px 1px 26px;
+}
+.browser {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  min-height: 0;
+}
+.headerRail {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  border-right: 1px solid var(--vscode-panel-border, #454545);
+}
+.collapsedRail {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  border-right: 1px solid var(--vscode-panel-border, #454545);
+}
+.reopen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  user-select: none;
+}
+.railChevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--log-control-height);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.actions {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid var(--vscode-panel-border, #454545);
+}
+.commands {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 3px;
+}
+.icon,
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.toggle {
+  margin-top: 3px;
+  height: var(--log-control-height);
+  margin-bottom: 4px;
+}
+.collapsedLabel {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  margin-top: 12px;
+  color: var(--vscode-descriptionForeground, #aaa);
+}
+.search[hidden],
+.browser[hidden],
+.commands[hidden] {
+  display: none;
+}
+.tree {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 0;
+  container-type: inline-size;
+}
+.tree vscode-tree-item::part(wrapper) {
+  box-sizing: border-box;
+  height: 22px;
+  border-radius: 0;
+  padding-right: 6px;
+  min-width: var(--reference-row-min-width);
+  padding-left: calc(8px + var(--reference-depth) * 8px) !important;
+}
+.tree vscode-tree-item::part(icon-container) {
+  flex-shrink: 0;
+}
+.glyph {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: var(--vscode-icon-foreground, #ccc);
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.currentGlyph {
+  composes: glyph;
+  color: var(--vscode-charts-yellow, #d7ba7d);
+}
+.tree vscode-tree-item[data-current='true'] .name {
+  font-weight: 600;
+}
+.tree vscode-tree-item:not([branch])::part(wrapper) {
+  padding-left: calc(30px + var(--reference-depth) * 8px) !important;
+}
+.tree vscode-tree-item::part(arrow-icon-container) {
+  box-sizing: border-box;
+  flex: 0 0 22px;
+  width: 22px;
+  padding: 0 6px 0 0;
+  transform: translateX(3px);
+}
+.tree vscode-tree-item::part(icon-container) {
+  min-width: 0;
+  max-width: 16px;
+  width: 16px;
+  margin-right: 6px;
+}
+.tree vscode-tree-item[data-tree-node^='group:']::part(icon-container),
+.tree vscode-tree-item[data-scope='all']::part(icon-container),
+.tree vscode-tree-item[data-scope='head']::part(icon-container) {
+  width: 0;
+  margin: 0;
+}
+.tree vscode-tree-item::part(children) {
+  --indentation-guide-left: calc(
+    16px + var(--reference-depth) * 8px
+  ) !important;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.empty {
+  color: var(--vscode-descriptionForeground, #aaa);
+  margin: 12px;
+}

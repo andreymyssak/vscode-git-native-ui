@@ -1,0 +1,14 @@
+--- a/src/vs/workbench/contrib/scm/browser/scmHistory.ts
++++ b/src/vs/workbench/contrib/scm/browser/scmHistory.ts
+@@ -10,7 +10,10 @@
+ export interface ISCMHistoryItemViewModel {historyItem:ISCMHistoryItem;inputSwimlanes:ISCMHistoryItemGraphNode[];outputSwimlanes:ISCMHistoryItemGraphNode[];kind:'HEAD'|'node';}
+ const deepClone = <T>(value:T):T => structuredClone(value);
+ function rot(index:number,modulo:number):number {return (modulo+(index%modulo))%modulo;}
+-function asCssVariable(color:string):string {return `var(--vscode-${color.replace(/\./g,'-')})`;}
++function asCssVariable(color:string):string {
++ const defaults:Record<string,string>={'scmGraph.foreground1':'#FFB000','scmGraph.foreground2':'#DC267F','scmGraph.foreground3':'#994F00','scmGraph.foreground4':'#40B0A6','scmGraph.foreground5':'#B66DFF'};
++ return `var(--vscode-${color.replace(/\./g,'-')},${defaults[color]??'var(--vscode-foreground,#cccccc)'})`;
++}
+ export const historyItemRefColor='scmGraph.historyItemRefColor';
+ export const historyItemRemoteRefColor='scmGraph.historyItemRemoteRefColor';
+ export const historyItemBaseRefColor='scmGraph.historyItemBaseRefColor';

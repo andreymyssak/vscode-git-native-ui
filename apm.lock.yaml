@@ -1,0 +1,185 @@
+lockfile_version: '1'
+apm_version: 0.33.0
+dependencies:
+- repo_url: cursor/plugins
+  alias: principle-boundary-discipline
+  name: principle-boundary-discipline
+  host: github.com
+  resolved_commit: ccb5507cec1546dc88135c1139c811e6c59115ba
+  resolved_ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+  version: unknown
+  virtual_path: pstack/skills/principle-boundary-discipline
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/principle-boundary-discipline
+  - .agents/skills/principle-boundary-discipline/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/principle-boundary-discipline/SKILL.md: sha256:62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28
+  content_hash: sha256:51f995752ff3bad613526eb7779872e01d01ac141a88c9ca050075a074ee5b70
+- repo_url: cursor/plugins
+  alias: principle-type-system-discipline
+  name: principle-type-system-discipline
+  host: github.com
+  resolved_commit: ccb5507cec1546dc88135c1139c811e6c59115ba
+  resolved_ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+  version: unknown
+  virtual_path: pstack/skills/principle-type-system-discipline
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/principle-type-system-discipline
+  - .agents/skills/principle-type-system-discipline/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/principle-type-system-discipline/SKILL.md: sha256:c83da8031ffb4c86410030d3e261f659598fca2b7d8158fd9dc269d70a3a025e
+  content_hash: sha256:dbd4efbb3e6da61329f23b43301b8aa73fde79d6fca75be3d518f51abfd30e32
+- repo_url: cursor/plugins
+  alias: technical-writing
+  name: technical-writing
+  host: github.com
+  resolved_commit: ccb5507cec1546dc88135c1139c811e6c59115ba
+  resolved_ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+  version: unknown
+  virtual_path: pstack/skills/technical-writing
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/technical-writing
+  - .agents/skills/technical-writing/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/technical-writing/SKILL.md: sha256:f5c512ffeec70bc4e0dee50f7bb4c26742e1be77967a6e8b15d1921e1c209ceb
+  content_hash: sha256:d8ecca1f5bfa2d531f5ead6da72001b320d293eebd4435a2e3e11f79fa3f6949
+- repo_url: cursor/plugins
+  alias: typescript-best-practices
+  name: typescript-best-practices
+  host: github.com
+  resolved_commit: ccb5507cec1546dc88135c1139c811e6c59115ba
+  resolved_ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+  version: unknown
+  virtual_path: pstack/skills/typescript-best-practices
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/typescript-best-practices
+  - .agents/skills/typescript-best-practices/SKILL.md
+  - .agents/skills/typescript-best-practices/references/patterns.md
+  deployed_file_hashes:
+    .agents/skills/typescript-best-practices/SKILL.md: sha256:28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e
+    .agents/skills/typescript-best-practices/references/patterns.md: sha256:faa1362055374452efccac1b629677c61acfb0bcc6c4e3311836b5715638ee18
+  content_hash: sha256:59b3d20cf0939379ac9120ab9fb94076ad3aec99177308c699c720f475bcbd2c
+- repo_url: poteto/plugins
+  alias: unslop
+  name: unslop
+  host: github.com
+  resolved_commit: 74dd2291e8e37b12fd6dc49b2acbd655c6bdaf12
+  resolved_ref: 74dd2291e8e37b12fd6dc49b2acbd655c6bdaf12
+  version: unknown
+  virtual_path: pstack/skills/unslop
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/unslop
+  - .agents/skills/unslop/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/unslop/SKILL.md: sha256:4694d89007ffc0a00f3254f578433729d64af575ea77c00c028c71d57654d8ec
+  content_hash: sha256:bf0fa50406da04d3831e99807c199e392321cfb52c061567e7177b078bda0682
+deployments:
+- kind: project-relative
+  target: codex
+  value: .agents/skills/principle-boundary-discipline
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/principle-boundary-discipline
+  active_owner: cursor/plugins/pstack/skills/principle-boundary-discipline
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/principle-boundary-discipline/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/principle-boundary-discipline
+  active_owner: cursor/plugins/pstack/skills/principle-boundary-discipline
+  content_hash: sha256:62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28
+- kind: project-relative
+  target: codex
+  value: .agents/skills/principle-type-system-discipline
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/principle-type-system-discipline
+  active_owner: cursor/plugins/pstack/skills/principle-type-system-discipline
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/principle-type-system-discipline/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/principle-type-system-discipline
+  active_owner: cursor/plugins/pstack/skills/principle-type-system-discipline
+  content_hash: sha256:c83da8031ffb4c86410030d3e261f659598fca2b7d8158fd9dc269d70a3a025e
+- kind: project-relative
+  target: codex
+  value: .agents/skills/technical-writing
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/technical-writing
+  active_owner: cursor/plugins/pstack/skills/technical-writing
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/technical-writing/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/technical-writing
+  active_owner: cursor/plugins/pstack/skills/technical-writing
+  content_hash: sha256:f5c512ffeec70bc4e0dee50f7bb4c26742e1be77967a6e8b15d1921e1c209ceb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/typescript-best-practices
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/typescript-best-practices
+  active_owner: cursor/plugins/pstack/skills/typescript-best-practices
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/typescript-best-practices/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/typescript-best-practices
+  active_owner: cursor/plugins/pstack/skills/typescript-best-practices
+  content_hash: sha256:28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e
+- kind: project-relative
+  target: codex
+  value: .agents/skills/typescript-best-practices/references/patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - cursor/plugins/pstack/skills/typescript-best-practices
+  active_owner: cursor/plugins/pstack/skills/typescript-best-practices
+  content_hash: sha256:faa1362055374452efccac1b629677c61acfb0bcc6c4e3311836b5715638ee18
+- kind: project-relative
+  target: codex
+  value: .agents/skills/unslop
+  runtime: null
+  scope: project
+  owners:
+  - poteto/plugins/pstack/skills/unslop
+  active_owner: poteto/plugins/pstack/skills/unslop
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/unslop/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - poteto/plugins/pstack/skills/unslop
+  active_owner: poteto/plugins/pstack/skills/unslop
+  content_hash: sha256:4694d89007ffc0a00f3254f578433729d64af575ea77c00c028c71d57654d8ec

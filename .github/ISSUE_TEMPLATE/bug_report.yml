@@ -1,0 +1,32 @@
+name: Bug report
+description: Describe a reproducible problem in Git Native UI.
+body:
+  - type: markdown
+    attributes:
+      value: For security vulnerabilities, follow [the security policy](https://github.com/andreymyssak/git-native-ui/security/policy). Keep exploit details and security fixes out of this public form.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: Explain what you tried and what happened.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: A small disposable repository or minimal example is helpful. Do not include credentials or private repository contents.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Git Native UI, VS Code, Git and operating system versions. Mention remote/VDI restrictions if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional evidence
+      description: Relevant screenshots or error text, with private information removed. For vulnerabilities, use SECURITY.md instead.

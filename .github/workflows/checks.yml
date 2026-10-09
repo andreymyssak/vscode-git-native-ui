@@ -1,0 +1,39 @@
+name: Extension checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    name: ${{ matrix.os }} / VS Code ${{ matrix.vscode }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+        vscode: ['1.140.0', stable]
+    env:
+      VSCODE_TEST_VERSION: ${{ matrix.vscode }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Select npm
+        run: npm install --global npm@12.2.0 --ignore-scripts
+      - run: npm ci
+      - run: npm run check
+      - name: Reproduce upstream graph in a clean directory
+        run: npm run upstream:reproduce -- upstream/vscode/manifest.json .artifacts/ci-reproduced
+      - name: Install Chromium for webview tests
+        run: npx playwright install chromium
+      - run: npm run test:browser
+      - run: npm run test:vscode
+      - run: npm run test:installed
+      - run: npm run graph

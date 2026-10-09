@@ -1,0 +1,27 @@
+name: git-native-ui-agent-setup
+version: 1.0.0
+description: Development skills for Git Native UI.
+targets:
+  - codex
+dependencies:
+  apm:
+    - git: https://github.com/poteto/plugins.git
+      path: pstack/skills/unslop
+      ref: 74dd2291e8e37b12fd6dc49b2acbd655c6bdaf12
+      alias: unslop
+    - git: https://github.com/cursor/plugins.git
+      path: pstack/skills/technical-writing
+      ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+      alias: technical-writing
+    - git: https://github.com/cursor/plugins.git
+      path: pstack/skills/typescript-best-practices
+      ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+      alias: typescript-best-practices
+    - git: https://github.com/cursor/plugins.git
+      path: pstack/skills/principle-type-system-discipline
+      ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+      alias: principle-type-system-discipline
+    - git: https://github.com/cursor/plugins.git
+      path: pstack/skills/principle-boundary-discipline
+      ref: ccb5507cec1546dc88135c1139c811e6c59115ba
+      alias: principle-boundary-discipline

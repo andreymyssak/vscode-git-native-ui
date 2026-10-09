@@ -1,0 +1,27 @@
+.DS_Store
+node_modules/
+dist/
+coverage/
+.artifacts/
+*.vsix
+.understand-anything/
+.vscode-test/
+playwright-report/
+test-results/
+
+# Temporary agent plans and reports use .artifacts/; ignore legacy output paths.
+docs/validation/
+docs/superpowers/
+
+.codegraph/
+
+# Installed agent dependencies. Keep their manifest and lockfile in Git.
+apm_modules/
+.agents/skills/*
+!.agents/skills/write-adr/
+.claude/skills/
+.claude/hooks/
+.claude/settings.json
+.claude/settings.local.json
+.claude/apm-hooks.json
+CLAUDE.local.md

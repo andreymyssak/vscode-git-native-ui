@@ -1,0 +1,1 @@
+export { SplitHandle } from './SplitHandle';

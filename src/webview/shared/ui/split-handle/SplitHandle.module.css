@@ -1,0 +1,8 @@
+.handle {
+  cursor: col-resize;
+  border-left: 1px solid var(--vscode-panel-border, #454545);
+  touch-action: none;
+}
+.handle:hover {
+  background: var(--vscode-focusBorder, #007fd4);
+}

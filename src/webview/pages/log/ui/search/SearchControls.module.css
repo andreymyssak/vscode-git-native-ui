@@ -1,0 +1,53 @@
+.controls {
+  position: relative;
+  flex: 0 1 240px;
+  min-width: 160px;
+  max-width: 280px;
+}
+.controls label {
+  position: relative;
+  display: block;
+}
+.searchIcon {
+  composes: icon from './SearchIcon.module.css';
+}
+.controls input {
+  width: 100%;
+  height: var(--log-control-height);
+  padding: 1px 50px 1px 26px;
+}
+.options {
+  position: absolute;
+  right: 2px;
+  top: 3px;
+  display: flex;
+}
+.option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 22px;
+  padding: 2px 3px;
+  background: transparent;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+.tooltip {
+  z-index: 1100;
+  max-width: min(280px, calc(100vw - 16px));
+  padding: 6px 8px;
+  border: 1px solid var(--vscode-editorHoverWidget-border, #454545);
+  border-radius: 3px;
+  background: var(--vscode-editorHoverWidget-background, #252526);
+  color: var(--vscode-editorHoverWidget-foreground, #ccc);
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0006);
+  pointer-events: none;
+  font: inherit;
+  line-height: 1.4;
+}
+.option[aria-pressed='true'] {
+  background: var(--vscode-inputOption-activeBackground, #094771);
+  border-color: var(--vscode-inputOption-activeBorder, #007acc);
+  color: var(--vscode-inputOption-activeForeground, #fff);
+}

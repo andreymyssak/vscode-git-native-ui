@@ -1,0 +1,463 @@
+{
+  "name": "git-native-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browse Git history, branches and worktrees in VS Code.",
+  "icon": "assets/marketplace-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreymyssak/git-native-ui.git"
+  },
+  "homepage": "https://github.com/andreymyssak/git-native-ui#readme",
+  "bugs": {
+    "url": "https://github.com/andreymyssak/git-native-ui/issues"
+  },
+  "keywords": [
+    "git",
+    "history",
+    "graph",
+    "branches",
+    "worktrees"
+  ],
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=26.10.0 <27",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": ">=12.2.0 <13",
+      "onFail": "error"
+    }
+  },
+  "scripts": {
+    "ai:install": "apm install --frozen",
+    "ai:audit": "apm audit --ci",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run architecture:check && npm run test:local && npm run upstream:verify",
+    "typecheck": "tsc -p tsconfig.host.json && tsc -p tsconfig.webview.json && tsc -p tsconfig.test.json && tsc -p tsconfig.vitest.json && tsc -p tsconfig.scripts.json",
+    "build": "node scripts/build/extension.ts && vite build",
+    "build:vscode-tests": "node scripts/test/build-vscode-tests.ts",
+    "test:unit": "vitest run --config vitest.config.mts --project unit",
+    "test:integration": "vitest run --config vitest.config.mts --project integration",
+    "architecture:check": "depcruise src --config .dependency-cruiser.cjs --ts-config tsconfig.webview.json && steiger src/webview",
+    "graph": "node -e \"require('node:fs').mkdirSync('.artifacts', { recursive: true })\" && depcruise src --config .dependency-cruiser.cjs --ts-config tsconfig.webview.json --output-type mermaid --output-to .artifacts/dependencies.mmd",
+    "demo": "node scripts/dev/create-demo.ts",
+    "test": "npm run check",
+    "upstream:verify": "node scripts/upstream/verify.ts",
+    "upstream:reproduce": "node scripts/upstream/reproduce.ts",
+    "upstream:report": "node scripts/upstream/report.ts",
+    "upstream:prepare": "node scripts/upstream/update.ts",
+    "package": "npm run build && vsce package --no-dependencies --out .artifacts/git-native-ui.vsix && npm run package:verify",
+    "package:verify": "node scripts/package/verify.ts",
+    "release:preview": "release-it --dry-run",
+    "release:prepare": "release-it",
+    "release:validate": "npm run check && npm run test:browser && npm run test:vscode && npm run test:installed",
+    "release": "release-it --config .release-it.publish.cjs --no-increment",
+    "release:marketplace": "npm run package:verify && vsce publish --packagePath .artifacts/git-native-ui.vsix",
+    "test:installed": "npm run package && npm run build:vscode-tests && node scripts/test/run-vscode-tests.ts --installed",
+    "test:local": "vitest run --config vitest.config.mts",
+    "test:component": "vitest run --config vitest.config.mts --project component",
+    "test:browser": "npm run build && playwright test",
+    "test:vscode": "npm run package && npm run build:vscode-tests && vscode-test --label native && node scripts/test/run-vscode-tests.ts --restricted"
+  },
+  "dependencies": {
+    "@floating-ui/react": "0.27.20",
+    "@tanstack/react-virtual": "3.14.13",
+    "@vscode-elements/elements": "2.5.1",
+    "@vscode/codicons": "0.0.45",
+    "clsx": "2.1.1",
+    "jsonc-parser": "3.3.1",
+    "picomatch": "4.0.7",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@babel/core": "8.0.6",
+    "@eslint/js": "10.0.1",
+    "@feature-sliced/steiger-plugin": "0.8.0",
+    "@playwright/test": "1.63.0",
+    "@release-it/conventional-changelog": "12.0.2",
+    "@rolldown/plugin-babel": "0.2.4",
+    "@stylistic/eslint-plugin": "5.10.0",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/mocha": "10.0.10",
+    "@types/node": "26.6.4",
+    "@types/picomatch": "4.0.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/vscode": "1.140.0",
+    "@types/yauzl": "3.4.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.0.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dependency-cruiser": "18.5.0",
+    "esbuild": "0.28.2",
+    "eslint": "10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-simple-import-sort": "14.0.0",
+    "globals": "17.13.0",
+    "jsdom": "30.1.2",
+    "prettier": "3.9.9",
+    "release-it": "21.1.0",
+    "steiger": "0.7.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.0",
+    "vite": "8.3.2",
+    "vitest": "5.0.3",
+    "yauzl": "3.4.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@vscode/vsce-sign": false,
+    "fsevents": false
+  },
+  "displayName": "Git Native UI",
+  "publisher": "local-git-native-ui",
+  "main": "./dist/extension.cjs",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "activationEvents": [
+    "onView:gitNativeUI.log"
+  ],
+  "categories": [
+    "SCM Providers"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "gitNativeUI",
+          "title": "Git Native UI",
+          "icon": "assets/git-native-ui.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitNativeUI": [
+        {
+          "id": "gitNativeUI.log",
+          "name": "Git Native UI",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gitNativeUI.merge-branch",
+        "title": "Merge Selected Branch into Current Branch",
+        "enablement": "gitNativeUIRefCanIntegrate"
+      },
+      {
+        "command": "gitNativeUI.rebase-branch",
+        "title": "Rebase Current Branch on Selected Branch",
+        "enablement": "gitNativeUIRefCanIntegrate"
+      },
+      {
+        "command": "gitNativeUI.create-worktree",
+        "title": "New Worktree from Selected Branch…",
+        "enablement": "gitNativeUIRefKind != tag"
+      },
+      {
+        "command": "gitNativeUI.update-branch",
+        "title": "Update Branch",
+        "enablement": "gitNativeUIRefCanUpdate"
+      },
+      {
+        "command": "gitNativeUI.checkout",
+        "title": "Checkout",
+        "enablement": "gitNativeUIRefKind != tag && !gitNativeUIRefCurrent"
+      },
+      {
+        "command": "gitNativeUI.create-branch",
+        "title": "New Branch from Here…"
+      },
+      {
+        "command": "gitNativeUI.rename-branch",
+        "title": "Rename…",
+        "enablement": "gitNativeUIRefKind == local"
+      },
+      {
+        "command": "gitNativeUI.delete-branch",
+        "title": "Delete",
+        "enablement": "gitNativeUIRefKind == local && !gitNativeUIRefCurrent"
+      },
+      {
+        "command": "gitNativeUI.delete-branches",
+        "title": "Delete Selected Branches",
+        "enablement": "gitNativeUIRefsCanDelete && gitNativeUIRefSelectionCount > 1"
+      },
+      {
+        "command": "gitNativeUI.copy-branch",
+        "title": "Copy Branch Name"
+      },
+      {
+        "command": "gitNativeUI.copy-sha",
+        "title": "Copy Revision Number"
+      },
+      {
+        "command": "gitNativeUI.cherry-pick",
+        "title": "Cherry-Pick",
+        "enablement": "gitNativeUICommitCanCherryPick"
+      },
+      {
+        "command": "gitNativeUI.edit-commit-message",
+        "title": "Edit Commit Message…",
+        "enablement": "gitNativeUICommitCanEdit"
+      },
+      {
+        "command": "gitNativeUI.squash-commits",
+        "title": "Squash Commits…",
+        "enablement": "gitNativeUICommitCanSquash"
+      },
+      {
+        "command": "gitNativeUI.branch-from-commit",
+        "title": "New Branch…"
+      },
+      {
+        "command": "gitNativeUI.tag-from-commit",
+        "title": "New Tag…"
+      },
+      {
+        "command": "gitNativeUI.drop-commits",
+        "title": "Drop Commits…",
+        "enablement": "gitNativeUICommitCanDrop"
+      },
+      {
+        "command": "gitNativeUI.open-worktree-new",
+        "title": "Open in New Window",
+        "enablement": "gitNativeUIWorktreeCanOpen"
+      },
+      {
+        "command": "gitNativeUI.open-worktree-current",
+        "title": "Open in This Window",
+        "enablement": "gitNativeUIWorktreeCanOpen"
+      },
+      {
+        "command": "gitNativeUI.delete-worktrees",
+        "title": "Delete",
+        "enablement": "gitNativeUIWorktreeCanDelete"
+      }
+    ],
+    "menus": {
+      "webview/context": [
+        {
+          "command": "gitNativeUI.rebase-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "2_integrate@1"
+        },
+        {
+          "command": "gitNativeUI.merge-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "2_integrate@2"
+        },
+        {
+          "command": "gitNativeUI.create-worktree",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "2_worktree@1"
+        },
+        {
+          "command": "gitNativeUI.checkout",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "1_branch@1"
+        },
+        {
+          "command": "gitNativeUI.create-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "1_branch@2"
+        },
+        {
+          "command": "gitNativeUI.update-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "1_branch@3"
+        },
+        {
+          "command": "gitNativeUI.rename-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "2_manage@1"
+        },
+        {
+          "command": "gitNativeUI.delete-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "2_manage@2"
+        },
+        {
+          "command": "gitNativeUI.delete-branches",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount > 1",
+          "group": "2_manage@2"
+        },
+        {
+          "command": "gitNativeUI.copy-branch",
+          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "group": "3_copy@1"
+        },
+        {
+          "command": "gitNativeUI.copy-sha",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "group": "1_commit@1"
+        },
+        {
+          "command": "gitNativeUI.cherry-pick",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit",
+          "group": "2_commit@1"
+        },
+        {
+          "command": "gitNativeUI.edit-commit-message",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "group": "3_commit@1"
+        },
+        {
+          "command": "gitNativeUI.squash-commits",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount > 1",
+          "group": "3_commit@1"
+        },
+        {
+          "command": "gitNativeUI.branch-from-commit",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "group": "4_create@1"
+        },
+        {
+          "command": "gitNativeUI.tag-from-commit",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "group": "4_create@2"
+        },
+        {
+          "command": "gitNativeUI.drop-commits",
+          "when": "webviewId == gitNativeUI.log && webviewSection == commit",
+          "group": "3_commit@2"
+        },
+        {
+          "command": "gitNativeUI.open-worktree-new",
+          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "group": "1_worktree@1"
+        },
+        {
+          "command": "gitNativeUI.open-worktree-current",
+          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "group": "1_worktree@2"
+        },
+        {
+          "command": "gitNativeUI.delete-worktrees",
+          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "group": "1_worktree@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "gitNativeUI.merge-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.rebase-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.create-worktree",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.checkout",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.create-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.rename-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.delete-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.delete-branches",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.copy-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.copy-sha",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.cherry-pick",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.edit-commit-message",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.squash-commits",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.update-branch",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.branch-from-commit",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.tag-from-commit",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.drop-commits",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.open-worktree-new",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.open-worktree-current",
+          "when": "false"
+        },
+        {
+          "command": "gitNativeUI.delete-worktrees",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "overrides": {
+    "release-it": {
+      "undici": "7.29.1",
+      "basic-ftp": "6.2.1"
+    },
+    "eslint-plugin-react-hooks": {
+      "zod-validation-error": "4.0.2"
+    },
+    "diff": "8.0.4",
+    "serialize-javascript": "7.1.2"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "The panel shows setup instructions; Git access requires workspace trust."
+    },
+    "virtualWorkspaces": false
+  },
+  "license": "MIT"
+}

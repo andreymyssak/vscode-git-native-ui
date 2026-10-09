@@ -1,0 +1,14 @@
+**/*
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE.txt
+!THIRD_PARTY_NOTICES.md
+!assets/git-native-ui.svg
+!assets/marketplace-icon.png
+!dist/extension.cjs
+!dist/squash-helper.cjs
+!dist/webview.js
+!dist/webview.css
+!dist/codicon.ttf
+!dist/UI_LICENSES.txt

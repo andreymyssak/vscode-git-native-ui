@@ -1,0 +1,82 @@
+.changes-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.commit-info {
+  flex: 0 0 38%;
+  min-height: 74px;
+  max-height: 230px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 1px solid var(--vscode-panel-border, #454545);
+}
+.commit-description {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 10px;
+}
+.commit-message {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: inherit;
+  font-weight: 600;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0 0 12px;
+}
+.commit-metadata {
+  line-height: 1.4;
+}
+.commit-metadata p {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+.commit-sha {
+  font-family: var(--vscode-editor-font-family, monospace);
+}
+.email {
+  color: var(--vscode-textLink-foreground, #73b4ff);
+}
+.email:hover {
+  color: var(--vscode-textLink-activeForeground, #4daafc);
+}
+.references {
+  margin-top: 8px;
+}
+.references p {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.referenceIcon {
+  display: inline-flex;
+  width: 16px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+.referenceIcon[data-reference-kind='head'],
+.referenceIcon[data-reference-kind='tag'] {
+  color: var(--vscode-charts-yellow, #cca700);
+}
+.referenceIcon[data-reference-kind='local'] {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #81b88b);
+}
+.referenceIcon[data-reference-kind='remote'] {
+  color: var(--vscode-charts-purple, #b180d7);
+}
+.empty {
+  color: var(--vscode-descriptionForeground, #aaa);
+  margin: 12px;
+}
+.details {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

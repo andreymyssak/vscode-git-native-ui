@@ -1,0 +1,50 @@
+[
+  {
+    "name": "page public API",
+    "from": "app/layout/Entry.tsx",
+    "to": "@webview/pages/log",
+    "rule": null
+  },
+  {
+    "name": "sibling page",
+    "from": "pages/log/ui/Bad.tsx",
+    "to": "@webview/pages/worktrees",
+    "rule": "pages-do-not-import-other-pages"
+  },
+  {
+    "name": "page to App",
+    "from": "pages/log/ui/Bad.tsx",
+    "to": "@webview/app/model/state",
+    "rule": "frontend-pages-and-shared-do-not-import-app"
+  },
+  {
+    "name": "deep page import",
+    "from": "app/layout/Entry.tsx",
+    "to": "@webview/pages/log/ui/Inside",
+    "rule": "page-public-api-only"
+  },
+  {
+    "name": "nested page entry",
+    "from": "app/layout/Entry.tsx",
+    "to": "@webview/pages/log/ui",
+    "rule": "page-public-api-only"
+  },
+  {
+    "name": "host import",
+    "from": "shared/api/bridge/index.ts",
+    "to": "../../../../extension/secret",
+    "rule": "webview-has-no-host-imports"
+  },
+  {
+    "name": "Node import",
+    "from": "shared/api/bridge/index.ts",
+    "to": "node:fs",
+    "rule": "webview-has-no-node-builtins"
+  },
+  {
+    "name": "vendor import",
+    "from": "pages/log/ui/Bad.tsx",
+    "to": "../../../../vendor/graph",
+    "rule": "only-graph-adapter-imports-vendor"
+  }
+]

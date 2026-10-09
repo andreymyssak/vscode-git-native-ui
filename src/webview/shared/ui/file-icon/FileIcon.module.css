@@ -1,0 +1,28 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 16px;
+  height: 22px;
+  font-size: inherit;
+  line-height: inherit;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.icon::before {
+  display: inline-block;
+  width: 16px;
+  height: 22px;
+  line-height: inherit;
+  flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+.icon :global(.codicon) {
+  font-size: 16px;
+}

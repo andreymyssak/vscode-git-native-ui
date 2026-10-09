@@ -1,0 +1,201 @@
+{
+  "repository": "microsoft/vscode",
+  "adoptedRevision": "07f806f999227108933c2e30515b26eecc1fda74",
+  "lastReviewedRevision": "07f806f999227108933c2e30515b26eecc1fda74",
+  "inputs": [
+    {
+      "path": "src/vs/workbench/contrib/scm/browser/scmHistory.ts",
+      "localPath": "upstream/vscode/originals/src/vs/workbench/contrib/scm/browser/scmHistory.ts",
+      "role": "copied",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "d5618af64b8d2a9425ed419e504625f1f5a5844ae998ace4d45891568bf42447",
+      "selectedExports": [
+        "toISCMHistoryItemViewModelArray",
+        "renderSCMHistoryItemGraph",
+        "compareHistoryItemRefs"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": [
+        "src/vendor/vscode-graph/graph.ts"
+      ]
+    },
+    {
+      "path": "src/vs/workbench/contrib/scm/common/history.ts",
+      "localPath": "upstream/vscode/originals/src/vs/workbench/contrib/scm/common/history.ts",
+      "role": "declarations",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "b71dcc641490e4cc38f7ddf0ab82f5316871912775daef9c6e61e9f854fc5af4",
+      "selectedExports": [
+        "ISCMHistoryItem",
+        "ISCMHistoryItemViewModel",
+        "ISCMHistoryItemGraphNode",
+        "ISCMHistoryItemRef"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    },
+    {
+      "path": "src/vs/base/common/numbers.ts",
+      "localPath": "upstream/vscode/originals/src/vs/base/common/numbers.ts",
+      "role": "helper",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "2598d701b60fe02af4e6c9b44c2d71cd084ebcf3a2097b4ce7e30b56daef7fe7",
+      "selectedExports": [
+        "rot"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    },
+    {
+      "path": "src/vs/base/common/objects.ts",
+      "localPath": "upstream/vscode/originals/src/vs/base/common/objects.ts",
+      "role": "helper",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "f88a269feeb501e0f0b7dec319e16cee100b213b003f08c2bbeee572480100f2",
+      "selectedExports": [
+        "deepClone"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    },
+    {
+      "path": "src/vs/platform/theme/common/colorUtils.ts",
+      "localPath": "upstream/vscode/originals/src/vs/platform/theme/common/colorUtils.ts",
+      "role": "helper",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "cc1656c41e8b61326fb22161013a806e80cb5a758368bb8cdfedf2b77f3b05f6",
+      "selectedExports": [
+        "asCssVariable"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    },
+    {
+      "path": "src/vs/workbench/contrib/scm/test/browser/scmHistory.test.ts",
+      "localPath": "upstream/vscode/originals/src/vs/workbench/contrib/scm/test/browser/scmHistory.test.ts",
+      "role": "test",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "d1135a19345f4f441a75c7b30ca18257e58be67747c691394888140ea1b0d166",
+      "selectedExports": [
+        "linear graph",
+        "merge commit"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [
+        "test/graph/layout.test.ts"
+      ],
+      "outputPaths": []
+    },
+    {
+      "path": "extensions/git/src/api/git.d.ts",
+      "localPath": "upstream/vscode/originals/extensions/git/src/api/git.d.ts",
+      "role": "declarations",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "974b34bcb7a1dcab9f65349943daa98c1c299a2406b2665fdd48010f39439a8b",
+      "selectedExports": [
+        "API",
+        "Repository",
+        "GitExtension"
+      ],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    },
+    {
+      "path": "LICENSE.txt",
+      "localPath": "upstream/vscode/originals/LICENSE.txt",
+      "role": "license",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "9480271317925265e806a9a196aaa33410a962fa9d4d1e248a4a5187bc8c9df9",
+      "selectedExports": [],
+      "notice": "Microsoft Corporation, MIT",
+      "testPaths": [],
+      "outputPaths": []
+    }
+  ],
+  "patches": [
+    {
+      "path": "upstream/vscode/patches/0001-portable-graph.patch",
+      "sha256": "80fb15877a4b1363b823adcfb1588bdbcc50d203162d938e659102b10aab9eed",
+      "description": "Extract graph functions, narrow types, inline rot/CSS names, structuredClone flat lanes, remove pseudo-items and add strict guarded index assertions."
+    },
+    {
+      "path": "upstream/vscode/patches/0002-color-defaults.patch",
+      "sha256": "597b571d462adb9ced4b0d0b879fd6fd70b2a222ce78a99c4ec2745d15552a4f",
+      "description": "Retain native theme identifiers with upstream palette fallbacks when a color token is absent."
+    }
+  ],
+  "outputs": [
+    {
+      "sourcePath": "src/vs/workbench/contrib/scm/browser/scmHistory.ts",
+      "path": "src/vendor/vscode-graph/graph.ts"
+    }
+  ],
+  "watched": [
+    {
+      "path": "extensions/git/src/api/api1.ts",
+      "category": "api",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "5ec2305fac480cea515af483daf2b0fd5c8fcc25c3f0bf84742cd96fd67e744e"
+    },
+    {
+      "path": "extensions/git/src/commands.ts",
+      "category": "commands",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "e6507fd72045f6890618759b718d990615b8a752c9ab08bd3c21289fa8b63fb7"
+    },
+    {
+      "path": "extensions/git/src/git.ts",
+      "category": "git",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "64489576888dae4128f4399e9d28dddecbd1b3d16806e2b3a73fd226c8b24985"
+    },
+    {
+      "path": "extensions/git/src/repository.ts",
+      "category": "git",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "6cf32dc3f7aa6226998549ac51ddfbfe1d20c7c1325b505e835355625bfe6daf"
+    },
+    {
+      "path": "extensions/git/src/historyProvider.ts",
+      "category": "history",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "3637aa4665a248590cbfd5cde3a0e5578dd63e0f1cdfedf1a59129741e7ead4d"
+    },
+    {
+      "path": "extensions/git/src/historyItemDetailsProvider.ts",
+      "category": "history",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "ee377bf5314c87d05eab2e3b7b12fde17ab89ff047e0187e33c0e13869b14f25"
+    },
+    {
+      "path": "src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts",
+      "category": "history",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "7ee9ff1ce1d07da85c28900f5e6c1ad1a6ed916efe4be08ab72a0708e4bad0b8"
+    },
+    {
+      "path": "extensions/git/src/test/git.test.ts",
+      "category": "tests",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "34cbdaa58b19b87d603c6cc02a30dc4ade6489c881853c59e06e4ed37919f5b4"
+    },
+    {
+      "path": "extensions/git/src/test/worktreeSymlink.test.ts",
+      "category": "tests",
+      "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+      "sha256": "9b271b983efeaf345d951f60e41b6203078122836f4d7a1ea24691995ac6fb16"
+    }
+  ],
+  "releaseNotes": {
+    "version": "1.140.0",
+    "url": "https://code.visualstudio.com/updates/v1_140",
+    "revision": "07f806f999227108933c2e30515b26eecc1fda74",
+    "sha256": "1fe2d1602356cf98e38df8b834c2d7a807f83452fe47b578967d0ed6a0217224"
+  }
+}

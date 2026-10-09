@@ -1,0 +1,25 @@
+.range {
+  display: flex;
+  gap: 8px;
+}
+.range label {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.range input {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+}
+.error {
+  color: var(--vscode-errorForeground, #f48771);
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}

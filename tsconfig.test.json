@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM"],
+    "types": ["node", "vscode", "mocha"],
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "test/browser/**/*.ts",
+    "test/browser/**/*.tsx",
+    "test/vscode/**/*.ts",
+    "test/fixtures/**/*.ts",
+    "test/fixtures/**/*.tsx",
+    "src/webview/**/*.d.ts",
+    "playwright.config.ts"
+  ]
+}

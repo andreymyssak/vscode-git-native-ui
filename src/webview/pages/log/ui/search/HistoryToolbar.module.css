@@ -1,0 +1,92 @@
+.toolbar {
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  min-height: var(--log-header-min-height);
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 3px 4px 3px 0;
+  border-bottom: 1px solid var(--vscode-panel-border, #454545);
+  flex-shrink: 0;
+}
+.actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: var(--log-control-height);
+  padding: 3px;
+  flex-shrink: 0;
+}
+.options {
+  z-index: 1000;
+  padding: 8px;
+  border: 1px solid var(--vscode-editorWidget-border, #454545);
+  background: var(--vscode-editorWidget-background, #252526);
+  color: var(--vscode-editorWidget-foreground, #ccc);
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0006);
+  font: inherit;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+}
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  padding: 5px 8px;
+  border-radius: 3px;
+}
+.options label:hover,
+.columns:hover,
+.columns[aria-expanded='true'] {
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+.heading {
+  color: var(--vscode-descriptionForeground, #aaa);
+  padding: 6px 8px;
+  font-weight: 600;
+}
+.divider {
+  border: 0;
+  border-top: 1px solid var(--vscode-menu-separatorBackground, #454545);
+  margin: 6px 0 0;
+}
+.columns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  width: 100%;
+  padding: 5px 8px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+}
+.submenu {
+  z-index: 1001;
+  min-width: 130px;
+}
+
+.options input[type='checkbox'] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+.options input[type='checkbox']:checked::before {
+  content: '✓';
+  display: block;
+  line-height: 16px;
+  font-size: 16px;
+}
