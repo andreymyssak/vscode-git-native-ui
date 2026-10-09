@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -201,28 +202,47 @@ describe('history and identity', () => {
   it('ambiguous hash prefix requests more characters without writing', async () => {
     const before = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
     const tree = (await fixture.runGit(['rev-parse', 'HEAD^{tree}'])).trim();
-    const prefixes = new Map<string, string>();
-    let collision: string | null = null;
+    const format = (
+      await fixture.runGit(['rev-parse', '--show-object-format'])
+    ).trim();
 
-    for (let index = 0; index < 1500 && !collision; index++) {
-      const sha = (
-        await fixture.runGit([
-          'commit-tree',
-          tree,
-          '-p',
-          before,
-          '-m',
-          `Unreachable ${index}`,
-        ])
-      ).trim();
-      const prefix = sha.slice(0, 4);
+    assert.ok(format === 'sha1' || format === 'sha256');
+    const date = '1700000000 +0000';
 
-      if (prefixes.has(prefix)) collision = prefix;
-      else prefixes.set(prefix, sha);
+    type Candidate = { message: string; sha: string };
+
+    const prefixes = new Map<string, Candidate>();
+    let collision: readonly [Candidate, Candidate] | undefined;
+
+    // Find matching four-character prefixes without launching Git for each candidate.
+    for (let index = 0; index <= 0x10000 && !collision; index++) {
+      const message = `Unreachable ${index}`;
+      const contents =
+        `tree ${tree}\nparent ${before}\n` +
+        `author Fixture <fixture@example.test> ${date}\n` +
+        `committer Fixture <fixture@example.test> ${date}\n\n${message}\n`;
+      const sha = createHash(format)
+        .update(`commit ${Buffer.byteLength(contents)}\0`)
+        .update(contents)
+        .digest('hex');
+      const candidate = { message, sha };
+      const previous = prefixes.get(sha.slice(0, 4));
+
+      if (previous && previous.sha !== sha) collision = [previous, candidate];
+      else prefixes.set(sha.slice(0, 4), candidate);
     }
 
     assert.ok(collision, 'fixture must contain a commit prefix collision');
-    assert.equal((await adapter.resolve(id, collision)).kind, 'ambiguous');
+    // Git writes real objects and verifies the hashes computed above.
+    for (const candidate of collision)
+      assert.equal(
+        await commitWithDate(fixture, tree, before, candidate.message, date),
+        candidate.sha,
+      );
+    const prefix = collision[0].sha.slice(0, 4);
+
+    assert.equal(collision[1].sha.slice(0, 4), prefix);
+    assert.equal((await adapter.resolve(id, prefix)).kind, 'ambiguous');
     assert.equal((await fixture.runGit(['rev-parse', 'HEAD'])).trim(), before);
   });
   it('repository events revoke old cursors and aborted reads cannot return results', async () => {
