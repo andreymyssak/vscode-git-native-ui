@@ -279,26 +279,30 @@ describe('private package', () => {
             'vs-seti',
             vscode.ConfigurationTarget.Global,
           );
+          // A theme refresh can replace its stylesheet between separate reads.
           await expect
-            .poll(() =>
-              icon.evaluate(
-                (node) => getComputedStyle(node, '::before').fontFamily,
-              ),
-            )
-            .toMatch(/git-file-theme-.*-font-0/);
-          assert.equal(
-            await icon.evaluate(async (node) => {
-              const font = getComputedStyle(node, '::before').fontFamily;
-              const loaded = await document.fonts.load('24px ' + font);
+            .poll(
+              () =>
+                icon.evaluate(async (node) => {
+                  const family = getComputedStyle(node, '::before').fontFamily;
+                  const faces = await document.fonts.load('24px ' + family);
 
-              return (
-                loaded.length > 0 &&
-                loaded.every((face) => face.status === 'loaded')
-              );
-            }),
-            true,
-            'installed host serves the active Explorer font under the real CSP',
-          );
+                  return {
+                    family,
+                    loaded:
+                      faces.length > 0 &&
+                      faces.every((face) => face.status === 'loaded'),
+                  };
+                }),
+              {
+                message:
+                  'installed host serves the active Explorer font under the real CSP',
+              },
+            )
+            .toMatchObject({
+              family: /git-file-theme-.*-font-0/,
+              loaded: true,
+            });
           await iconSettings.update(
             'iconTheme',
             'vs-minimal',

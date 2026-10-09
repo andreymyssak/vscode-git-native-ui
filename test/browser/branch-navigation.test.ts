@@ -350,6 +350,7 @@ test('pending filter layout preserves scrolling to the focused branch name', asy
   page,
 }) => {
   await page.setViewportSize({ width: 620, height: 280 });
+  await expect(page.locator('#branch-pane')).toHaveCSS('width', '150px');
   await updateReferences(page, ['main', 'feature/team/epic/deep-reference']);
   const finishLayout = await page.evaluateHandle(() => {
     const request = window.requestAnimationFrame;
@@ -357,15 +358,19 @@ test('pending filter layout preserves scrolling to the focused branch name', asy
 
     window.requestAnimationFrame = (callback) => pending.push(callback);
 
-    return () => {
-      window.requestAnimationFrame = request;
-      const leaf = document.querySelector(
-        '[data-ref="refs/heads/feature/team/epic/deep-reference"]',
-      );
+    return async () => {
+      const tree = document.getElementById('branches');
 
-      if (!(leaf instanceof HTMLElement))
-        throw new Error('Deep branch must be available.');
-      leaf.focus();
+      if (!tree) throw new Error('Branch tree must be available.');
+      for (let step = 0; step < 5; step++) {
+        document.activeElement?.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
+        );
+        for (const item of tree.querySelectorAll('vscode-tree-item'))
+          await item.updateComplete;
+      }
+
+      window.requestAnimationFrame = request;
       for (const callback of pending) callback(performance.now());
     };
   });
