@@ -62,6 +62,18 @@ export async function run(): Promise<string[]> {
         .toBe(true);
       assert.ok(frame);
       const branch = frame.locator(`[data-ref="${refId}"]`);
+
+      await expect(frame.locator('#history')).not.toHaveAttribute('inert', '');
+      await branch.evaluate((node) => {
+        node.addEventListener(
+          'contextmenu',
+          (event) => event.preventDefault(),
+          { once: true },
+        );
+        node.dispatchEvent(
+          new MouseEvent('contextmenu', { bubbles: true, cancelable: true }),
+        );
+      });
       const context = JSON.parse(
         (await branch.getAttribute('data-vscode-context')) ?? '{}',
       );
@@ -153,6 +165,34 @@ export async function run(): Promise<string[]> {
       assert.equal((await f.runGit(['stash', 'list'])).trim(), '');
       passed.push(
         `registered ${scenario} reviews branch names and preserves source/checkout contracts`,
+      );
+    } catch (error) {
+      const state =
+        frame && !frame.isDetached()
+          ? {
+              context: await frame
+                .locator(`[data-ref="${refId}"]`)
+                .getAttribute('data-vscode-context', { timeout: 1000 })
+                .catch(() => null),
+              status: await frame
+                .locator('#status')
+                .textContent({ timeout: 1000 })
+                .catch(() => null),
+              busy: await frame
+                .locator('#history')
+                .getAttribute('inert', { timeout: 1000 })
+                .catch(() => null),
+            }
+          : null;
+      const workbench = await page
+        .locator('body')
+        .innerText({ timeout: 1000 })
+        .then((text) => text.slice(0, 2000))
+        .catch(() => null);
+
+      throw new Error(
+        `${scenario}: ${error instanceof Error ? error.message : String(error)}\n${JSON.stringify({ state, workbench })}`,
+        { cause: error },
       );
     } finally {
       try {
