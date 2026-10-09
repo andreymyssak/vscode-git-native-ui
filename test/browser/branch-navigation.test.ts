@@ -346,6 +346,45 @@ test('keyboard navigation reveals deep reference names in a narrow pane', async 
   });
 });
 
+test('pending filter layout preserves scrolling to the focused branch name', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 620, height: 280 });
+  await updateReferences(page, ['main', 'feature/team/epic/deep-reference']);
+  const finishLayout = await page.evaluateHandle(() => {
+    const request = window.requestAnimationFrame;
+    const pending: FrameRequestCallback[] = [];
+
+    window.requestAnimationFrame = (callback) => pending.push(callback);
+
+    return () => {
+      window.requestAnimationFrame = request;
+      const leaf = document.querySelector(
+        '[data-ref="refs/heads/feature/team/epic/deep-reference"]',
+      );
+
+      if (!(leaf instanceof HTMLElement))
+        throw new Error('Deep branch must be available.');
+      leaf.focus();
+      for (const callback of pending) callback(performance.now());
+    };
+  });
+
+  await page.getByRole('searchbox', { name: 'Branch or tag' }).fill('feature');
+  const leaf = page.getByRole('treeitem', {
+    name: 'deep-reference',
+    exact: true,
+  });
+
+  await expect(leaf).toBeVisible();
+  await finishLayout.evaluate((finish) => finish());
+  await finishLayout.dispose();
+  await expect(leaf).toBeFocused();
+  await expect(leaf.locator('[data-reference-name]')).toBeInViewport({
+    ratio: 1,
+  });
+});
+
 test('removing the focused reference keeps keyboard navigation in the tree', async ({
   page,
 }) => {

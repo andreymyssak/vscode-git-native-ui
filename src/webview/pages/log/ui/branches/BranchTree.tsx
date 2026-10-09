@@ -394,6 +394,10 @@ export function BranchTree({
             item
               .querySelector('[data-reference-name]')
               ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            // Scroll events arrive later; pending restoration must see this intent.
+            memory.current.scrollTop = tree.scrollTop;
+            memory.current.scrollLeft = tree.scrollLeft;
+            memory.current.scrollEpoch++;
           }
         }
       }}
