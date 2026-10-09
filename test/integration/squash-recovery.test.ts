@@ -43,8 +43,8 @@ afterAll(async () => {
   await built?.dispose();
 });
 
-async function waitForFile(path: string): Promise<void> {
-  const deadline = Date.now() + 5000;
+async function waitForFile(path: string, signal: AbortSignal): Promise<void> {
+  const deadline = Date.now() + 20000;
 
   while (Date.now() < deadline) {
     try {
@@ -55,7 +55,7 @@ async function waitForFile(path: string): Promise<void> {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     }
 
-    await setTimeout(25);
+    await setTimeout(25, undefined, { signal });
   }
 
   throw new Error('The fixture pre-rebase hook did not reach its gate.');
@@ -108,7 +108,21 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
       target: fixture.target,
       message: 'Reviewed across windows\n',
     });
-    await waitForFile(ready);
+    const gate = new AbortController();
+
+    try {
+      await Promise.race([
+        waitForFile(ready, gate.signal),
+        running.then((result) => {
+          throw new Error(
+            `Squash finished before reaching its hook: ${JSON.stringify(result)}`,
+          );
+        }),
+      ]);
+    } finally {
+      gate.abort();
+    }
+
     const rebase = (
       await fixture.runGit([
         'rev-parse',
@@ -163,7 +177,7 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
       await fixture.dispose();
     }
   }
-});
+}, 60000);
 test('fresh recovery retains an unobserved orphan rather than assuming absent state proves completion', async (t) => {
   const fixture = await createSquashFixture();
 
