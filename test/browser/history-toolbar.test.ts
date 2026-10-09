@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('filters are sent together, native author results apply once, and revision visibility survives reopening', async ({
   page,

@@ -3,9 +3,8 @@ import { rm } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { promisify } from 'node:util';
 
-import { expect, test } from '@playwright/test';
-
 import type { CommitRecord } from '../../src/shared/model';
+import { expect, test } from '../fixtures/browser';
 
 const execute = promisify(execFile);
 

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('tree filtering, clearing and reload preserve other filters without checkout', async ({
   page,

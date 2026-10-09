@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('Strict Mode subscribes before ready without repeating it', async ({
   page,

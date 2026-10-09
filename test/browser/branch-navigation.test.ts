@@ -1,6 +1,5 @@
-import { expect, test } from '@playwright/test';
-
 import { updateReferences } from '../fixtures/branch-references';
+import { expect, test } from '../fixtures/browser';
 
 test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 360 });

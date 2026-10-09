@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('changed files stay clickable in a short panel with a long commit message', async ({
   page,

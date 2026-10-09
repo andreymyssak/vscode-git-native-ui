@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('hiding branches keeps the search draft, scope and preferred width through reload', async ({
   page,

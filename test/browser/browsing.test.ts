@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-
+import { expect, test } from '../fixtures/browser';
 import { loadHistoryPages } from './history-paging';
 
 test.beforeEach(async ({ page }) => {

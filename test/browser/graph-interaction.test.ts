@@ -1,4 +1,4 @@
-import { expect, type Page, test } from '@playwright/test';
+import { expect, type Page, test } from '../fixtures/browser';
 
 const sha = (index: number) => index.toString(16).padStart(40, '0');
 const row = (page: Page, index: number) =>

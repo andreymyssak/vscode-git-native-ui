@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-
+import { expect, test } from '../fixtures/browser';
 import { loadHistoryPages } from './history-paging';
 
 test('loading indicator updates within 100 ms independently of Git duration', async ({

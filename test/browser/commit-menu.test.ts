@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('right-click exposes the clicked commit in native context without dispatching an action', async ({
   page,

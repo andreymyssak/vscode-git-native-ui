@@ -1,7 +1,6 @@
-import { expect, test } from '@playwright/test';
-
 import type { PanelBody } from '../../src/shared/messages';
 import type { RestorableView } from '../../src/shared/model';
+import { expect, test } from '../fixtures/browser';
 import { loadHistoryPages } from './history-paging';
 
 test('background restoration keeps the previous history and latest scroll until partial pages arrive', async ({

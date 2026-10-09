@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
+
+import { expect, test } from '../fixtures/browser';
 
 const sha = (number: number) => number.toString(16).padStart(40, '0');
 const row = (page: Page, number: number) =>

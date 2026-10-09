@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 for (const width of [620, 1280])
   for (const outcome of ['success', 'empty', 'error'] as const)

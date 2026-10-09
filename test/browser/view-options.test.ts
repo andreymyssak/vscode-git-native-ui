@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('calendar range applies once, survives reopening and clears independently', async ({
   page,

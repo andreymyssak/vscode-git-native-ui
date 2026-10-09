@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('single click only selects; Enter opens a new window and the toolbar creates a worktree', async ({
   page,

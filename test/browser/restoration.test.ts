@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('browser reload restores identifiers, widths and active view without caching contents', async ({
   page,

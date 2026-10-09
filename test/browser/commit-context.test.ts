@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('commit context uses full identities and disables merge or detached cherry pick', async ({
   page,

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/browser';
 
 test('near-end scrolling requests each cursor once while a page is pending', async ({
   page,

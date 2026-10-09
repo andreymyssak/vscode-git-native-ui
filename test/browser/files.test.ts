@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
 
+import { expect, test } from '../fixtures/browser';
 import { changedFiles } from '../fixtures/changed-files';
 
 async function showChangedFiles(page: Page) {

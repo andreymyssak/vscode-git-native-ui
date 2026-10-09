@@ -1,6 +1,5 @@
-import { expect, test } from '@playwright/test';
-
 import type { PanelBody } from '../../src/shared/messages';
+import { expect, test } from '../fixtures/browser';
 
 test('search options stay inside a compact input at wide panel sizes', async ({
   page,
