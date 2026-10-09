@@ -233,8 +233,11 @@ describe('native squash menu workflow', () => {
         );
       }
 
-      await rows.first().click();
-      await rows.nth(2).click({ modifiers: ['Shift'] });
+      // Native dialogs can leave the pointer over an interactive reference popup.
+      // This scenario verifies command routing; select through the keyboard instead.
+      await rows.first().press('Enter');
+      await rows.first().press('Shift+ArrowDown');
+      await rows.nth(1).press('Shift+ArrowDown');
       await expect(
         frame.locator('[data-commit-row][aria-selected="true"]'),
       ).toHaveCount(3);
@@ -324,8 +327,9 @@ describe('native squash menu workflow', () => {
       await expect(cancel).toHaveCount(0);
       // Each invocation must use a newly opened menu. Git discovery/status may
       // refresh the view while the preceding native editor was open.
-      await rows.first().click();
-      await rows.nth(2).click({ modifiers: ['Shift'] });
+      await rows.first().press('Enter');
+      await rows.first().press('Shift+ArrowDown');
+      await rows.nth(1).press('Shift+ArrowDown');
       await expect(frame.locator('#details')).toContainText('Menu Oldest');
       await rows.first().evaluate((node) => {
         node.addEventListener(
@@ -398,7 +402,7 @@ describe('native squash menu workflow', () => {
       const squashed = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
 
       for (const choice of ['Cancel', 'Drop']) {
-        await rows.first().click();
+        await rows.first().press('Enter');
         await expect(frame.locator('#details')).toHaveAttribute(
           'aria-busy',
           'false',
