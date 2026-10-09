@@ -1,12 +1,31 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 
 async function widths(page: Page): Promise<number[]> {
-  return page
-    .locator('[data-commit-row]')
-    .first()
-    .evaluate((row) =>
-      [...row.children].map((cell) => cell.getBoundingClientRect().width),
-    );
+  let measured: number[] = [];
+
+  // The initial pane resize arrives after the first rows become visible.
+  await expect
+    .poll(async () => {
+      const geometry = await page
+        .locator('[data-commit-row]')
+        .first()
+        .evaluate((row) => ({
+          columns: [...row.children].map(
+            (cell) => cell.getBoundingClientRect().width,
+          ),
+          available: row.closest('#history')?.clientWidth,
+        }));
+
+      measured = geometry.columns;
+
+      return (
+        measured.reduce((total, width) => total + width, 0) -
+        (geometry.available ?? 0)
+      );
+    })
+    .toBeCloseTo(0, 0);
+
+  return measured;
 }
 
 async function drag(page: Page, handle: Locator, delta: number): Promise<void> {

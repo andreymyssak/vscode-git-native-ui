@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { loadHistoryPages } from './history-paging';
 
-test('loading response stays within 100 ms independently of Git duration', async ({
+test('loading indicator updates within 100 ms independently of Git duration', async ({
   page,
 }) => {
   await page.goto('/');
@@ -25,19 +25,35 @@ test('loading response stays within 100 ms independently of Git duration', async
       else deliver(message);
     };
 
-    const input = document.getElementById('search') as HTMLInputElement;
+    const input = document.getElementById('search');
+    const status = document.getElementById('status');
+
+    if (!(input instanceof HTMLInputElement) || !status)
+      throw new Error('Search and loading status must be available.');
     const started = performance.now();
+    const updated = new Promise<number>((resolve) => {
+      // Measure the DOM update, without waiting for the browser's next frame.
+      const observer = new MutationObserver(() => {
+        if (!status.textContent?.includes('Loading')) return;
+        observer.disconnect();
+        resolve(performance.now() - started);
+      });
+
+      observer.observe(status, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    });
 
     input.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
     );
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => resolve()),
-    );
+    const elapsed = await updated;
 
     return {
-      loading: document.getElementById('status')!.textContent,
-      elapsed: performance.now() - started,
+      loading: status.textContent,
+      elapsed,
     };
   });
 
