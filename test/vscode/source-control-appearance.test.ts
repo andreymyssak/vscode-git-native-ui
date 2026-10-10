@@ -65,30 +65,25 @@ async function folderBadge(label: Locator, native: boolean) {
 
 async function revealNativeLabel(page: Page, label: Locator): Promise<void> {
   const list = page.locator('.scm-view .monaco-list').first();
+  const rowIndex = await label.evaluate((element) =>
+    element.closest('.monaco-list-row')?.getAttribute('data-index'),
+  );
 
-  // Monaco scrolls its virtual rows through wheel events rather than DOM scrolling.
-  await expect
-    .poll(async () => {
-      const viewport = await list.boundingBox();
-      const bounds = await label.boundingBox();
+  assert.ok(rowIndex !== null && rowIndex !== undefined);
+  const index = Number(rowIndex);
 
-      if (!viewport || !bounds) return false;
-      const delta =
-        bounds.y < viewport.y
-          ? bounds.y - viewport.y
-          : Math.max(
-              0,
-              bounds.y + bounds.height - viewport.y - viewport.height,
-            );
-
-      if (delta === 0) return true;
-      await list.hover();
-      await page.mouse.wheel(0, delta);
-
-      return false;
-    })
-    .toBe(true);
+  assert.ok(Number.isInteger(index) && index >= 0);
+  // Keyboard focus reveals virtual rows without starting a hover on the scroll target.
   await page.mouse.move(0, 0);
+  await list.press('Home');
+  for (let row = 0; row < index; row++) await list.press('ArrowDown');
+  await expect
+    .poll(() =>
+      label.evaluate((element) =>
+        element.closest('.monaco-list-row')?.classList.contains('focused'),
+      ),
+    )
+    .toBe(true);
 }
 
 describe('Source Control appearance', () => {
