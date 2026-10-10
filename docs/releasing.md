@@ -15,7 +15,7 @@ Preview shows the proposed version and notes without changing files. Preparation
 
 Release tooling recommends the version from [Conventional Commit messages](../CONTRIBUTING.md#write-commit-messages).
 
-Generate release entries with release-it's `conventionalcommits` preset. Publish the generated version section from `CHANGELOG.md` unchanged. The preset includes features, fixes, performance improvements, reverts, and breaking changes. Routine maintenance commits are omitted.
+Generate release entries with release-it's `conventionalcommits` preset. Publish the generated version section from `CHANGELOG.md` unchanged. The preset includes features, fixes, performance improvements, reverts, and breaking changes. Routine maintenance commits are omitted; a maintenance-only release can have no entries.
 
 Review commit messages before merging because their descriptions become public release entries. Add no manual introductions, feature summaries, or validation paragraphs to release notes.
 

@@ -224,7 +224,7 @@ test.each(['dirty', 'other branch'])(
   },
 );
 
-test('GitHub notes copy generated release entries and reject absent or empty notes', async () => {
+test('GitHub notes copy generated release entries and reject absent versions', async () => {
   const f = await fixture();
 
   for (const message of [
@@ -263,9 +263,23 @@ test('GitHub notes copy generated release entries and reject absent or empty not
     code: 1,
     stderr: expect.stringContaining('Missing release notes'),
   });
-  await writeFile(join(f.root, 'CHANGELOG.md'), '# Changelog\n\n## 1.1.0\n');
-  await expect(readNotes()).rejects.toMatchObject({
-    code: 1,
-    stderr: expect.stringContaining('Empty release notes'),
-  });
+});
+
+test('maintenance releases preserve an empty generated release section', async () => {
+  const f = await fixture('chore: update Marketplace metadata');
+
+  await f.run('release:prepare', ['1.0.1']);
+  const { stdout } = await execute(
+    process.execPath,
+    [
+      '-e',
+      "console.log(JSON.stringify(require('./.release-it.publish.cjs').github.releaseNotes({ version: '1.0.1' })))",
+    ],
+    { cwd: f.root },
+  );
+
+  expect(JSON.parse(stdout)).toBe('');
+  expect(await f.read('CHANGELOG.md')).not.toContain(
+    'update Marketplace metadata',
+  );
 });

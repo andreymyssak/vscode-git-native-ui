@@ -27,11 +27,7 @@ module.exports = {
 
       if (!section) throw new Error(`Missing release notes for ${version}.`);
 
-      const notes = section.split('\n').slice(1).join('\n').trim();
-
-      if (!notes) throw new Error(`Empty release notes for ${version}.`);
-
-      return notes;
+      return section.split('\n').slice(1).join('\n').trim();
     },
   },
 };
