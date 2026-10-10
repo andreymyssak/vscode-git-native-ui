@@ -421,6 +421,10 @@ test('Commit and Stash controls fit a narrow themed sidebar and keep an editable
   expect(requests).not.toEqual(
     expect.arrayContaining([{ kind: 'commit', repositoryId: 'repo' }]),
   );
+  await root.getByRole('button', { name: 'Commit', exact: true }).click();
+  expect(
+    await page.evaluate(() => Reflect.get(window, 'sourceControlRequests')),
+  ).toEqual(expect.arrayContaining([{ kind: 'commit', repositoryId: 'repo' }]));
 });
 
 test('file open and selected restore requests identify the saved snapshot', async ({

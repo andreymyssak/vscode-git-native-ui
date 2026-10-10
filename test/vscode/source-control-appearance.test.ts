@@ -75,6 +75,7 @@ describe('Source Control appearance', () => {
     );
     let page: Page | undefined;
     let hoverTarget: string | undefined;
+    let panelWasVisible = false;
 
     try {
       await workbench.update(
@@ -152,6 +153,8 @@ describe('Source Control appearance', () => {
       const frame = await sourceControlFrame();
 
       page = frame.page();
+      panelWasVisible = await page.locator('.part.panel').isVisible();
+      await vscode.commands.executeCommand('workbench.action.closePanel');
       const comparisons = [];
       const themes = [
         { name: 'Default Dark Modern', bodyClass: 'vscode-dark' },
@@ -325,6 +328,8 @@ describe('Source Control appearance', () => {
         previousTheme,
         vscode.ConfigurationTarget.Global,
       );
+      if (panelWasVisible)
+        await vscode.commands.executeCommand('workbench.action.focusPanel');
     }
   }).timeout(60000);
 });

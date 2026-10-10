@@ -77,8 +77,16 @@ async function runContextAction(
     .page()
     .getByRole('menuitem', { name: action, exact: true });
 
-  await expect(menuItem)
-    .toBeVisible()
+  await expect
+    .poll(async () =>
+      menuItem
+        .evaluate((element) => ({
+          visible: element.getBoundingClientRect().height > 0,
+          enabled: element.getAttribute('aria-disabled') !== 'true',
+        }))
+        .catch(() => null),
+    )
+    .toEqual({ visible: true, enabled: true })
     .catch(async (error: unknown) => {
       await writeFile(
         '.artifacts/change-menu-diagnostic.json',
@@ -96,7 +104,6 @@ async function runContextAction(
         .screenshot({ path: '.artifacts/change-menu-failure.png' });
       throw error;
     });
-  await expect(menuItem).toBeEnabled();
   const encoded = await target.getAttribute('data-vscode-context');
 
   assert.ok(encoded);
@@ -257,7 +264,7 @@ describe('Changes context actions', () => {
       const stash = frame.locator('[data-stash]').first();
 
       await stash.getByRole('button', { name: /Stash selected files/ }).click();
-      await row(frame, 'src/a.txt').click();
+      await row(frame, 'src/a.txt').click({ modifiers: ['ControlOrMeta'] });
       await runContextAction(frame, 'src/a.txt', 'Apply Selected Files');
       await expect
         .poll(() => readFile(join(fixture.root, 'src/a.txt'), 'utf8'))

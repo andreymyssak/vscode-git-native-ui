@@ -75,6 +75,14 @@ function file(frame: Frame, path: string) {
   return frame.getByRole('treeitem', { name: path, exact: true });
 }
 
+async function activate(frame: Frame, name: string): Promise<void> {
+  const button = frame.getByRole('button', { name, exact: true });
+
+  await expect(button).toBeEnabled();
+  // Browser tests cover pointer routing; native tests exercise keyboard activation.
+  await button.press('Enter');
+}
+
 async function contextAction(
   frame: Frame,
   path: string,
@@ -158,6 +166,8 @@ describe('combined Commit and Stash view', () => {
           ),
         '1px',
       );
+      await frame.page().bringToFront();
+      await file(frame, 'nested/deeper/new.txt').focus();
       await file(frame, 'nested/deeper/new.txt')
         .getByText('new.txt', { exact: true })
         .hover();
@@ -180,9 +190,7 @@ describe('combined Commit and Stash view', () => {
       await frame.page().keyboard.press('Escape');
       await expect(tooltip).toHaveCount(0);
       await file(frame, 'nested/deeper/new.txt').getByRole('checkbox').click();
-      await frame
-        .getByRole('button', { name: 'Stash Silently', exact: true })
-        .click();
+      await activate(frame, 'Stash Silently');
       await expect
         .poll(async () =>
           (await fixture.runGit(['stash', 'list', '--format=%gs'])).trim(),
@@ -243,9 +251,7 @@ describe('combined Commit and Stash view', () => {
         await frame
           .getByRole('textbox', { name: 'Commit message' })
           .fill('Commit link targets');
-        await frame
-          .getByRole('button', { name: 'Commit', exact: true })
-          .click();
+        await activate(frame, 'Commit');
         await expect
           .poll(async () =>
             (await fixture.runGit(['log', '-1', '--format=%s'])).trim(),
@@ -344,7 +350,7 @@ describe('combined Commit and Stash view', () => {
       await expect(message).toHaveValue(
         'Commit checked folders\n\nKeep unchecked staging.',
       );
-      await frame.getByRole('button', { name: 'Commit', exact: true }).click();
+      await activate(frame, 'Commit');
       await expect
         .poll(async () =>
           (await fixture.runGit(['log', '-1', '--format=%s'])).trim(),
@@ -513,7 +519,7 @@ describe('combined Commit and Stash view', () => {
 
       edit.insert(uri, new vscode.Position(0, 0), 'unsaved buffer\n');
       assert.equal(await vscode.workspace.applyEdit(edit), true);
-      await frame.getByRole('button', { name: 'Commit', exact: true }).click();
+      await activate(frame, 'Commit');
       await frame
         .page()
         .getByRole('button', { name: 'Cancel', exact: true })
@@ -532,7 +538,7 @@ describe('combined Commit and Stash view', () => {
         'workbench.action.revertAndCloseActiveEditor',
       );
       await writeFile(join(fixture.root, '.git', 'MERGE_HEAD'), head + '\n');
-      await frame.getByRole('button', { name: 'Commit', exact: true }).click();
+      await activate(frame, 'Commit');
       await expect(frame.getByRole('alert')).toHaveCount(0);
       await expect(
         frame
@@ -576,7 +582,7 @@ describe('combined Commit and Stash view', () => {
       await frame
         .getByRole('textbox', { name: 'Commit message' })
         .fill('Commit first repository');
-      await frame.getByRole('button', { name: 'Commit', exact: true }).click();
+      await activate(frame, 'Commit');
       await expect
         .poll(async () =>
           (await first.runGit(['log', '-1', '--format=%s'])).trim(),
