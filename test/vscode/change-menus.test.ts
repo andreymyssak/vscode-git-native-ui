@@ -118,6 +118,10 @@ describe('Changes context actions', () => {
       await vscode.commands.executeCommand(
         sourceControlCommandId('refresh-changes'),
       );
+      await expect(row(frame, 'src/a.txt')).toHaveAttribute(
+        'data-status',
+        'deleted',
+      );
       await runContextAction(frame, 'src', 'Open File');
       const uri = vscode.Uri.file(join(fixture.root, 'src/b.txt')).toString();
 

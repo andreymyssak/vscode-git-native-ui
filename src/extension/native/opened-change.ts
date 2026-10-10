@@ -23,7 +23,9 @@ export function openedChangePath(
       [file.path, file.originalPath].some((path) => {
         const current = vscode.Uri.joinPath(root, ...path.split('/'));
 
-        return current.path === uri.path && current.authority === uri.authority;
+        return (
+          current.fsPath === uri.fsPath && current.authority === uri.authority
+        );
       }),
     );
 

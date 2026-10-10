@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdir, readFile, symlink, unlink, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { isAbsolute, join, relative, sep } from 'node:path';
 
 import type { Frame, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
@@ -42,9 +42,13 @@ async function finish(
   for (const document of vscode.workspace.textDocuments)
     if (
       document.isDirty &&
-      fixtures.some((fixture) =>
-        document.uri.fsPath.startsWith(`${fixture.root}/`),
-      )
+      fixtures.some((fixture) => {
+        const path = relative(fixture.root, document.uri.fsPath);
+
+        return (
+          path !== '..' && !path.startsWith(`..${sep}`) && !isAbsolute(path)
+        );
+      })
     ) {
       await vscode.window.showTextDocument(document);
       await vscode.commands.executeCommand(
@@ -319,7 +323,7 @@ describe('combined Commit and Stash view', () => {
             ? input.modified.fsPath
             : '';
         })
-        .toBe(join(fixture.root, 'chosen', 'same.txt'));
+        .toBe(vscode.Uri.file(join(fixture.root, 'chosen', 'same.txt')).fsPath);
       await contextAction(frame, 'sample.txt', 'open-index-change');
       await expect
         .poll(async () => {

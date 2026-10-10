@@ -74,6 +74,7 @@ describe('Source Control appearance', () => {
       (repository) => repository.rootUri,
     );
     let page: Page | undefined;
+    let hoverTarget: string | undefined;
 
     try {
       await workbench.update(
@@ -221,19 +222,31 @@ describe('Source Control appearance', () => {
       ).toBeVisible();
       await page.locator('.scm-view .monaco-list').first().focus();
       const native = [];
+      let nativeTheme: string | undefined;
 
       for (const comparison of comparisons) {
-        await workbench.update(
-          'colorTheme',
-          comparison.theme,
-          vscode.ConfigurationTarget.Global,
-        );
+        hoverTarget = comparison.path;
+        if (nativeTheme !== comparison.theme) {
+          await workbench.update(
+            'colorTheme',
+            comparison.theme,
+            vscode.ConfigurationTarget.Global,
+          );
+          await expect(page.locator('.monaco-workbench')).toHaveClass(
+            comparison.theme === 'Default Dark Modern'
+              ? /\bvs-dark\b/
+              : /(?:^|\s)vs(?:\s|$)/,
+          );
+          nativeTheme = comparison.theme;
+        }
+
         const nativeLabel = page
           .locator('.scm-view .monaco-list-row .monaco-icon-label')
           .getByText(comparison.name, { exact: true })
           .first();
 
         await expect(nativeLabel).toBeVisible();
+        await page.bringToFront();
         await page.locator('.scm-view .monaco-list').first().focus();
         await page.mouse.move(0, 0);
         await nativeLabel.scrollIntoViewIfNeeded();
@@ -269,8 +282,19 @@ describe('Source Control appearance', () => {
       assert.deepEqual(comparisons, native);
     } catch (error) {
       await page?.screenshot({
-        path: '.artifacts/hover-review/appearance-failure.png',
+        path: '.artifacts/source-control-appearance-failure.png',
       });
+      await writeFile(
+        '.artifacts/source-control-appearance-diagnostic.json',
+        JSON.stringify({
+          hoverTarget,
+          theme: workbench.get('colorTheme'),
+          labels: await page
+            ?.locator('.scm-view .monaco-list-row .monaco-icon-label')
+            .allTextContents(),
+          text: await page?.locator('body').innerText(),
+        }),
+      );
       throw error;
     } finally {
       await page?.keyboard.press('Escape');

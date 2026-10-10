@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
-import { posix, win32 } from 'node:path';
+import { posix } from 'node:path';
 
-/** Match VS Code's home-relative file labels without exposing host details in fixtures. */
+/** Match VS Code's file labels, including home-relative labels on macOS and Linux. */
 export function formatPathLabel({
   path,
   home = homedir(),
@@ -11,7 +11,8 @@ export function formatPathLabel({
   home?: string;
   windows?: boolean;
 }): string {
-  const paths = windows ? win32 : posix;
+  if (windows) return path.replace(/^[a-z]:/i, (drive) => drive.toUpperCase());
+  const paths = posix;
   const relative = paths.relative(home, path);
 
   if (!relative) return '~';

@@ -23,6 +23,18 @@ test('stash listing parser accepts empty lists, full SHA-256 IDs, and a literal 
   ).toBe(long);
 });
 
+test('stash listing parser accepts Git UTC timestamps with a Z suffix', () => {
+  const utc = '2026-10-10T12:00:00Z';
+
+  expect(
+    parseStashes(
+      `${sha}\0stash@{0}\0Saved changes\0${utc}\0${base} ${index}\0`,
+    ),
+  ).toEqual([
+    { sha, selector: 'stash@{0}', message: 'Saved changes', date: utc, base },
+  ]);
+});
+
 for (const output of [
   'incomplete',
   `${sha}\0stash@{0}\0message\0${date}\0${base}\0`,

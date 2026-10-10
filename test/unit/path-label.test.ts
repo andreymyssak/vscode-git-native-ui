@@ -15,12 +15,13 @@ test.each([
 );
 
 test.each([
-  ['C:\\Users\\John', 'C:\\Users\\John', '~'],
+  ['C:\\Users\\John', 'C:\\Users\\John', 'C:\\Users\\John'],
   [
     'C:\\Users\\John\\projects\\my repo',
     'C:\\Users\\John',
-    '~\\projects\\my repo',
+    'C:\\Users\\John\\projects\\my repo',
   ],
+  ['c:\\Users\\John\\repo', 'C:\\Users\\John', 'C:\\Users\\John\\repo'],
   [
     'C:\\Users\\JohnSmith\\repo',
     'C:\\Users\\John',

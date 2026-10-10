@@ -52,7 +52,9 @@ export function parseStashes(output: string): Stash[] {
       !base ||
       (parents.length !== 2 && parents.length !== 3) ||
       !/^stash@\{\d+\}$/.test(selector) ||
-      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/.test(date) ||
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/.test(
+        date,
+      ) ||
       !Number.isFinite(Date.parse(date))
     )
       throw new Error('Git returned invalid stash metadata.');
