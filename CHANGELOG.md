@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2](https://github.com/andreymyssak/vscode-git-ui/compare/v0.1.1...v0.1.2) (2026-10-10)
+
+### Bug Fixes
+
+- use Git UI branding and the new Marketplace identifier ([7c1281b](https://github.com/andreymyssak/vscode-git-ui/commit/7c1281b00d079575d91a9e3e39c85658a061c341))
+
 ## [0.1.1](https://github.com/andreymyssak/vscode-git-ui/compare/v0.1.0...v0.1.1) (2026-10-10)
 
 ### Bug Fixes
