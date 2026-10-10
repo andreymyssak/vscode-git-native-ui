@@ -1,16 +1,16 @@
 {
-  "name": "git-native-ui",
+  "name": "git-ui-native",
   "version": "0.1.1",
   "private": true,
   "description": "Finally, a proper Git UI for VS Code. Inspired by JetBrains IDEs.",
   "icon": "assets/marketplace-icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andreymyssak/vscode-git-native-ui.git"
+    "url": "https://github.com/andreymyssak/vscode-git-ui.git"
   },
-  "homepage": "https://github.com/andreymyssak/vscode-git-native-ui#readme",
+  "homepage": "https://github.com/andreymyssak/vscode-git-ui#readme",
   "bugs": {
-    "url": "https://github.com/andreymyssak/vscode-git-native-ui/issues"
+    "url": "https://github.com/andreymyssak/vscode-git-ui/issues"
   },
   "keywords": [
     "git",
@@ -75,13 +75,13 @@
     "upstream:reproduce": "node scripts/upstream/reproduce.ts",
     "upstream:report": "node scripts/upstream/report.ts",
     "upstream:prepare": "node scripts/upstream/update.ts",
-    "package": "npm run build && vsce package --no-dependencies --out .artifacts/git-native-ui.vsix && npm run package:verify",
+    "package": "npm run build && vsce package --no-dependencies --out .artifacts/git-ui-native.vsix && npm run package:verify",
     "package:verify": "node scripts/package/verify.ts",
     "release:preview": "release-it --dry-run",
     "release:prepare": "release-it",
     "release:validate": "npm run check && npm run test:browser && npm run test:vscode && npm run test:installed",
     "release": "release-it --config .release-it.publish.cjs --no-increment",
-    "release:marketplace": "npm run package:verify && vsce publish --packagePath .artifacts/git-native-ui.vsix",
+    "release:marketplace": "npm run package:verify && vsce publish --packagePath .artifacts/git-ui-native.vsix",
     "test:installed": "npm run package && npm run build:vscode-tests && node scripts/test/run-vscode-tests.ts --installed",
     "test:local": "vitest run --config vitest.config.mts",
     "test:component": "vitest run --config vitest.config.mts --project component",
@@ -146,7 +146,7 @@
     "@vscode/vsce-sign": false,
     "fsevents": false
   },
-  "displayName": "Git Native UI",
+  "displayName": "Git UI",
   "publisher": "andreymyssak",
   "main": "./dist/extension.cjs",
   "engines": {
@@ -166,8 +166,8 @@
       "panel": [
         {
           "id": "gitNativeUI",
-          "title": "Git Native UI",
-          "icon": "assets/git-native-ui.svg"
+          "title": "Git UI",
+          "icon": "assets/git-ui-native.svg"
         }
       ]
     },
@@ -175,7 +175,7 @@
       "gitNativeUI": [
         {
           "id": "gitNativeUI.log",
-          "name": "Git Native UI",
+          "name": "Git UI",
           "type": "webview"
         }
       ]

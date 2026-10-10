@@ -4,7 +4,7 @@ Accepted 2026-10-09, recording the existing implementation.
 
 ## Context
 
-VS Code's Git extension already provides repository discovery, authentication, and most Git actions. Reusing those capabilities keeps Git Native UI integrated with the editor.
+VS Code's Git extension already provides repository discovery, authentication, and most Git actions. Reusing those capabilities keeps Git UI integrated with the editor.
 
 Some operations need different behavior. For example, the native worktree deletion API can offer forced removal or return normally after cancellation. Our Delete action must refuse to discard local changes and report whether deletion happened.
 

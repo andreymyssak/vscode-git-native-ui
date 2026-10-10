@@ -39,9 +39,9 @@ Build the VSIX:
 npm run package
 ```
 
-This builds `.artifacts/git-native-ui.vsix` and checks its contents without running tests. Rebuild after changing the candidate.
+This builds `.artifacts/git-ui-native.vsix` and checks its contents without running tests. Rebuild after changing the candidate.
 
-The Marketplace publisher is `andreymyssak`; the extension identifier is `andreymyssak.git-native-ui`. Its listing URL is [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=andreymyssak.git-native-ui).
+The Marketplace publisher is `andreymyssak`; the extension identifier is `andreymyssak.git-ui-native`. Its listing URL is [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=andreymyssak.git-ui-native).
 
 Upload the VSIX under that publisher in Marketplace management. With publishing credentials configured, publish the same package from the terminal:
 

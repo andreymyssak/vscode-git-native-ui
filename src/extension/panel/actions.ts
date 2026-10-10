@@ -416,7 +416,7 @@ export class PanelActions {
         return null;
       if (!this.session.current(request.repositoryId, request.generation))
         throw new Error(
-          'The Git Native UI view changed. Select the branch and action again.',
+          'The Git UI view changed. Select the branch and action again.',
         );
 
       return {

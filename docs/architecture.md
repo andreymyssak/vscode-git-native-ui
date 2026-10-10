@@ -1,6 +1,6 @@
 # Architecture
 
-Git Native UI has an extension host for Git access and a React webview for presentation.
+Git UI has an extension host for Git access and a React webview for presentation.
 
 ## Modules
 

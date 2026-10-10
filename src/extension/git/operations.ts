@@ -413,7 +413,7 @@ export function createOperations(
             kind: 'success',
             backend,
             branchRestore,
-            message: `${message} Git Native UI could not refresh. Use Refresh to reload it.`,
+            message: `${message} Git UI could not refresh. Use Refresh to reload it.`,
           };
         if (context?.aborted && error === context.reason)
           return { kind: 'cancelled', backend: null };

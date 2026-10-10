@@ -157,7 +157,7 @@ if (prepared.kind === 'restricted') {
     process.platform === 'win32' ? `"${cli}"` : cli,
     [
       '--install-extension',
-      resolve('.artifacts/git-native-ui.vsix'),
+      resolve('.artifacts/git-ui-native.vsix'),
       '--extensions-dir',
       extensions,
       '--user-data-dir',
@@ -181,7 +181,7 @@ if (prepared.kind === 'restricted') {
   writeFileSync(
     join(driver, 'package.json'),
     JSON.stringify({
-      name: 'git-native-ui-installed-test-driver',
+      name: 'git-ui-native-installed-test-driver',
       publisher: 'local-fixture',
       version: '0.0.0',
       engines: { vscode: '^1.140.0' },

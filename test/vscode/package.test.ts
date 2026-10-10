@@ -12,7 +12,7 @@ import { createFixture } from '../fixtures/repository';
 describe('private package', () => {
   it('registered extension activates on the tested VS Code runtime', async () => {
     const extension = vscode.extensions.getExtension(
-      'andreymyssak.git-native-ui',
+      'andreymyssak.git-ui-native',
     );
 
     assert.ok(extension);
@@ -30,7 +30,7 @@ describe('private package', () => {
       );
     }
 
-    assert.equal(extension.packageJSON.displayName, 'Git Native UI');
+    assert.equal(extension.packageJSON.displayName, 'Git UI');
     assert.equal(
       extension.packageJSON.contributes.viewsContainers.panel[0].title,
       extension.packageJSON.displayName,
@@ -51,7 +51,7 @@ describe('private package', () => {
 
     assert.ok(workbench);
     await expect(
-      workbench.getByRole('tab', { name: 'Git Native UI', exact: true }),
+      workbench.getByRole('tab', { name: 'Git UI', exact: true }),
     ).toBeVisible();
   });
   if (process.env.GIT_NATIVE_UI_INSTALLED_ROOT)

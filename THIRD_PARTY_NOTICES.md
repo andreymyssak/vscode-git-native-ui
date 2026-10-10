@@ -1,6 +1,6 @@
 # Third-party notices
 
-Git Native UI's original code is covered by [LICENSE.txt](LICENSE.txt). Copied code, bundled libraries, and icon assets retain their own copyrights and licenses.
+Git UI's original code is covered by [LICENSE.txt](LICENSE.txt). Copied code, bundled libraries, and icon assets retain their own copyrights and licenses.
 
 ## Bundled libraries
 
@@ -19,7 +19,7 @@ Both complete license texts are included in `dist/UI_LICENSES.txt`.
 
 ## Git logo
 
-The icons in `assets/git-native-ui.svg` and `assets/marketplace-icon.png` are adapted from Git Logo by Jason Long, available from [Git's logo downloads](https://git-scm.com/community/logos), under [Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/).
+The icons in `assets/git-ui-native.svg` and `assets/marketplace-icon.png` are adapted from Git Logo by Jason Long, available from [Git's logo downloads](https://git-scm.com/community/logos), under [Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/).
 
 The Marketplace icon uses a navy diamond and white branch symbol. The panel icon uses the current VS Code theme color. Git and the Git logo are trademarks of Software Freedom Conservancy, Inc.
 

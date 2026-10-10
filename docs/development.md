@@ -36,7 +36,7 @@ CI reads the same `.node-version` through `actions/setup-node`. Development Node
 npm run package
 ```
 
-Install `.artifacts/git-native-ui.vsix` through **Extensions: Install from VSIX...**. The package command builds the extension, creates the VSIX with Microsoft's `@vscode/vsce`, and verifies its contents. Runtime assets and licenses ship through an explicit allowlist; tests, agent tools and development dependencies stay outside it.
+Install `.artifacts/git-ui-native.vsix` through **Extensions: Install from VSIX...**. The package command builds the extension, creates the VSIX with Microsoft's `@vscode/vsce`, and verifies its contents. Runtime assets and licenses ship through an explicit allowlist; tests, agent tools and development dependencies stay outside it.
 
 ## Try the example repository
 
@@ -46,7 +46,7 @@ From the project root, run:
 npm run demo
 ```
 
-Open the workspace path printed by the command and select **All branches** in Git Native UI. Each run creates a disposable repository and local remote under `.artifacts/`.
+Open the workspace path printed by the command and select **All branches** in Git UI. Each run creates a disposable repository and local remote under `.artifacts/`.
 
 The graph includes crossed and three-parent merges, an independent history, branches, and tags. Use `examples/three-real-parents` for nonempty parent comparisons and `examples/empty-second-parent` for a valid empty comparison. The command prints their parent revisions and changed paths.
 

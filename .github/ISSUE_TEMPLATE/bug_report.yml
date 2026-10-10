@@ -1,9 +1,9 @@
 name: Bug report
-description: Describe a reproducible problem in Git Native UI.
+description: Describe a reproducible problem in Git UI.
 body:
   - type: markdown
     attributes:
-      value: For security vulnerabilities, follow [the security policy](https://github.com/andreymyssak/vscode-git-native-ui/security/policy). Keep exploit details and security fixes out of this public form.
+      value: For security vulnerabilities, follow [the security policy](https://github.com/andreymyssak/vscode-git-ui/security/policy). Keep exploit details and security fixes out of this public form.
   - type: textarea
     id: behavior
     attributes:
@@ -22,7 +22,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Include Git Native UI, VS Code, Git and operating system versions. Mention remote/VDI restrictions if relevant.
+      description: Include Git UI, VS Code, Git and operating system versions. Mention remote/VDI restrictions if relevant.
     validations:
       required: true
   - type: textarea

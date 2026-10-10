@@ -67,9 +67,7 @@ export async function prepareNewWorktree(
 ): Promise<GitAction | null> {
   const check = () => {
     if (!session.current(request.repositoryId, request.generation))
-      throw new Error(
-        'The Git Native UI view changed. Choose Create Worktree again.',
-      );
+      throw new Error('The Git UI view changed. Choose Create Worktree again.');
   };
 
   check();

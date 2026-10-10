@@ -10,7 +10,7 @@ import { App } from '../layout/App';
 
 const mount = document.getElementById('app');
 
-if (!mount) throw new Error('Git Native UI root is unavailable.');
+if (!mount) throw new Error('Git UI root is unavailable.');
 const bridge = getVsCodeBridge();
 const root = createRoot(mount);
 

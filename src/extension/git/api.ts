@@ -133,9 +133,7 @@ export async function getGitApi(): Promise<GitApiAccess> {
       )
         throw new Error('Enable Git and trust this workspace through VS Code.');
       if (!repository)
-        throw new Error(
-          'Repository is no longer available. Refresh Git Native UI.',
-        );
+        throw new Error('Repository is no longer available. Refresh Git UI.');
 
       return repository;
     },

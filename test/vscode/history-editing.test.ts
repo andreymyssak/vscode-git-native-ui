@@ -41,7 +41,7 @@ describe('older history with the installed Git API', () => {
 
         await access.repository(id).status();
         const extension = vscode.extensions.all.find(
-          (entry) => entry.packageJSON.name === 'git-native-ui',
+          (entry) => entry.packageJSON.name === 'git-ui-native',
         );
 
         assert.ok(extension);

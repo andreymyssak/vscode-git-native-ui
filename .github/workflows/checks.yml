@@ -27,7 +27,7 @@ jobs:
           if-no-files-found: error
           path: |
             dist/
-            .artifacts/git-native-ui.vsix
+            .artifacts/git-ui-native.vsix
             .artifacts/build-host.json
             .artifacts/build-squash-helper.json
 

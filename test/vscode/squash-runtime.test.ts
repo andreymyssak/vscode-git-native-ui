@@ -41,12 +41,12 @@ describe('squash helper on the installed VS Code runtime', () => {
       'must exercise VS Code Electron, not a development Node executable',
     );
     const extension = vscode.extensions.all.find(
-      (candidate) => candidate.packageJSON.name === 'git-native-ui',
+      (candidate) => candidate.packageJSON.name === 'git-ui-native',
     );
 
     assert.ok(
       extension,
-      'Git Native UI extension must be installed in this test host',
+      'Git UI extension must be installed in this test host',
     );
     const packagedHelper = join(
       extension.extensionPath,

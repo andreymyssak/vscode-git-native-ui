@@ -23,7 +23,7 @@ describe('native capabilities', () => {
     for (const root of roots)
       await access.api.openRepository(vscode.Uri.file(root.root));
     const extension = vscode.extensions.getExtension(
-      'andreymyssak.git-native-ui',
+      'andreymyssak.git-ui-native',
     );
 
     assert.ok(extension);
@@ -65,7 +65,7 @@ describe('native capabilities', () => {
 
     assert.ok(workbench);
     await expect(
-      workbench.getByRole('tab', { name: 'Git Native UI', exact: true }),
+      workbench.getByRole('tab', { name: 'Git UI', exact: true }),
     ).toBeVisible();
   });
   it('native diff uses revision URIs', async () => {

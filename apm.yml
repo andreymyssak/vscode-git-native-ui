@@ -1,6 +1,6 @@
-name: git-native-ui-agent-setup
+name: git-ui-native-agent-setup
 version: 1.0.0
-description: Development skills for Git Native UI.
+description: Development skills for Git UI.
 targets:
   - codex
 dependencies:

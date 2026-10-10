@@ -1,6 +1,6 @@
-# Working in Git Native UI
+# Working in Git UI
 
-Git Native UI is a VS Code extension. Prefer public VS Code Git APIs and native editors/dialogs. Use verified commands or narrow argument-array Git calls behind the adapter when the API lacks an operation.
+Git UI is a VS Code extension. Prefer public VS Code Git APIs and native editors/dialogs. Use verified commands or narrow argument-array Git calls behind the adapter when the API lacks an operation.
 
 ## Read only relevant docs
 

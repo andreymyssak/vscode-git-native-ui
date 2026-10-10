@@ -4,7 +4,7 @@ Accepted 2026-10-04.
 
 ## Context
 
-Git Native UI needs a commit graph consistent with VS Code Source Control. The upstream graph module depends on private workbench services that the webview cannot import.
+Git UI needs a commit graph consistent with VS Code Source Control. The upstream graph module depends on private workbench services that the webview cannot import.
 
 ## Alternatives
 

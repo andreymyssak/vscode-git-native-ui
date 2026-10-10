@@ -68,7 +68,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
     value: unknown,
   ): Promise<void> {
     if (!this.menuAction)
-      throw new Error('Open Git Native UI and select a branch first.');
+      throw new Error('Open Git UI and select a branch first.');
     await this.menuAction(kind, value);
   }
 
@@ -77,7 +77,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
     value: unknown,
   ): Promise<void> {
     if (!this.commitMenuAction)
-      throw new Error('Open Git Native UI and select a commit first.');
+      throw new Error('Open Git UI and select a commit first.');
     await this.commitMenuAction(kind, value);
   }
 
@@ -289,9 +289,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
       const request = branchMenuRequest(kind, value);
 
       if (!request)
-        throw new Error(
-          'Select a branch in Git Native UI before using this action.',
-        );
+        throw new Error('Select a branch in Git UI before using this action.');
       initializing ??= initialize();
       await (await initializing).handle(request);
     };
@@ -301,9 +299,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
       const request = commitMenuRequest(kind, value);
 
       if (!request)
-        throw new Error(
-          'Select a commit in Git Native UI before using this action.',
-        );
+        throw new Error('Select a commit in Git UI before using this action.');
       initializing ??= initialize();
       await (await initializing).handle(request);
     };
@@ -330,7 +326,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(
             error instanceof Error
               ? error.message
-              : 'Git Native UI initialization failed.',
+              : 'Git UI initialization failed.',
             'Dismiss',
           ),
         );

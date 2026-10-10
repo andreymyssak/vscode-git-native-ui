@@ -16,7 +16,7 @@ const allowed = new Set([
   'extension/changelog.md',
   'extension/LICENSE.txt',
   'extension/THIRD_PARTY_NOTICES.md',
-  'extension/assets/git-native-ui.svg',
+  'extension/assets/git-ui-native.svg',
   'extension/assets/marketplace-icon.png',
   'extension/dist/extension.cjs',
   'extension/dist/squash-helper.cjs',
@@ -125,8 +125,8 @@ export function verifyReleaseManifest(manifest: unknown): void {
   assert.ok(isRecord(manifest), 'Invalid release manifest');
   assert.equal(
     manifest.name,
-    'git-native-ui',
-    'Release extension name must be git-native-ui',
+    'git-ui-native',
+    'Release extension name must be git-ui-native',
   );
   assert.equal(
     manifest.publisher,
@@ -153,18 +153,18 @@ export function verifyReleaseManifest(manifest: unknown): void {
     manifest.repository,
     {
       type: 'git',
-      url: 'https://github.com/andreymyssak/vscode-git-native-ui.git',
+      url: 'https://github.com/andreymyssak/vscode-git-ui.git',
     },
     'Release repository must identify the intended personal source repository',
   );
   assert.equal(
     manifest.homepage,
-    'https://github.com/andreymyssak/vscode-git-native-ui#readme',
+    'https://github.com/andreymyssak/vscode-git-ui#readme',
     'Release homepage must link to project documentation',
   );
   assert.equal(
     isRecord(manifest.bugs) ? manifest.bugs.url : undefined,
-    'https://github.com/andreymyssak/vscode-git-native-ui/issues',
+    'https://github.com/andreymyssak/vscode-git-ui/issues',
     'Release bugs URL must identify the issue tracker',
   );
   assert.ok(
@@ -458,5 +458,5 @@ if (
   import.meta.url === pathToFileURL(resolve(process.argv[1])).href
 )
   await verifyPackage(
-    resolve(process.argv[2] ?? '.artifacts/git-native-ui.vsix'),
+    resolve(process.argv[2] ?? '.artifacts/git-ui-native.vsix'),
   );

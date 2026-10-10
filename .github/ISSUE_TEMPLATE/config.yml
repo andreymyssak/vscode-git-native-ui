@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Report a security vulnerability
-    url: https://github.com/andreymyssak/vscode-git-native-ui/security/policy
+    url: https://github.com/andreymyssak/vscode-git-ui/security/policy
     about: Read the private reporting instructions before sharing vulnerability details.

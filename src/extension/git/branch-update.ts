@@ -105,7 +105,7 @@ export async function updateBranch(
             'update-ref',
             '--no-deref',
             '-m',
-            'Git Native UI: fast-forward tracked branch',
+            'Git UI: fast-forward tracked branch',
             action.refId,
             fetched,
             action.expectedSha,

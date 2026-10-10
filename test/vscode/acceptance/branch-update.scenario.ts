@@ -13,7 +13,7 @@ import { nativeBrowser } from '../../fixtures/native-panel';
 // commands and native notifications in a normal, isolated workbench.
 export async function run() {
   const extension = vscode.extensions.all.find(
-    (entry) => entry.packageJSON.name === 'git-native-ui',
+    (entry) => entry.packageJSON.name === 'git-ui-native',
   );
 
   assert.ok(extension);
@@ -211,7 +211,7 @@ export async function run() {
             {},
           );
           const error = workbench.getByRole('dialog', {
-            name: 'Error: Select a branch in Git Native UI before using this action.',
+            name: 'Error: Select a branch in Git UI before using this action.',
           });
 
           await expect(error).toBeVisible();

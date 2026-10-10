@@ -31,7 +31,7 @@ describe('native squash menu workflow', () => {
         vscode.ConfigurationTarget.Global,
       );
       const extension = vscode.extensions.getExtension(
-        'andreymyssak.git-native-ui',
+        'andreymyssak.git-ui-native',
       );
 
       assert.ok(extension);
@@ -382,7 +382,7 @@ describe('native squash menu workflow', () => {
       assert.equal(object.slice(object.indexOf('\n\n') + 2), approved);
       assert.equal(await fixture.runGit(['status', '--porcelain=v1']), '');
       const extension = vscode.extensions.all.find(
-        (entry) => entry.packageJSON.name === 'git-native-ui',
+        (entry) => entry.packageJSON.name === 'git-ui-native',
       )!;
       const helper = join(extension.extensionPath, 'dist', 'squash-helper.cjs');
       const helperLocation = relative(extension.extensionPath, helper);

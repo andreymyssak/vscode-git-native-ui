@@ -195,9 +195,7 @@ export class PanelController {
       .find((repo) => repo.id === id);
 
     if (!repository)
-      throw new Error(
-        'Repository is no longer available. Refresh Git Native UI.',
-      );
+      throw new Error('Repository is no longer available. Refresh Git UI.');
 
     return repository;
   }
@@ -573,7 +571,7 @@ export class PanelController {
         result.kind === 'cancelled'
       )
         await this.options.reportActionError?.(
-          'The history operation was cancelled because the Git Native UI context changed. The commits were left unchanged.',
+          'The history operation was cancelled because the Git UI context changed. The commits were left unchanged.',
         );
       if (rewritesHistory) {
         if (

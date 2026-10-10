@@ -14,7 +14,7 @@ module.exports = {
   hooks: {},
   github: {
     release: true,
-    assets: ['.artifacts/git-native-ui.vsix'],
+    assets: ['.artifacts/git-ui-native.vsix'],
     releaseNotes: ({ version }) => {
       const section = readFileSync('CHANGELOG.md', 'utf8')
         .split(/^#{1,2} /m)

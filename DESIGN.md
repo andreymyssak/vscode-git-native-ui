@@ -1,4 +1,4 @@
-# Git Native UI design
+# Git UI design
 
 ## Overview
 

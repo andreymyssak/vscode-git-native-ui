@@ -37,7 +37,7 @@ describe('queued squash through the installed Git API and bundled runtime', () =
     owned = await mkdtemp(join(tmpdir(), 'git-native-ui squash storage ü '));
     storageDirectory = join(owned, 'recovery');
     const extension = vscode.extensions.all.find(
-      (entry) => entry.packageJSON.name === 'git-native-ui',
+      (entry) => entry.packageJSON.name === 'git-ui-native',
     );
 
     assert.ok(extension);

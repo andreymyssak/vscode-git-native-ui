@@ -111,7 +111,7 @@ export async function deleteBranches(
   try {
     await access.repository(id).status();
   } catch {
-    refresh = ' Git Native UI could not refresh. Use Refresh to reload it.';
+    refresh = ' Git UI could not refresh. Use Refresh to reload it.';
   }
 
   const message = `${deleted.length ? `Deleted ${deleted.length} branch${deleted.length === 1 ? '' : 'es'}.` : 'No branches were deleted.'}${failures.length ? ` Could not delete: ${failures.join('; ')}` : ''}${refresh}`;

@@ -57,13 +57,13 @@ export async function runInstalledActions({
   writeFileSync(
     join(driver, 'package.json'),
     JSON.stringify({
-      name: 'git-native-ui-installed-actions-driver',
+      name: 'git-ui-native-installed-actions-driver',
       publisher: 'local-fixture',
       version: '0.0.0',
       engines: { vscode: '^1.140.0' },
       main: './extension.cjs',
       activationEvents: ['onStartupFinished'],
-      extensionDependencies: ['andreymyssak.git-native-ui'],
+      extensionDependencies: ['andreymyssak.git-ui-native'],
     }),
   );
   writeFileSync(

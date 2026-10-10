@@ -9,11 +9,10 @@ declare global {
 }
 export async function nativeBrowser(): Promise<Browser> {
   const extension = vscode.extensions.getExtension(
-    'andreymyssak.git-native-ui',
+    'andreymyssak.git-ui-native',
   );
 
-  if (!extension)
-    throw new Error('Git Native UI is not installed in the test host.');
+  if (!extension) throw new Error('Git UI is not installed in the test host.');
   await extension.activate();
   globalThis.gitNativeUINativeTestBrowser ??= await chromium.connectOverCDP(
     `http://127.0.0.1:${process.env.VSCODE_TEST_DEBUG_PORT ?? ''}`,
