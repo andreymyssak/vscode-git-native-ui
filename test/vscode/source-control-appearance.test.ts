@@ -1,0 +1,306 @@
+import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import * as vscode from 'vscode';
+
+import { getGitApi } from '../../src/extension/git/api';
+import { sourceControlCommandId } from '../../src/shared/extension-identity';
+import { createFixture } from '../fixtures/repository';
+import { sourceControlFrame } from '../fixtures/source-control-view';
+
+async function typography(label: Locator) {
+  return label.evaluate((element) => {
+    const style = getComputedStyle(element);
+
+    return {
+      fontFamily: style.fontFamily,
+      fontSize: style.fontSize,
+      fontWeight: style.fontWeight,
+    };
+  });
+}
+
+async function hoverAppearance(hover: Locator, contents: Locator) {
+  return {
+    ...(await typography(hover)),
+    ...(await hover.evaluate((element) => {
+      const style = getComputedStyle(element);
+
+      return {
+        lineHeight: style.lineHeight,
+        borderRadius: style.borderRadius,
+        borderColor: style.borderColor,
+        background: style.backgroundColor,
+        color: style.color,
+      };
+    })),
+    padding: await contents.evaluate(
+      (element) => getComputedStyle(element).padding,
+    ),
+  };
+}
+
+async function folderBadge(label: Locator, native: boolean) {
+  return label.evaluate((element, native) => {
+    const badge = native
+      ? element.closest('.monaco-icon-label')
+      : element.querySelector('[data-folder-status] .codicon');
+
+    if (!badge) return null;
+    const style = getComputedStyle(badge, native ? '::after' : null);
+
+    if (native && !style.content.includes('\uea71')) return null;
+
+    return {
+      size: style.fontSize,
+      color: style.color,
+      opacity: style.opacity,
+    };
+  }, native);
+}
+
+describe('Source Control appearance', () => {
+  it('matches native folder status dots and file hovers in light and dark themes', async () => {
+    const fixture = await createFixture({ prefix: 'git-ui-appearance-' });
+    const workbench = vscode.workspace.getConfiguration('workbench');
+    const delay = workbench.inspect<number>('hover.delay')?.globalValue;
+    const previousTheme = workbench.inspect<string>('colorTheme')?.globalValue;
+    const access = await getGitApi();
+    const previousRepositories = access.api.repositories.map(
+      (repository) => repository.rootUri,
+    );
+    let page: Page | undefined;
+
+    try {
+      await workbench.update(
+        'hover.delay',
+        100,
+        vscode.ConfigurationTarget.Global,
+      );
+      for (const path of [
+        'modified/sample.txt',
+        'deleted/removed.txt',
+        'renamed/old.txt',
+        'staged/only.txt',
+        'mixed/both.txt',
+        'conflicted/both-edited.txt',
+      ]) {
+        await mkdir(dirname(join(fixture.root, path)), { recursive: true });
+        await writeFile(join(fixture.root, path), `Original ${path}\n`);
+      }
+
+      await fixture.runGit(['add', '.']);
+      await fixture.runGit(['commit', '-m', 'Hover fixtures']);
+      await fixture.runGit(['checkout', '-b', 'conflict-side']);
+      await writeFile(
+        join(fixture.root, 'conflicted/both-edited.txt'),
+        'Other branch\n',
+      );
+      await fixture.runGit(['commit', '-am', 'Other branch edit']);
+      await fixture.runGit(['checkout', 'main']);
+      await writeFile(
+        join(fixture.root, 'conflicted/both-edited.txt'),
+        'Current branch\n',
+      );
+      await fixture.runGit(['commit', '-am', 'Current branch edit']);
+      await assert.rejects(fixture.runGit(['merge', 'conflict-side']));
+      await writeFile(join(fixture.root, 'modified/sample.txt'), 'Changed\n');
+      await mkdir(join(fixture.root, 'compact/deep'), { recursive: true });
+      await writeFile(join(fixture.root, 'compact/deep/new.txt'), 'New\n');
+      await unlink(join(fixture.root, 'deleted/removed.txt'));
+      await fixture.runGit(['mv', 'renamed/old.txt', 'renamed/new-name.txt']);
+      for (const path of ['staged/only.txt', 'mixed/both.txt'])
+        await writeFile(join(fixture.root, path), `Staged ${path}\n`);
+      await fixture.runGit(['add', 'staged/only.txt', 'mixed/both.txt']);
+      await writeFile(
+        join(fixture.root, 'mixed/both.txt'),
+        'Working changes\n',
+      );
+
+      const cases = [
+        { path: 'modified/sample.txt', name: 'sample.txt' },
+        { path: 'compact/deep/new.txt', name: 'new.txt' },
+        { path: 'deleted/removed.txt', name: 'removed.txt' },
+        { path: 'renamed/new-name.txt', name: 'new-name.txt' },
+        { path: 'staged/only.txt', name: 'only.txt' },
+        { path: 'mixed/both.txt', name: 'both.txt' },
+        { path: 'conflicted/both-edited.txt', name: 'both-edited.txt' },
+        { path: 'modified', name: 'modified' },
+        { path: 'compact/deep', name: 'deep' },
+        { path: 'deleted', name: 'deleted' },
+        { path: 'staged', name: 'staged' },
+        { path: 'conflicted', name: 'conflicted' },
+      ];
+
+      // Native SCM virtualizes its rows; earlier fixtures can push this one out of view.
+      for (const uri of previousRepositories)
+        await vscode.commands.executeCommand('git.close', uri);
+      const repository = await access.api.openRepository(
+        vscode.Uri.file(fixture.root),
+      );
+
+      assert.ok(repository);
+      await repository.status();
+      await vscode.commands.executeCommand(
+        sourceControlCommandId('refresh-changes'),
+      );
+      const frame = await sourceControlFrame();
+
+      page = frame.page();
+      const comparisons = [];
+      const themes = [
+        { name: 'Default Dark Modern', bodyClass: 'vscode-dark' },
+        { name: 'Default Light Modern', bodyClass: 'vscode-light' },
+      ];
+
+      for (const theme of themes) {
+        await workbench.update(
+          'colorTheme',
+          theme.name,
+          vscode.ConfigurationTarget.Global,
+        );
+        await expect(frame.locator('body')).toHaveClass(
+          new RegExp(theme.bodyClass),
+        );
+        for (const { path, name } of cases) {
+          const customRow = frame.getByRole('treeitem', {
+            name: path,
+            exact: true,
+          });
+          const customLabel = customRow
+            .locator(':scope > span')
+            .filter({ hasText: name })
+            .first();
+
+          await page.mouse.move(0, 0);
+          await customLabel.hover({ timeout: 5000 });
+          const customHover = frame.getByRole('tooltip');
+
+          await expect(customHover).toBeVisible();
+          comparisons.push({
+            name,
+            path,
+            theme: theme.name,
+            typography: await typography(customLabel),
+            text: await customHover.innerText(),
+            appearance: await hoverAppearance(customHover, customHover),
+            badge:
+              (await customRow.getAttribute('aria-expanded')) !== null
+                ? await folderBadge(customRow, false)
+                : undefined,
+          });
+          await page.keyboard.press('Escape');
+        }
+      }
+
+      const changes = page.getByRole('button', {
+        name: 'Changes Section',
+        exact: true,
+      });
+      const customSection = page.getByRole('button', {
+        name: 'Git UI Section',
+        exact: true,
+      });
+
+      if ((await customSection.getAttribute('aria-expanded')) === 'true')
+        await customSection.locator('.twisty-container').click();
+
+      if ((await changes.getAttribute('aria-expanded')) !== 'true')
+        await changes.locator('.twisty-container').click();
+      await vscode.commands.executeCommand(
+        'workbench.scm.action.setTreeViewMode',
+      );
+      await expect(
+        page
+          .locator('.scm-view .monaco-list-row .monaco-icon-label')
+          .getByText('modified', { exact: true }),
+      ).toBeVisible();
+      await page.locator('.scm-view .monaco-list').first().focus();
+      const native = [];
+
+      for (const comparison of comparisons) {
+        await workbench.update(
+          'colorTheme',
+          comparison.theme,
+          vscode.ConfigurationTarget.Global,
+        );
+        const nativeLabel = page
+          .locator('.scm-view .monaco-list-row .monaco-icon-label')
+          .getByText(comparison.name, { exact: true })
+          .first();
+
+        await expect(nativeLabel).toBeVisible();
+        await page.locator('.scm-view .monaco-list').first().focus();
+        await page.mouse.move(0, 0);
+        await nativeLabel.scrollIntoViewIfNeeded();
+        await nativeLabel.hover({ timeout: 5000 });
+        const nativeHover = page
+          .locator('.monaco-hover.workbench-hover')
+          .filter({ visible: true });
+
+        await expect(nativeHover).toHaveCount(1);
+        await expect(nativeHover).toContainText(
+          join(fixture.root, comparison.path),
+        );
+        native.push({
+          name: comparison.name,
+          path: comparison.path,
+          theme: comparison.theme,
+          typography: await typography(nativeLabel),
+          text: await nativeHover.innerText(),
+          appearance: await hoverAppearance(
+            nativeHover,
+            nativeHover.locator('.hover-contents'),
+          ),
+          badge:
+            comparison.badge !== undefined
+              ? await folderBadge(nativeLabel, true)
+              : undefined,
+        });
+        await page.keyboard.press('Escape');
+        await page.mouse.move(0, 0);
+        await expect(nativeHover).toHaveCount(0);
+      }
+
+      assert.deepEqual(comparisons, native);
+    } catch (error) {
+      await page?.screenshot({
+        path: '.artifacts/hover-review/appearance-failure.png',
+      });
+      throw error;
+    } finally {
+      await page?.keyboard.press('Escape');
+      const changes = page?.getByRole('button', {
+        name: 'Changes Section',
+        exact: true,
+      });
+
+      if (changes && (await changes.getAttribute('aria-expanded')) === 'true')
+        await changes.locator('.twisty-container').click();
+      await vscode.commands.executeCommand(
+        'git.close',
+        vscode.Uri.file(fixture.root),
+      );
+      await fixture.dispose();
+      for (const uri of previousRepositories)
+        if (existsSync(uri.fsPath)) await access.api.openRepository(uri);
+      await vscode.commands.executeCommand(
+        sourceControlCommandId('refresh-changes'),
+      );
+      await workbench.update(
+        'hover.delay',
+        delay,
+        vscode.ConfigurationTarget.Global,
+      );
+      await workbench.update(
+        'colorTheme',
+        previousTheme,
+        vscode.ConfigurationTarget.Global,
+      );
+    }
+  }).timeout(60000);
+});

@@ -86,7 +86,12 @@ test('a failed automatic page is not retried by incidental scrolling', async ({
   await history.evaluate((node) => {
     node.scrollTop = node.scrollHeight;
   });
-  await expect(page.getByRole('status')).toHaveText('Page failed');
+  await expect(page.locator('#history-pane')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  await expect(page.getByText('Page failed')).toHaveCount(0);
+  await expect(page.locator('#status')).toBeHidden();
   await history.evaluate((node) => {
     node.scrollTop -= 22;
   });
