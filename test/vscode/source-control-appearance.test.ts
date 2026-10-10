@@ -63,6 +63,34 @@ async function folderBadge(label: Locator, native: boolean) {
   }, native);
 }
 
+async function revealNativeLabel(page: Page, label: Locator): Promise<void> {
+  const list = page.locator('.scm-view .monaco-list').first();
+
+  // Monaco scrolls its virtual rows through wheel events rather than DOM scrolling.
+  await expect
+    .poll(async () => {
+      const viewport = await list.boundingBox();
+      const bounds = await label.boundingBox();
+
+      if (!viewport || !bounds) return false;
+      const delta =
+        bounds.y < viewport.y
+          ? bounds.y - viewport.y
+          : Math.max(
+              0,
+              bounds.y + bounds.height - viewport.y - viewport.height,
+            );
+
+      if (delta === 0) return true;
+      await list.hover();
+      await page.mouse.wheel(0, delta);
+
+      return false;
+    })
+    .toBe(true);
+  await page.mouse.move(0, 0);
+}
+
 describe('Source Control appearance', () => {
   it('matches native folder status dots and file hovers in light and dark themes', async () => {
     const fixture = await createFixture({ prefix: 'git-ui-appearance-' });
@@ -252,7 +280,7 @@ describe('Source Control appearance', () => {
         await page.bringToFront();
         await page.locator('.scm-view .monaco-list').first().focus();
         await page.mouse.move(0, 0);
-        await nativeLabel.scrollIntoViewIfNeeded();
+        await revealNativeLabel(page, nativeLabel);
         await nativeLabel.hover({ timeout: 5000 });
         const nativeHover = page
           .locator('.monaco-hover.workbench-hover')

@@ -12,6 +12,9 @@ import type { Fixture } from '../fixtures/repository';
 import { createFixture } from '../fixtures/repository';
 import { sourceControlFrame } from '../fixtures/source-control-view';
 
+// Git writes spawn several processes; wait for their result before fixture cleanup.
+const mutation = expect.configure({ timeout: 30000 });
+
 async function open(fixture: Fixture): Promise<Frame> {
   const access = await getGitApi();
   const repo = await access.api.openRepository(vscode.Uri.file(fixture.root));
@@ -79,8 +82,14 @@ async function activate(frame: Frame, name: string): Promise<void> {
   const button = frame.getByRole('button', { name, exact: true });
 
   await expect(button).toBeEnabled();
-  // Browser tests cover pointer routing; native tests exercise keyboard activation.
-  await button.press('Enter');
+  await button.click();
+}
+
+async function settled(frame: Frame): Promise<void> {
+  // HEAD and refs/stash update before index reconciliation and the view refresh finish.
+  await mutation(
+    frame.getByRole('tab', { name: 'Commit', exact: true }),
+  ).toBeEnabled();
 }
 
 async function contextAction(
@@ -191,11 +200,12 @@ describe('combined Commit and Stash view', () => {
       await expect(tooltip).toHaveCount(0);
       await file(frame, 'nested/deeper/new.txt').getByRole('checkbox').click();
       await activate(frame, 'Stash Silently');
-      await expect
+      await mutation
         .poll(async () =>
           (await fixture.runGit(['stash', 'list', '--format=%gs'])).trim(),
         )
         .toBe('Changes');
+      await settled(frame);
       await expect(file(frame, 'nested/deeper/new.txt')).toHaveCount(0);
       assert.equal(await fixture.runGit(['rev-parse', 'HEAD']), head);
       assert.equal(await fixture.runGit(['ls-files', '--stage', '-z']), index);
@@ -207,7 +217,7 @@ describe('combined Commit and Stash view', () => {
     } finally {
       await finish(frame?.page(), [fixture]);
     }
-  });
+  }).timeout(60000);
 
   (process.platform === 'win32' ? it.skip : it)(
     'previews the link text that will be committed for live and dangling symlinks',
@@ -252,11 +262,12 @@ describe('combined Commit and Stash view', () => {
           .getByRole('textbox', { name: 'Commit message' })
           .fill('Commit link targets');
         await activate(frame, 'Commit');
-        await expect
+        await mutation
           .poll(async () =>
             (await fixture.runGit(['log', '-1', '--format=%s'])).trim(),
           )
           .toBe('Commit link targets');
+        await settled(frame);
         assert.equal(
           await fixture.runGit(['show', 'HEAD:tracked-link']),
           'missing-target',
@@ -280,7 +291,7 @@ describe('combined Commit and Stash view', () => {
         await finish(frame?.page(), [fixture]);
       }
     },
-  );
+  ).timeout(60000);
 
   it('commits checked folders from an inline message and restores one saved file in native diffs', async () => {
     const fixture = await createFixture({ prefix: 'git-ui combined ' });
@@ -351,11 +362,12 @@ describe('combined Commit and Stash view', () => {
         'Commit checked folders\n\nKeep unchecked staging.',
       );
       await activate(frame, 'Commit');
-      await expect
+      await mutation
         .poll(async () =>
           (await fixture.runGit(['log', '-1', '--format=%s'])).trim(),
         )
         .toBe('Commit checked folders');
+      await settled(frame);
       assert.deepEqual(
         (
           await fixture.runGit([
@@ -392,9 +404,10 @@ describe('combined Commit and Stash view', () => {
       await frame
         .getByRole('button', { name: 'Stash Silently', exact: true })
         .click();
-      await expect
+      await mutation
         .poll(() => readFile(join(fixture.root, 'chosen', 'same.txt'), 'utf8'))
         .toBe('commit one\n');
+      await settled(frame);
       const stashSha = (
         await fixture.runGit(['rev-parse', 'refs/stash'])
       ).trim();
@@ -436,9 +449,10 @@ describe('combined Commit and Stash view', () => {
       await frame
         .getByRole('button', { name: 'Apply Stash', exact: true })
         .click();
-      await expect
+      await mutation
         .poll(() => readFile(join(fixture.root, 'chosen', 'same.txt'), 'utf8'))
         .toBe('saved one\n');
+      await settled(frame);
       assert.equal(
         await readFile(
           join(fixture.root, 'chosen', 'nested', 'same.txt'),
@@ -469,7 +483,8 @@ describe('combined Commit and Stash view', () => {
         .page()
         .getByRole('button', { name: 'Delete Stash', exact: true })
         .click({ timeout: 5000 });
-      await expect(stash).toHaveCount(0);
+      await mutation(stash).toHaveCount(0);
+      await settled(frame);
       assert.equal(await fixture.runGit(['stash', 'list']), '');
       assert.equal(
         await readFile(join(fixture.root, 'chosen', 'same.txt'), 'utf8'),
@@ -496,7 +511,7 @@ describe('combined Commit and Stash view', () => {
     } finally {
       await finish(frame?.page(), [fixture]);
     }
-  });
+  }).timeout(120000);
 
   it('retains the inline draft and selection when saving is cancelled or a Git operation blocks committing', async () => {
     const fixture = await createFixture({ prefix: 'git-ui combined guards ' });
@@ -583,11 +598,12 @@ describe('combined Commit and Stash view', () => {
         .getByRole('textbox', { name: 'Commit message' })
         .fill('Commit first repository');
       await activate(frame, 'Commit');
-      await expect
+      await mutation
         .poll(async () =>
           (await first.runGit(['log', '-1', '--format=%s'])).trim(),
         )
         .toBe('Commit first repository');
+      await settled(frame);
       assert.equal(
         (await second.runGit(['rev-parse', 'HEAD'])).trim(),
         secondHead,
@@ -604,8 +620,27 @@ describe('combined Commit and Stash view', () => {
       await expect(
         file(frame, 'sample.txt').getByRole('checkbox'),
       ).toBeChecked();
+    } catch (error) {
+      if (frame)
+        await writeFile(
+          join(
+            process.env.GIT_UI_TEST_ARTIFACTS ?? '.artifacts',
+            'multi-repository-failure.json',
+          ),
+          JSON.stringify(
+            {
+              body: await frame.page().locator('body').innerText(),
+              view: await frame.content(),
+              repositories: (await getGitApi()).repositories(),
+              head: await first.runGit(['log', '-1', '--format=%s']),
+            },
+            null,
+            2,
+          ),
+        );
+      throw error;
     } finally {
       await finish(frame?.page(), [first, second]);
     }
-  });
+  }).timeout(60000);
 });

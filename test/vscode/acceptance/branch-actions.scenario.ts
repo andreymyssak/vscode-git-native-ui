@@ -94,6 +94,8 @@ export async function run(): Promise<string[]> {
             : 'Rebase "main" on "feature"? This rewrites its local commits.';
         const notice = page.getByRole('dialog', { name: `Info: ${message}` });
 
+        await page.bringToFront();
+        await vscode.commands.executeCommand('notifications.showList');
         await expect(notice).toBeVisible();
         await expect(page.locator('.monaco-dialog-box:visible')).toHaveCount(0);
         await notice
