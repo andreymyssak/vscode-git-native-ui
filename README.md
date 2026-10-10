@@ -2,6 +2,8 @@
 
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
+[View on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=andreymyssak.git-native-ui)
+
 **Finally, a proper Git UI for VS Code.**
 
 Git Native UI is a free, focused alternative to [GitLens](https://github.com/gitkraken/vscode-gitlens) for browsing history, managing branches and worktrees, and inspecting changes. It uses familiar VS Code styling, follows your chosen theme, and opens file comparisons in VS Code's native diff editor.

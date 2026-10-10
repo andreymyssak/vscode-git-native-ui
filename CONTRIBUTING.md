@@ -36,7 +36,9 @@ Use `feat` for new functionality and `fix` for bug fixes. Other types include `d
 
 For a breaking change, add `!` after the type or scope, or a `BREAKING CHANGE:` footer. Explain the incompatibility and migration in the message.
 
-Release tooling uses these messages to recommend versions: `fix` for patch, `feat` for minor, and breaking changes for major. Version bumps and changelog updates belong to [release preparation](docs/releasing.md).
+Release tooling uses these messages to recommend versions: `fix`, `perf`, and `revert` for patch, `feat` for minor, and breaking changes for major. Version bumps and changelog updates belong to [release preparation](docs/releasing.md).
+
+Subjects for `feat`, `fix`, `perf`, and `revert` appear in public release notes. Describe the change users will see. Keep implementation details in the commit body. Routine maintenance commits are omitted. Breaking changes appear regardless of commit type.
 
 ## Open a pull request
 

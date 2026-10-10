@@ -123,6 +123,16 @@ function requiredFile(contents: Map<string, Buffer>, path: string): Buffer {
 
 export function verifyReleaseManifest(manifest: unknown): void {
   assert.ok(isRecord(manifest), 'Invalid release manifest');
+  assert.equal(
+    manifest.name,
+    'git-native-ui',
+    'Release extension name must be git-native-ui',
+  );
+  assert.equal(
+    manifest.publisher,
+    'andreymyssak',
+    'Release publisher must match andreymyssak',
+  );
   assert.ok(
     typeof manifest.version === 'string',
     'Release version must be a nonzero stable semantic version',

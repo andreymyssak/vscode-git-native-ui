@@ -11,7 +11,7 @@ module.exports = {
     push: true,
   },
   plugins: { '@release-it/conventional-changelog': false },
-  hooks: { 'before:git:release': 'npm run release:validate' },
+  hooks: {},
   github: {
     release: true,
     assets: ['.artifacts/git-native-ui.vsix'],

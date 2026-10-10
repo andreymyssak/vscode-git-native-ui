@@ -9,7 +9,7 @@ declare global {
 }
 export async function nativeBrowser(): Promise<Browser> {
   const extension = vscode.extensions.getExtension(
-    'git-native-ui.git-native-ui',
+    'andreymyssak.git-native-ui',
   );
 
   if (!extension)

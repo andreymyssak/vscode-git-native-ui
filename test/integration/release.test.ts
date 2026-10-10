@@ -38,7 +38,7 @@ async function fixture(message = 'feat: add branch filtering') {
     ),
   );
 
-  scripts['release:validate'] = 'node validate.cjs';
+  scripts['release:validate'] = 'node checks.cjs';
   await symlink(
     resolve('node_modules'),
     join(f.root, 'node_modules'),
@@ -75,13 +75,9 @@ async function fixture(message = 'feat: add branch filtering') {
     '# Changelog\n\n## 1.0.0\n\nInitial release.\n',
   );
   await writeFile(
-    join(f.root, 'validate.cjs'),
-    `const fs = require('node:fs');
-const { execFileSync } = require('node:child_process');
-if (process.env.RELEASE_FIXTURE_FAIL) throw new Error('Candidate validation failed');
-const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
-const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-fs.writeFileSync('.artifacts/validated.json', JSON.stringify({ version, revision }));
+    join(f.root, 'checks.cjs'),
+    `require('node:fs').writeFileSync('.artifacts/checks-ran.txt', 'Checks ran.');
+if (process.env.RELEASE_FIXTURE_FAIL) throw new Error('Fixture checks failed');
 `,
   );
   await f.runGit(['add', '.']);
@@ -172,7 +168,7 @@ test('the first release can keep its chosen version while preparing notes', asyn
   expect((await f.runGit(['tag', '--list'])).trim()).toBe('');
 });
 
-test('release validates the committed candidate before tagging and pushing to a fixture remote', async () => {
+test('release tags and pushes the prepared version without running checks', async () => {
   const f = await fixture();
 
   await f.run('release:prepare');
@@ -181,10 +177,9 @@ test('release validates the committed candidate before tagging and pushing to a 
   const manifest = await f.read('package.json');
   const revision = (await f.runGit(['rev-parse', 'HEAD'])).trim();
 
-  await f.run('release', ['--no-github']);
-  expect(JSON.parse(await f.read('.artifacts/validated.json'))).toStrictEqual({
-    version: '1.1.0',
-    revision,
+  await f.run('release', ['--no-github'], { RELEASE_FIXTURE_FAIL: '1' });
+  await expect(f.read('.artifacts/checks-ran.txt')).rejects.toMatchObject({
+    code: 'ENOENT',
   });
   expect((await f.runGit(['rev-parse', 'v1.1.0^{}'])).trim()).toBe(revision);
   expect((await f.remoteGit(['rev-parse', 'v1.1.0^{}'])).trim()).toBe(revision);
@@ -193,7 +188,7 @@ test('release validates the committed candidate before tagging and pushing to a 
   expect((await f.runGit(['status', '--porcelain'])).trim()).toBe('');
 });
 
-test('failed candidate validation prevents tagging and pushing', async () => {
+test('checks can run independently without tagging or pushing', async () => {
   const f = await fixture();
 
   await f.run('release:prepare');
@@ -201,15 +196,16 @@ test('failed candidate validation prevents tagging and pushing', async () => {
   const remoteHead = await f.remoteGit(['rev-parse', 'main']);
 
   await expect(
-    f.run('release', ['--no-github'], { RELEASE_FIXTURE_FAIL: '1' }),
+    f.run('release:validate', [], { RELEASE_FIXTURE_FAIL: '1' }),
   ).rejects.toMatchObject({ code: 1 });
+  expect(await f.read('.artifacts/checks-ran.txt')).toBe('Checks ran.');
   expect((await f.runGit(['tag', '--list'])).trim()).toBe('v1.0.0');
   expect((await f.remoteGit(['tag', '--list'])).trim()).toBe('v1.0.0');
   expect(await f.remoteGit(['rev-parse', 'main'])).toBe(remoteHead);
 });
 
 test.each(['dirty', 'other branch'])(
-  'release rejects a candidate on %s before validation or remote writes',
+  'release rejects a candidate on %s before remote writes',
   async (state) => {
     const f = await fixture();
 
@@ -223,21 +219,20 @@ test.each(['dirty', 'other branch'])(
     await expect(f.run('release', ['--no-github'])).rejects.toMatchObject({
       code: 1,
     });
-    await expect(f.read('.artifacts/validated.json')).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
     expect((await f.runGit(['tag', '--list'])).trim()).toBe('v1.0.0');
     expect(await f.remoteGit(['rev-parse', 'main'])).toBe(remoteHead);
   },
 );
 
-test('GitHub notes use the reviewed version section and reject absent or empty notes', async () => {
+test('GitHub notes copy generated release entries and reject absent or empty notes', async () => {
   const f = await fixture();
 
-  await writeFile(
-    join(f.root, 'CHANGELOG.md'),
-    '# Changelog\n\n## [1.1.0](https://example.test)\n\nReviewed feature.\n\n## 1.0.0\n\nOlder change.\n',
-  );
+  for (const message of [
+    'ci: report validation results',
+    'test: cover branch filtering',
+  ])
+    await f.runGit(['commit', '--allow-empty', '-m', message]);
+  await f.run('release:prepare');
   const readNotes = () =>
     execute(
       process.execPath,
@@ -248,7 +243,18 @@ test('GitHub notes use the reviewed version section and reject absent or empty n
       { cwd: f.root },
     );
 
-  expect((await readNotes()).stdout.trim()).toBe('Reviewed feature.');
+  const notes = (await readNotes()).stdout.trim();
+  const changelog = await f.read('CHANGELOG.md');
+  const generatedEntries = changelog
+    .slice(changelog.indexOf('### Features'), changelog.indexOf('## 1.0.0'))
+    .trim();
+
+  expect(notes).toMatch(/^### Features\b/);
+  expect(notes).toContain('add branch filtering');
+  expect(notes).not.toContain('report validation results');
+  expect(notes).not.toContain('cover branch filtering');
+  expect(notes).not.toContain('Initial release.');
+  expect(notes).toBe(generatedEntries);
   await writeFile(
     join(f.root, 'CHANGELOG.md'),
     '# Changelog\n\n## 1.0.0\n\nOlder change.\n',

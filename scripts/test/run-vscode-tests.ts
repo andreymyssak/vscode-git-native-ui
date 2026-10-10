@@ -120,7 +120,7 @@ assert.ok(
 const prepared = prepare(mode === '--installed' ? 'installed' : 'restricted');
 const executable =
   process.env.VSCODE_EXECUTABLE_PATH ??
-  (await downloadAndUnzipVSCode(process.env.VSCODE_TEST_VERSION ?? '1.140.0'));
+  (await downloadAndUnzipVSCode(process.env.VSCODE_TEST_VERSION ?? 'stable'));
 const launchArgs = [
   ...prepared.launchArgs,
   '--disable-updates',

@@ -5,18 +5,241 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 jobs:
-  check:
-    name: ${{ matrix.os }} / VS Code ${{ matrix.vscode }}
+  build:
+    name: Build extension and VSIX
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: npm run package
+      - run: npm run build:vscode-tests
+      - uses: actions/upload-artifact@v7
+        with:
+          name: extension-build
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            dist/
+            .artifacts/git-native-ui.vsix
+            .artifacts/build-host.json
+            .artifacts/build-squash-helper.json
+
+  local:
+    name: Code and local tests / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 35
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
-        vscode: ['1.140.0', stable]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        id: setup
+      - name: Code checks and Vitest
+        id: check
+        run: npm run check
+      - name: Reproduce upstream graph in a clean directory
+        id: upstream
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: npm run upstream:reproduce -- upstream/vscode/manifest.json .artifacts/ci-reproduced
+      - name: Dependency graph
+        id: graph
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: npm run graph
+      - uses: actions/upload-artifact@v7
+        id: archive
+        if: always()
+        with:
+          name: local-results-${{ matrix.os }}
+          include-hidden-files: true
+          if-no-files-found: ignore
+          path: |
+            .artifacts/local-results.xml
+            .artifacts/dependencies.mmd
+      - name: Summarize checks
+        if: always()
+        run: node scripts/test/check-summary.ts
+        env:
+          CHECK_TITLE: Code and local tests / ${{ matrix.os }}
+          CHECK_RESULTS: >-
+            [{"name":"Development setup","status":"${{ steps.setup.outcome }}"},
+            {"name":"Code checks and Vitest","status":"${{ steps.check.outcome }}"},
+            {"name":"Upstream reproduction","status":"${{ steps.upstream.outcome }}"},
+            {"name":"Dependency graph","status":"${{ steps.graph.outcome }}"},
+            {"name":"Save results","status":"${{ steps.archive.outcome }}"}]
+
+  browser:
+    name: Browser tests / ${{ matrix.os }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        id: setup
+      - uses: actions/download-artifact@v8
+        id: build
+        with:
+          name: extension-build
+      - name: Install Chromium for webview tests
+        id: chromium
+        run: npx playwright install chromium
+      - name: Browser tests
+        id: tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v7
+        id: archive
+        if: always()
+        with:
+          name: browser-results-${{ matrix.os }}
+          include-hidden-files: true
+          if-no-files-found: ignore
+          path: |
+            playwright-report/
+            test-results/
+            .artifacts/browser-results.xml
+            .artifacts/*.png
+      - name: Summarize checks
+        if: always()
+        run: node scripts/test/check-summary.ts
+        env:
+          CHECK_TITLE: Browser tests / ${{ matrix.os }}
+          CHECK_RESULTS: >-
+            [{"name":"Development setup","status":"${{ steps.setup.outcome }}"},
+            {"name":"Download shared build","status":"${{ steps.build.outcome }}"},
+            {"name":"Chromium setup","status":"${{ steps.chromium.outcome }}"},
+            {"name":"Browser tests","status":"${{ steps.tests.outcome }}"},
+            {"name":"Save results","status":"${{ steps.archive.outcome }}"}]
+
+  native:
+    name: Native VS Code tests / ${{ matrix.os }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
     env:
-      VSCODE_TEST_VERSION: ${{ matrix.vscode }}
+      VSCODE_TEST_VERSION: stable
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        id: setup
+      - uses: actions/download-artifact@v8
+        id: build
+        with:
+          name: extension-build
+      - name: Native VS Code tests
+        id: tests
+        run: npx vscode-test --label native 2>&1 | tee .artifacts/native-tests.log
+      - name: Restricted Mode tests
+        id: restricted
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: node scripts/test/run-vscode-tests.ts --restricted 2>&1 | tee .artifacts/restricted-tests.log
+      - uses: actions/upload-artifact@v7
+        id: archive
+        if: always()
+        with:
+          name: native-results-${{ matrix.os }}
+          include-hidden-files: true
+          if-no-files-found: ignore
+          path: |
+            .artifacts/*-tests.log
+            .artifacts/*failure*.json
+            .artifacts/*diagnostic*.json
+            .artifacts/*runtime*.json
+            .artifacts/performance.json
+            .artifacts/*.png
+      - name: Summarize checks
+        if: always()
+        run: node scripts/test/check-summary.ts
+        env:
+          CHECK_TITLE: Native VS Code tests / ${{ matrix.os }}
+          CHECK_RESULTS: >-
+            [{"name":"Development setup","status":"${{ steps.setup.outcome }}"},
+            {"name":"Download shared build","status":"${{ steps.build.outcome }}"},
+            {"name":"Native VS Code tests","status":"${{ steps.tests.outcome }}"},
+            {"name":"Restricted Mode tests","status":"${{ steps.restricted.outcome }}"},
+            {"name":"Save results","status":"${{ steps.archive.outcome }}"}]
+
+  installed:
+    name: Installed-package tests / ${{ matrix.os }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    env:
+      VSCODE_TEST_VERSION: stable
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        id: setup
+      - uses: actions/download-artifact@v8
+        id: build
+        with:
+          name: extension-build
+      - name: Verify VSIX contents
+        id: package
+        run: npm run package:verify
+      - name: Installed-package tests
+        id: tests
+        run: node scripts/test/run-vscode-tests.ts --installed 2>&1 | tee .artifacts/installed-tests.log
+      - uses: actions/upload-artifact@v7
+        id: archive
+        if: always()
+        with:
+          name: installed-results-${{ matrix.os }}
+          include-hidden-files: true
+          if-no-files-found: ignore
+          path: |
+            .artifacts/*-tests.log
+            .artifacts/*failure*.json
+            .artifacts/*diagnostic*.json
+            .artifacts/*.png
+            .artifacts/installed-actions-driver-*/result.json
+            .artifacts/installed-actions-driver-*/progress.txt
+      - name: Summarize checks
+        if: always()
+        run: node scripts/test/check-summary.ts
+        env:
+          CHECK_TITLE: Installed-package tests / ${{ matrix.os }}
+          CHECK_RESULTS: >-
+            [{"name":"Development setup","status":"${{ steps.setup.outcome }}"},
+            {"name":"Download shared build","status":"${{ steps.build.outcome }}"},
+            {"name":"VSIX contents","status":"${{ steps.package.outcome }}"},
+            {"name":"Installed-package tests","status":"${{ steps.tests.outcome }}"},
+            {"name":"Save results","status":"${{ steps.archive.outcome }}"}]
+
+  summary:
+    name: Overall extension checks
+    if: always()
+    needs: [build, local, browser, native, installed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
         with:
@@ -25,16 +248,12 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
-      - name: Select npm
-        run: npm install --global npm@12.2.0 --ignore-scripts
-        working-directory: ${{ runner.temp }}
-      - run: npm ci
-      - run: npm run check
-      - name: Reproduce upstream graph in a clean directory
-        run: npm run upstream:reproduce -- upstream/vscode/manifest.json .artifacts/ci-reproduced
-      - name: Install Chromium for webview tests
-        run: npx playwright install chromium
-      - run: npm run test:browser
-      - run: npm run test:vscode
-      - run: npm run test:installed
-      - run: npm run graph
+      - name: Report all validation groups
+        run: node scripts/test/check-summary.ts
+        env:
+          CHECK_RESULTS: >-
+            [{"name":"Build extension and VSIX","status":"${{ needs.build.result }}"},
+            {"name":"Code and local tests (macOS and Windows)","status":"${{ needs.local.result }}"},
+            {"name":"Browser tests (macOS and Windows)","status":"${{ needs.browser.result }}"},
+            {"name":"Native VS Code tests (macOS and Windows)","status":"${{ needs.native.result }}"},
+            {"name":"Installed-package tests (macOS and Windows)","status":"${{ needs.installed.result }}"}]

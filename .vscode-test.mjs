@@ -16,7 +16,7 @@ const base = {
     GIT_TERMINAL_PROMPT: '0',
     GIT_NATIVE_UI_TEST_ARTIFACTS: resolve('.artifacts'),
   },
-  version: process.env.VSCODE_TEST_VERSION ?? '1.140.0',
+  version: process.env.VSCODE_TEST_VERSION ?? 'stable',
   platform: 'desktop',
   ...(process.env.VSCODE_EXECUTABLE_PATH
     ? { useInstallation: { fromPath: process.env.VSCODE_EXECUTABLE_PATH } }

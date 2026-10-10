@@ -15,36 +15,46 @@ Preview shows the proposed version and notes without changing files. Preparation
 
 Release tooling recommends the version from [Conventional Commit messages](../CONTRIBUTING.md#write-commit-messages).
 
+Generate release entries with release-it's `conventionalcommits` preset. Publish the generated version section from `CHANGELOG.md` unchanged. The preset includes features, fixes, performance improvements, reverts, and breaking changes. Routine maintenance commits are omitted.
+
+Review commit messages before merging because their descriptions become public release entries. Add no manual introductions, feature summaries, or validation paragraphs to release notes.
+
 To choose a version, use `npm run release:prepare -- 1.0.0`. For the first release, `npm run release:prepare -- --no-increment` keeps the current version and prepares its notes.
 
-Review the version and release notes. Check publisher, source and support URLs, icon, and license before committing the candidate in a release PR.
+Review the version and generated entries, then commit the prepared files.
 
-## Validate the candidate
+## Optional checks
 
 ```sh
 npm run release:validate
 ```
 
-This runs local, browser, native, and installed-package tests and builds the VSIX. Review passing [extension checks](../.github/workflows/checks.yml) for the release revision on macOS and Windows with minimum and current VS Code versions.
-
-Record the revision, VSIX, test environments, results, and remaining gaps in the release PR. Keep logs in CI artifacts or `.artifacts/`.
+This runs local, browser, native, and installed-package tests. Run it when needed; publication does not run it or require a passing CI workflow. Individual checks are listed in [testing](testing.md).
 
 ## Publish the version
 
-Enable GitHub's private vulnerability reporting and verify the route in [SECURITY.md](../SECURITY.md) before publication.
-
-After the candidate is merged into `main`, confirm repository ownership and provide `GITHUB_TOKEN` with release access:
+Build the VSIX:
 
 ```sh
-npm run release
+npm run package
 ```
 
-The command reruns validation before creating and pushing `v<version>` and creating a GitHub release with the reviewed notes and VSIX. It keeps the prepared version and changelog.
+This builds `.artifacts/git-native-ui.vsix` and checks its contents without running tests. Rebuild after changing the candidate.
 
-With the final Marketplace publisher and publishing credentials configured, publish that VSIX:
+The Marketplace publisher is `andreymyssak`; the extension identifier is `andreymyssak.git-native-ui`. Its listing URL is [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=andreymyssak.git-native-ui).
+
+Upload the VSIX under that publisher in Marketplace management. With publishing credentials configured, publish the same package from the terminal:
 
 ```sh
 npm run release:marketplace
 ```
 
-Publish only with explicit authorization. Verify installation and activation of the distributed package. If you change the candidate, rebuild and rerun the affected checks.
+To also create a GitHub release, use a clean checkout on `main` and provide `GITHUB_TOKEN` with release access:
+
+```sh
+npm run release
+```
+
+The command creates and pushes `v<version>`, creates a GitHub release, and attaches the built VSIX. It copies the prepared changelog section unchanged without running tests or waiting for CI.
+
+Publish only with explicit authorization.

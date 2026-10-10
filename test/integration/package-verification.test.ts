@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { expect, test } from 'vitest';
 
 import * as verifier from '../../scripts/package/verify.ts';
+import { isRecord } from '../../scripts/shared/validation.ts';
 
 const inputs = (...paths: string[]) => ({
   inputs: Object.fromEntries(paths.map((path) => [path, {}])),
@@ -211,6 +212,21 @@ test('release verification refuses missing support, source, license or icon meta
       },
     }),
   ).toThrow(/repository/i);
+});
+test('release verification rejects a package uploaded under a different publisher or extension name', async () => {
+  const manifest: unknown = JSON.parse(await readFile('package.json', 'utf8'));
+
+  if (!isRecord(manifest)) throw new Error('Invalid test manifest');
+
+  expect(() =>
+    verifier.verifyReleaseManifest({
+      ...manifest,
+      publisher: 'another-publisher',
+    }),
+  ).toThrow(/publisher/i);
+  expect(() =>
+    verifier.verifyReleaseManifest({ ...manifest, name: 'another-extension' }),
+  ).toThrow(/name/i);
 });
 const helperMetafile = () => ({
   inputs: {

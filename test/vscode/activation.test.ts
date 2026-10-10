@@ -23,7 +23,7 @@ describe('native capabilities', () => {
     for (const root of roots)
       await access.api.openRepository(vscode.Uri.file(root.root));
     const extension = vscode.extensions.getExtension(
-      'git-native-ui.git-native-ui',
+      'andreymyssak.git-native-ui',
     );
 
     assert.ok(extension);

@@ -8,6 +8,27 @@ export default defineConfig((env) =>
     test: {
       globals: false,
       maxWorkers: 4,
+      ...(process.env.CI
+        ? {
+            reporters: [
+              'default',
+              'junit',
+              ...(process.env.GITHUB_ACTIONS
+                ? [
+                    [
+                      'github-actions',
+                      {
+                        jobSummary: {
+                          title: 'Unit, integration and component tests',
+                        },
+                      },
+                    ],
+                  ]
+                : []),
+            ],
+            outputFile: '.artifacts/local-results.xml',
+          }
+        : {}),
       projects: [
         {
           test: {

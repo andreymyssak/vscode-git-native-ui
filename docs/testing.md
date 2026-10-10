@@ -19,6 +19,8 @@ Browser tests load the compiled UI in Chromium with a simulated VS Code connecti
 
 VS Code tests run inside the desktop editor using Microsoft's `@vscode/test-cli` and `@vscode/test-electron`. Installed-extension tests install the built VSIX into an isolated profile, then run selected VS Code suites and acceptance scenarios. `scripts/test/installed-actions.ts` tests branch actions, notifications and user choices against that installed copy.
 
+CI runs code/local tests, browser tests, native VS Code tests, and installed-package tests in parallel groups on macOS and Windows. A shared build prepares the VSIX and compiled tests once. VS Code jobs use stable. Each job reports its checks and saves results; the overall summary includes every group and fails if a required check fails or does not run.
+
 `npm run package` builds the extension, creates its installable VSIX with Microsoft's `@vscode/vsce`, and checks the contents. `npm run test:installed` then tests that package in VS Code. Both VS Code test commands rebuild and inspect the VSIX before running.
 
 Use `.test.ts` or `.test.tsx` for test suites and `.scenario.ts` for installed-extension scenarios. Put reusable fixtures in `test/fixtures/`. Clean up temporary files, repositories, listeners, and settings even after failure.
@@ -53,4 +55,4 @@ Review related coverage with each change. A passing test of unused code or an ob
 
 Name tests for the scenario and expected outcome. Assert interactions, requests, Git state and prevented side effects. Do not add tests that merely mirror a low-impact edit or check for source text.
 
-Use disposable repositories and fixture remotes for Git mutations. Keep logs, screenshots and one-off validation reports in `.artifacts/` or CI artifacts. Browser simulations, source analysis and native execution establish different things; report remaining platform limits accurately. Record release results in the release PR against the exact candidate. [Release checks](releasing.md) cover publication separately.
+Use disposable repositories and fixture remotes for Git mutations. Keep logs, screenshots and one-off validation reports in `.artifacts/` or CI artifacts. Browser simulations, source analysis and native execution establish different things; report remaining platform limits accurately. [Release preparation and publication](releasing.md) run independently of these checks.

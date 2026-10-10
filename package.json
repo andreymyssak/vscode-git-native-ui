@@ -14,10 +14,33 @@
   },
   "keywords": [
     "git",
-    "history",
+    "git ui",
+    "git gui",
+    "git browser",
+    "git graph",
+    "git history",
+    "git log",
     "graph",
+    "history",
+    "commits",
+    "commit graph",
+    "commit history",
     "branches",
-    "worktrees"
+    "tags",
+    "worktree",
+    "worktrees",
+    "checkout",
+    "diff",
+    "compare",
+    "merge",
+    "rebase",
+    "cherry-pick",
+    "squash",
+    "source control",
+    "scm",
+    "version control",
+    "jetbrains",
+    "intellij"
   ],
   "devEngines": {
     "runtime": {
@@ -124,7 +147,7 @@
     "fsevents": false
   },
   "displayName": "Git Native UI",
-  "publisher": "git-native-ui",
+  "publisher": "andreymyssak",
   "main": "./dist/extension.cjs",
   "engines": {
     "vscode": "^1.140.0"
