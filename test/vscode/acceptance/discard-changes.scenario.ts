@@ -96,7 +96,10 @@ async function discardStagedWorkingCopy() {
       sourceControlCommandId('open-working-file'),
       JSON.parse(encoded),
     );
-    assert.equal(vscode.window.activeTextEditor?.document.uri.fsPath, path);
+    assert.equal(
+      vscode.window.activeTextEditor?.document.uri.fsPath,
+      vscode.Uri.file(path).fsPath,
+    );
     assert.equal(
       vscode.window.activeTextEditor?.document.getText(),
       'staged\n',
