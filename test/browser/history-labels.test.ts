@@ -381,8 +381,17 @@ test('short subjects give references room while their trailing edge stays aligne
   await expect(row.locator('[data-subject-message]')).toHaveText(
     'Short subject',
   );
-  const history = (await row.getByRole('cell').first().boundingBox())!;
-  const reference = (await row.locator('[data-references]').boundingBox())!;
+  const { history, reference } = await row.evaluate((node) => {
+    const history = node.children[0]!.getBoundingClientRect();
+    const reference = node
+      .querySelector('[data-references]')!
+      .getBoundingClientRect();
+
+    return {
+      history: { x: history.x, width: history.width },
+      reference: { x: reference.x, width: reference.width },
+    };
+  });
 
   expect(reference.x).toBeGreaterThan(history.x + history.width / 2);
   expect(reference.x + reference.width).toBeCloseTo(
