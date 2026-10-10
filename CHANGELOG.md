@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.3](https://github.com/andreymyssak/vscode-git-ui/compare/v0.1.2...v0.1.3) (2026-10-10)
+
+### Bug Fixes
+
+- use Git UI branding consistently ([ecb6607](https://github.com/andreymyssak/vscode-git-ui/commit/ecb6607793dbe7c9b1abe3ae7cbb8d3493389dba))
+
 ## [0.1.2](https://github.com/andreymyssak/vscode-git-ui/compare/v0.1.1...v0.1.2) (2026-10-10)
 
 ### Bug Fixes
