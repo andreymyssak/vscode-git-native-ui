@@ -18,7 +18,7 @@ test('same inputs reproduce same bytes even when Git converts line endings', asy
   vi.stubEnv('GIT_CONFIG_COUNT', '1');
   vi.stubEnv('GIT_CONFIG_KEY_0', 'core.autocrlf');
   vi.stubEnv('GIT_CONFIG_VALUE_0', 'true');
-  const output = await mkdtemp(join(tmpdir(), 'git-native-ui-repro-'));
+  const output = await mkdtemp(join(tmpdir(), 'git-ui-native-repro-'));
 
   try {
     await reproduce(manifest, output);
@@ -40,7 +40,7 @@ for (const mutation of [
   'modified generated output',
 ]) {
   test(`verification rejects ${mutation}`, async () => {
-    const root = await mkdtemp(join(tmpdir(), 'git-native-ui-verify-'));
+    const root = await mkdtemp(join(tmpdir(), 'git-ui-native-verify-'));
 
     try {
       await cp('upstream', join(root, 'upstream'), { recursive: true });

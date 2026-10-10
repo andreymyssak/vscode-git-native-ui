@@ -5,6 +5,7 @@ import type { Frame } from '@playwright/test';
 import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
+import { LOG_VIEW_ID } from '../../../src/shared/extension-identity';
 import { divergentFixture } from '../../fixtures/branch-update';
 import { nativeBrowser } from '../../fixtures/native-panel';
 
@@ -41,7 +42,7 @@ export async function run(): Promise<string[]> {
       await f.runGit(['update-ref', refId, f.incoming]);
       await f.access.repository(f.id).status();
       await vscode.commands.executeCommand('notifications.clearAll');
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await expect
         .poll(async () => {
           for (const context of browser.contexts())
@@ -54,7 +55,7 @@ export async function run(): Promise<string[]> {
                   (await branch.getAttribute('data-vscode-context')) ?? '{}',
                 );
 
-                if (context.gitNativeUIRepositoryId === f.id) frame = item;
+                if (context.repositoryId === f.id) frame = item;
               }
 
           return !!frame;
@@ -78,9 +79,9 @@ export async function run(): Promise<string[]> {
         (await branch.getAttribute('data-vscode-context')) ?? '{}',
       );
 
-      assert.equal(context.gitNativeUIRefCanIntegrate, true);
+      assert.equal(context.refCanIntegrate, true);
       operation = vscode.commands.executeCommand(
-        `gitNativeUI.${worktree ? 'create-worktree' : method === 'Merge' ? 'merge-branch' : 'rebase-branch'}`,
+        `gitUI.${worktree ? 'create-worktree' : method === 'Merge' ? 'merge-branch' : 'rebase-branch'}`,
         context,
       );
       // Rethrow command failures when awaited, without an unhandled rejection while driving its UI.

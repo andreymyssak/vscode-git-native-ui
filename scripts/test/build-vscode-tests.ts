@@ -2,6 +2,8 @@ import { glob, rm } from 'node:fs/promises';
 
 import { build } from 'esbuild';
 
+import { extensionDefines } from '../shared/extension.ts';
+
 await rm('dist/test', { recursive: true, force: true });
 const files = await Array.fromAsync(
   glob(['test/vscode/**/*.test.ts', 'test/vscode/**/*.scenario.ts']),
@@ -16,6 +18,7 @@ if (files.length)
     outbase: 'test',
     outExtension: { '.js': '.cjs' },
     bundle: true,
+    define: extensionDefines,
     platform: 'node',
     format: 'cjs',
     target: 'es2022',

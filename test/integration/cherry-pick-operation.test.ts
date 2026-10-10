@@ -12,7 +12,7 @@ const b = 'b'.repeat(40);
 const head = 'c'.repeat(40);
 
 test('multi-pick writes once in captured order and cancels at the final boundary', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'git-native-ui-pick-unit-'));
+  const directory = await mkdtemp(join(tmpdir(), 'git-ui-native-pick-unit-'));
 
   t.onTestFinished(() => rm(directory, { recursive: true, force: true }));
   const writes: readonly string[][] = [];

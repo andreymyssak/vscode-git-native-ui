@@ -72,7 +72,7 @@ describe('history filters against real Git', () => {
   }
 
   beforeAll(async () => {
-    fixture = await createFixture({ prefix: 'git-native-ui filters ü ' });
+    fixture = await createFixture({ prefix: 'git-ui-native filters ü ' });
     process.env.GIT_CONFIG_GLOBAL = join(fixture.root, 'isolated-gitconfig');
     head = initial = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
     tree = (await fixture.runGit(['rev-parse', 'HEAD^{tree}'])).trim();

@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { createLargeHistory } from '../fixtures/large-history';
 import { nativeBrowser } from '../fixtures/native-panel';
 
@@ -52,7 +53,7 @@ describe('large native history', () => {
       const gitPageMs = performance.now() - start;
 
       assert.equal(first.commits.length, 200);
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
 
       for (let attempt = 0; attempt < 100 && !frame; attempt++) {
@@ -111,7 +112,7 @@ describe('large native history', () => {
         window.addEventListener('message', recordMessage);
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries())
-            if (entry.name === 'git-native-ui.render')
+            if (entry.name === 'git-ui-native.render')
               times.push(entry.duration);
         });
 

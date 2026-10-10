@@ -156,7 +156,7 @@ for (const path of ['/', '/development.html']) {
   }) => {
     await page.addInitScript(() =>
       sessionStorage.setItem(
-        'git-native-ui-state',
+        'git-ui-native-state',
         JSON.stringify({
           repositoryId: 'one',
           activeView: 'log',

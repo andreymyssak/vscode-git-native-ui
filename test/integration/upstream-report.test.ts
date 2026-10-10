@@ -17,7 +17,7 @@ const old = 'a'.repeat(40);
 const target = 'b'.repeat(40);
 
 async function fixture() {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui upstream-report '));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native upstream-report '));
 
   onTestFinished(() => rm(root, { recursive: true, force: true }));
   const path = join(root, 'upstream/vscode/manifest.json');

@@ -8,6 +8,11 @@ import * as vscode from 'vscode';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
 import { GitCli } from '../../src/extension/git/cli';
+import {
+  EXTENSION_ID,
+  extensionIdentity,
+  LOG_VIEW_ID,
+} from '../../src/shared/extension-identity';
 import { nativeBrowser } from '../fixtures/native-panel';
 import type { Fixture } from '../fixtures/repository';
 import { createFixture } from '../fixtures/repository';
@@ -17,14 +22,12 @@ describe('native capabilities', () => {
 
   before(async () => {
     for (const name of ['one', 'two'])
-      roots.push(await createFixture({ prefix: `git-native-ui ${name} ` }));
+      roots.push(await createFixture({ prefix: `git-ui-native ${name} ` }));
     const access = await getGitApi();
 
     for (const root of roots)
       await access.api.openRepository(vscode.Uri.file(root.root));
-    const extension = vscode.extensions.getExtension(
-      'andreymyssak.git-ui-native',
-    );
+    const extension = vscode.extensions.getExtension(EXTENSION_ID);
 
     assert.ok(extension);
     await extension.activate();
@@ -56,7 +59,7 @@ describe('native capabilities', () => {
     const [major, minor] = vscode.version.split('.').map(Number);
 
     assert.ok(major! > 1 || (major === 1 && minor! >= 140));
-    await vscode.commands.executeCommand('gitNativeUI.log.focus');
+    await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
     const browser = await nativeBrowser();
     const workbench = browser
       .contexts()
@@ -65,7 +68,10 @@ describe('native capabilities', () => {
 
     assert.ok(workbench);
     await expect(
-      workbench.getByRole('tab', { name: 'Git UI', exact: true }),
+      workbench.getByRole('tab', {
+        name: extensionIdentity.displayName,
+        exact: true,
+      }),
     ).toBeVisible();
   });
   it('native diff uses revision URIs', async () => {

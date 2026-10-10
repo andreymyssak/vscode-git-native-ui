@@ -85,16 +85,16 @@ export function HistoryRow({
     references ?? data.refs.filter((ref) => ref.sha === commit.sha);
   const context = {
     webviewSection: 'commit',
-    gitNativeUIRepositoryId: data.repository?.id ?? '',
-    gitNativeUIGeneration: data.generation,
-    gitNativeUICommitSha: commit.sha,
-    gitNativeUICommitShas: selection,
-    gitNativeUICommitSelectionCount: selection.length,
-    gitNativeUICommitCanDrop: selected && canDrop,
-    gitNativeUICommitCanSquash: selected && selection.length > 1 && canSquash,
-    gitNativeUICommitCanEdit:
+    repositoryId: data.repository?.id ?? '',
+    generation: data.generation,
+    commitSha: commit.sha,
+    commitShas: selection,
+    commitSelectionCount: selection.length,
+    commitCanDrop: selected && canDrop,
+    commitCanSquash: selected && selection.length > 1 && canSquash,
+    commitCanEdit:
       selection.length === 1 && canEditLoadedCommit(data, commit.sha),
-    gitNativeUICommitCanCherryPick: selected
+    commitCanCherryPick: selected
       ? (canCherryPick ?? canCherryPickLoadedRange(data, selection))
       : !!data.repository?.branch && commit.parents.length <= 1,
     preventDefaultContextMenuItems: true,

@@ -8,20 +8,21 @@ import * as vscode from 'vscode';
 import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
+import { extensionIdentity } from '../../src/shared/extension-identity';
 import { createFixture } from '../fixtures/repository';
 
 describe('older history with the installed Git API', () => {
   for (const kind of ['edit', 'squash', 'separated squash'] as const) {
     it(`${kind} retains descendants and selects the rewritten commit through the bundled helper`, async () => {
       const f = await createFixture({
-        prefix: 'git-native-ui native older history ',
+        prefix: 'git-ui-native native older history ',
       });
       let adapter: GitAdapter | undefined;
       let storage: string | undefined;
 
       try {
         storage = await mkdtemp(
-          join(tmpdir(), 'git-native-ui native rewrite '),
+          join(tmpdir(), 'git-ui-native native rewrite '),
         );
         const shas: string[] = [];
         const base = (await f.runGit(['rev-parse', 'HEAD'])).trim();
@@ -41,7 +42,7 @@ describe('older history with the installed Git API', () => {
 
         await access.repository(id).status();
         const extension = vscode.extensions.all.find(
-          (entry) => entry.packageJSON.name === 'git-ui-native',
+          (entry) => entry.packageJSON.name === extensionIdentity.name,
         );
 
         assert.ok(extension);

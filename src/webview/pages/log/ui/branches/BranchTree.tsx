@@ -242,20 +242,20 @@ export function BranchTree({
       ? {
           webviewSection: 'branch',
           preventDefaultContextMenuItems: true,
-          gitNativeUIRepositoryId: repositoryId,
-          gitNativeUIGeneration: generation,
-          gitNativeUIRefId: ref.id,
-          gitNativeUIRefKind: ref.kind,
-          gitNativeUIRefCurrent: node.current,
-          gitNativeUIRefSelectionCount: contextIds.length,
-          gitNativeUIRefIds: contextIds,
-          gitNativeUIRefsCanDelete: canDelete,
-          gitNativeUIRefCanIntegrate:
+          repositoryId: repositoryId,
+          generation: generation,
+          refId: ref.id,
+          refKind: ref.kind,
+          refCurrent: node.current,
+          refSelectionCount: contextIds.length,
+          refIds: contextIds,
+          refsCanDelete: canDelete,
+          refCanIntegrate:
             contextIds.length === 1 &&
             !!currentBranch &&
             ref.kind !== 'tag' &&
             !node.current,
-          gitNativeUIRefCanUpdate:
+          refCanUpdate:
             contextIds.length === 1 &&
             ref.kind === 'local' &&
             !!ref.tracking &&

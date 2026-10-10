@@ -118,7 +118,7 @@ window.__requests = [];
 window.__deliver = (message) =>
   window.dispatchEvent(new MessageEvent('message', { data: message }));
 let saved: unknown = JSON.parse(
-  sessionStorage.getItem('git-native-ui-state') ?? 'null',
+  sessionStorage.getItem('git-ui-native-state') ?? 'null',
 );
 let loadedActiveSha: string | null = null;
 let loadedGeneration = -1;
@@ -135,7 +135,7 @@ window.acquireVsCodeApi = () => {
     setState: (value) => {
       window.__savedWrites.push(value);
       saved = value;
-      sessionStorage.setItem('git-native-ui-state', JSON.stringify(value));
+      sessionStorage.setItem('git-ui-native-state', JSON.stringify(value));
     },
     postMessage: (request) => {
       window.__requests.push(request);

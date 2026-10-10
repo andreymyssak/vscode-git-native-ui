@@ -21,7 +21,7 @@ describe('explicit Git operations', () => {
     fixtures = [];
     temporaryAdapters = [];
     for (const name of ['operations', 'other', 'remote-a', 'remote-b'])
-      fixtures.push(await createFixture({ prefix: `git-native-ui ${name} ` }));
+      fixtures.push(await createFixture({ prefix: `git-ui-native ${name} ` }));
     const first = fixtures[0]!;
     const access = await getGitApi();
 
@@ -354,7 +354,7 @@ describe('explicit Git operations', () => {
 describe('literal namespace-looking branch names', () => {
   it('keeps distinct reference identities through browse resolve and checkout at equal tips', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui literal refs ',
+      prefix: 'git-ui-native literal refs ',
     });
     let adapter: GitAdapter | undefined;
 

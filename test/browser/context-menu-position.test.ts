@@ -32,13 +32,9 @@ for (const [name, selector, identity] of [
   [
     'commit',
     '[data-commit-row][data-sha="0000000000000000000000000000000000000002"]',
-    { gitNativeUICommitSha: '0000000000000000000000000000000000000002' },
+    { commitSha: '0000000000000000000000000000000000000002' },
   ],
-  [
-    'branch',
-    '[data-ref="refs/heads/main"]',
-    { gitNativeUIRefId: 'refs/heads/main' },
-  ],
+  ['branch', '[data-ref="refs/heads/main"]', { refId: 'refs/heads/main' }],
 ] as const) {
   test(`${name} pointer menu opens away from the click with one current context`, async ({
     page,

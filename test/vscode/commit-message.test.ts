@@ -201,7 +201,7 @@ describe('native message review and amendment', () => {
   });
   it('rejects untracked changes even when Git status hides them', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui hidden changes ',
+      prefix: 'git-ui-native hidden changes ',
     });
     let adapter: GitAdapter | undefined;
 
@@ -233,7 +233,7 @@ describe('native message review and amendment', () => {
   });
   it('amends only the message and preserves the tree, author, parent and other refs', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui amend message ',
+      prefix: 'git-ui-native amend message ',
     });
     let adapter: GitAdapter | undefined;
 

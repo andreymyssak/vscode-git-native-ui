@@ -39,7 +39,7 @@ describe('history filter native API', () => {
 
   before(async () => {
     fixture = await createFixture({
-      prefix: 'git-native-ui native filters ü ',
+      prefix: 'git-ui-native native filters ü ',
     });
     let parent = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
     const tree = (await fixture.runGit(['rev-parse', 'HEAD^{tree}'])).trim();

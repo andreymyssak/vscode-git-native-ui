@@ -4,10 +4,12 @@ import { join, resolve } from 'node:path';
 
 import { build } from 'esbuild';
 
+import { extensionIdentity } from '../../src/shared/extension-identity';
+
 /** Bundle standalone Node entry points into an owned, disposable directory. */
 export async function buildHelperFixture<T extends string>(
   entries: Record<T, string>,
-  prefix = 'git-native-ui-helper-',
+  prefix = 'git-ui-native-helper-',
 ) {
   const directory = await mkdtemp(join(tmpdir(), prefix));
   const paths = {} as Record<T, string>;
@@ -21,6 +23,7 @@ export async function buildHelperFixture<T extends string>(
         entryPoints: [resolve(entries[name])],
         outfile,
         bundle: true,
+        define: { __EXTENSION_IDENTITY__: JSON.stringify(extensionIdentity) },
         platform: 'node',
         format: 'cjs',
         target: 'es2022',

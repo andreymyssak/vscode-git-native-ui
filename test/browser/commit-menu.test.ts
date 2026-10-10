@@ -13,11 +13,11 @@ test('right-click exposes the clicked commit in native context without dispatchi
     JSON.parse((await row.getAttribute('data-vscode-context')) ?? '{}'),
   ).toMatchObject({
     webviewSection: 'commit',
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUICommitSha: '2'.padStart(40, '0'),
-    gitNativeUIGeneration: 1,
-    gitNativeUICommitCanEdit: false,
-    gitNativeUICommitCanCherryPick: true,
+    repositoryId: 'one',
+    commitSha: '2'.padStart(40, '0'),
+    generation: 1,
+    commitCanEdit: false,
+    commitCanCherryPick: true,
     preventDefaultContextMenuItems: true,
   });
   expect(
@@ -40,8 +40,8 @@ test('keyboard menu retains row focus and enables editing unpublished history', 
     (await row.getAttribute('data-vscode-context')) ?? '{}',
   );
 
-  expect(context.gitNativeUICommitSha).toBe('1'.padStart(40, '0'));
-  expect(context.gitNativeUICommitCanEdit).toBe(false); // This fixture's tip is also on origin/main.
+  expect(context.commitSha).toBe('1'.padStart(40, '0'));
+  expect(context.commitCanEdit).toBe(false); // This fixture's tip is also on origin/main.
   await page.evaluate(() => {
     const request = window.__requests.at(-1)!;
 
@@ -82,7 +82,7 @@ test('keyboard menu retains row focus and enables editing unpublished history', 
     (await row.getAttribute('data-vscode-context')) ?? '{}',
   );
 
-  expect(local.gitNativeUICommitCanEdit).toBe(true);
+  expect(local.commitCanEdit).toBe(true);
 });
 test('native context and selection are current before the menu event reaches the window', async ({
   page,
@@ -112,11 +112,11 @@ test('native context and selection are current before the menu event reaches the
   ).toMatchObject({
     selected: 'true',
     context: {
-      gitNativeUIRepositoryId: 'one',
-      gitNativeUIGeneration: 2,
-      gitNativeUICommitSha: '2'.padStart(40, '0'),
-      gitNativeUICommitCanEdit: false,
-      gitNativeUICommitCanCherryPick: true,
+      repositoryId: 'one',
+      generation: 2,
+      commitSha: '2'.padStart(40, '0'),
+      commitCanEdit: false,
+      commitCanCherryPick: true,
     },
   });
   await row.press('Shift+F10');
@@ -124,7 +124,7 @@ test('native context and selection are current before the menu event reaches the
     await page.evaluate(() => Reflect.get(window, 'observedNativeContext')),
   ).toMatchObject({
     selected: 'true',
-    context: { gitNativeUICommitSha: '2'.padStart(40, '0') },
+    context: { commitSha: '2'.padStart(40, '0') },
   });
 });
 
@@ -139,7 +139,7 @@ test('native squash context reflects the full range on every selected row and up
   await rows.nth(1).click({ modifiers: ['Shift'] });
   expect(
     JSON.parse((await rows.nth(0).getAttribute('data-vscode-context')) ?? '{}')
-      .gitNativeUICommitCanSquash,
+      .commitCanSquash,
   ).toBe(false);
   await page.evaluate(() => {
     const request = window.__requests.at(-1)!;
@@ -164,20 +164,20 @@ test('native squash context reflects the full range on every selected row and up
         (await rows.nth(index).getAttribute('data-vscode-context')) ?? '{}',
       ),
     ).toMatchObject({
-      gitNativeUICommitShas: [sha(1), sha(2)],
-      gitNativeUICommitSelectionCount: 2,
-      gitNativeUICommitCanSquash: true,
-      gitNativeUICommitCanDrop: true,
-      gitNativeUICommitCanEdit: false,
-      gitNativeUICommitCanCherryPick: true,
+      commitShas: [sha(1), sha(2)],
+      commitSelectionCount: 2,
+      commitCanSquash: true,
+      commitCanDrop: true,
+      commitCanEdit: false,
+      commitCanCherryPick: true,
     });
   await rows.nth(0).click({ button: 'right' });
   expect(
     await page.evaluate(() => Reflect.get(window, 'observedSquashContext')),
   ).toMatchObject({
-    gitNativeUICommitSha: sha(1),
-    gitNativeUICommitShas: [sha(1), sha(2)],
-    gitNativeUICommitCanSquash: true,
+    commitSha: sha(1),
+    commitShas: [sha(1), sha(2)],
+    commitCanSquash: true,
   });
   expect((await page.evaluate(() => window.__requests)).at(-1)?.body).toEqual({
     kind: 'select-commits',
@@ -188,19 +188,19 @@ test('native squash context reflects the full range on every selected row and up
   expect(
     await page.evaluate(() => Reflect.get(window, 'observedSquashContext')),
   ).toMatchObject({
-    gitNativeUICommitSha: sha(1),
-    gitNativeUICommitShas: [sha(1), sha(2)],
-    gitNativeUICommitCanSquash: true,
+    commitSha: sha(1),
+    commitShas: [sha(1), sha(2)],
+    commitCanSquash: true,
   });
   await rows.nth(2).click({ button: 'right' });
   expect(
     await page.evaluate(() => Reflect.get(window, 'observedSquashContext')),
   ).toMatchObject({
-    gitNativeUICommitSha: sha(3),
-    gitNativeUICommitShas: [sha(3)],
-    gitNativeUICommitSelectionCount: 1,
-    gitNativeUICommitCanSquash: false,
-    gitNativeUICommitCanCherryPick: true,
+    commitSha: sha(3),
+    commitShas: [sha(3)],
+    commitSelectionCount: 1,
+    commitCanSquash: false,
+    commitCanCherryPick: true,
   });
 });
 
@@ -213,13 +213,13 @@ test('older message edits and squash use linear ancestry while Drop keeps suffix
   await expect(rows.first()).toBeVisible();
   const context = JSON.parse(
     (await rows.first().getAttribute('data-vscode-context'))!,
-  ) as { gitNativeUIGeneration: number; gitNativeUIRepositoryId: string };
+  ) as { generation: number; repositoryId: string };
 
   await page.evaluate((current) => {
     window.__deliver({
       requestId: 'unpublished-fixture',
-      repositoryId: current.gitNativeUIRepositoryId,
-      generation: current.gitNativeUIGeneration,
+      repositoryId: current.repositoryId,
+      generation: current.generation,
       body: { kind: 'references', references: [] },
     });
   }, context);
@@ -227,13 +227,13 @@ test('older message edits and squash use linear ancestry while Drop keeps suffix
   await rows.nth(2).click({ button: 'right' });
   expect(
     JSON.parse((await rows.nth(2).getAttribute('data-vscode-context'))!),
-  ).toMatchObject({ gitNativeUICommitCanEdit: true });
+  ).toMatchObject({ commitCanEdit: true });
   await rows.nth(2).click();
   await rows.nth(4).click({ modifiers: ['Shift'] });
   expect(
     JSON.parse((await rows.nth(2).getAttribute('data-vscode-context'))!),
   ).toMatchObject({
-    gitNativeUICommitCanSquash: true,
-    gitNativeUICommitCanDrop: false,
+    commitCanSquash: true,
+    commitCanDrop: false,
   });
 });

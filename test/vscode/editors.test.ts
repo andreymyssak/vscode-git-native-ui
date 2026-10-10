@@ -9,6 +9,7 @@ import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
 import { changeUris, openChange } from '../../src/extension/native/editors';
+import { EXTENSION_ID } from '../../src/shared/extension-identity';
 import { createFixture } from '../fixtures/repository';
 
 async function expectNativeDiff(
@@ -43,7 +44,7 @@ async function expectNativeDiff(
 
 describe('historical changes', () => {
   it('ordinary file compares exact parent; root, deleted and rename retain paths', async () => {
-    const fixture = await createFixture({ prefix: 'git-native-ui diffs ü ' });
+    const fixture = await createFixture({ prefix: 'git-ui-native diffs ü ' });
     let adapter: GitAdapter | undefined;
 
     try {
@@ -54,9 +55,7 @@ describe('historical changes', () => {
       ).api.openRepository(vscode.Uri.file(fixture.root));
       const id = vscode.Uri.file(fixture.root).toString();
 
-      await vscode.extensions
-        .getExtension('andreymyssak.git-ui-native')!
-        .activate();
+      await vscode.extensions.getExtension(EXTENSION_ID)!.activate();
       const access = await getGitApi();
       const parent = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
       const root = await adapter.changes(id, parent, null);
@@ -295,7 +294,7 @@ describe('genuine shallow boundaries', () => {
   it('retains actual parents for shallow commit and merge without a root diff', async () => {
     for (const merge of [false, true]) {
       const fixture = await createFixture({
-        prefix: 'git-native-ui shallow source ',
+        prefix: 'git-ui-native shallow source ',
       });
       let adapter: GitAdapter | undefined;
 

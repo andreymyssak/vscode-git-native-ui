@@ -18,7 +18,7 @@ async function fixture(
   failure: 'creation' | 'tracking' | 'checkout' | 'verification',
   conflict = false,
 ) {
-  const directory = await mkdtemp(join(tmpdir(), 'git-native-ui-completion-'));
+  const directory = await mkdtemp(join(tmpdir(), 'git-ui-native-completion-'));
   const path = join(directory, 'worktree');
   const writes: string[] = [];
   const refs: GitRef[] = [

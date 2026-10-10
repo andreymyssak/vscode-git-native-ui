@@ -8,6 +8,12 @@ import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
 import {
+  commandId,
+  EXTENSION_ID,
+  extensionIdentity,
+  LOG_VIEW_ID,
+} from '../../src/shared/extension-identity';
+import {
   nativeBrowser,
   nativePanel,
   refreshNativeHistory,
@@ -18,7 +24,7 @@ import { createFixture } from '../fixtures/repository';
 describe('native squash menu workflow', () => {
   it('shows single-commit actions and an enabled Squash menu for a selected range', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui commit menu ',
+      prefix: 'git-ui-native commit menu ',
     });
     const menu = vscode.workspace.getConfiguration('window');
     const previous = menu.inspect<string>('menuStyle')?.globalValue;
@@ -30,15 +36,13 @@ describe('native squash menu workflow', () => {
         'custom',
         vscode.ConfigurationTarget.Global,
       );
-      const extension = vscode.extensions.getExtension(
-        'andreymyssak.git-ui-native',
-      );
+      const extension = vscode.extensions.getExtension(EXTENSION_ID);
 
       assert.ok(extension);
       await extension.activate();
-      if (process.env.GIT_NATIVE_UI_INSTALLED_ROOT) {
+      if (process.env.GIT_UI_INSTALLED_ROOT) {
         const location = relative(
-          process.env.GIT_NATIVE_UI_INSTALLED_ROOT,
+          process.env.GIT_UI_INSTALLED_ROOT,
           extension.extensionPath,
         );
 
@@ -55,7 +59,7 @@ describe('native squash menu workflow', () => {
 
       await access.api.openRepository(vscode.Uri.file(fixture.root));
       await access.repository(id).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const frame = await nativePanel(id);
 
       workbench = frame.page();
@@ -88,9 +92,9 @@ describe('native squash menu workflow', () => {
         .poll(async () => {
           const context = JSON.parse(
             (await rows.first().getAttribute('data-vscode-context')) ?? '{}',
-          ) as { gitNativeUICommitCanSquash?: boolean };
+          ) as { commitCanSquash?: boolean };
 
-          return context.gitNativeUICommitCanSquash;
+          return context.commitCanSquash;
         })
         .toBe(true);
       await rows.first().click({ button: 'right' });
@@ -128,7 +132,7 @@ describe('native squash menu workflow', () => {
 
     assert.ok(workbench);
     const fixture = await createFixture({
-      prefix: 'git-native-ui native menu ü ',
+      prefix: 'git-ui-native native menu ü ',
     });
     const drafts = trackNativeDrafts();
     let pending: Thenable<unknown> | undefined;
@@ -168,7 +172,7 @@ describe('native squash menu workflow', () => {
       await access
         .repository(vscode.Uri.file(fixture.root).toString())
         .status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await expect
         .poll(async () => {
           for (const context of browser.contexts())
@@ -207,10 +211,7 @@ describe('native squash menu workflow', () => {
           (await rows.last().getAttribute('data-vscode-context')) ?? '{}',
         ) as Record<string, unknown>;
 
-        pending = vscode.commands.executeCommand(
-          `gitNativeUI.${kind}`,
-          context,
-        );
+        pending = vscode.commands.executeCommand(`gitUI.${kind}`, context);
         void Promise.resolve(pending).catch(() => {});
         const input = workbench.locator('.quick-input-widget input:visible');
 
@@ -261,12 +262,12 @@ describe('native squash menu workflow', () => {
         (await rows.first().getAttribute('data-vscode-context')) ?? '{}',
       ) as Record<string, unknown>;
 
-      assert.deepEqual(context.gitNativeUICommitShas, shas);
-      assert.equal(context.gitNativeUICommitSha, shas[0]);
-      assert.equal(context.gitNativeUICommitSelectionCount, 3);
-      assert.equal(context.gitNativeUICommitCanSquash, true);
+      assert.deepEqual(context.commitShas, shas);
+      assert.equal(context.commitSha, shas[0]);
+      assert.equal(context.commitSelectionCount, 3);
+      assert.equal(context.commitCanSquash, true);
       pending = vscode.commands.executeCommand(
-        'gitNativeUI.squash-commits',
+        commandId('squash-commits'),
         context,
       );
       void Promise.resolve(pending).catch(() => {});
@@ -351,9 +352,9 @@ describe('native squash menu workflow', () => {
         (await rows.first().getAttribute('data-vscode-context')) ?? '{}',
       ) as Record<string, unknown>;
 
-      assert.deepEqual(freshContext.gitNativeUICommitShas, shas);
+      assert.deepEqual(freshContext.commitShas, shas);
       pending = vscode.commands.executeCommand(
-        'gitNativeUI.squash-commits',
+        commandId('squash-commits'),
         freshContext,
       );
       void Promise.resolve(pending).catch(() => {});
@@ -382,17 +383,14 @@ describe('native squash menu workflow', () => {
       assert.equal(object.slice(object.indexOf('\n\n') + 2), approved);
       assert.equal(await fixture.runGit(['status', '--porcelain=v1']), '');
       const extension = vscode.extensions.all.find(
-        (entry) => entry.packageJSON.name === 'git-ui-native',
+        (entry) => entry.packageJSON.name === extensionIdentity.name,
       )!;
       const helper = join(extension.extensionPath, 'dist', 'squash-helper.cjs');
       const helperLocation = relative(extension.extensionPath, helper);
 
       assert.equal(helperLocation, join('dist', 'squash-helper.cjs'));
-      if (process.env.GIT_NATIVE_UI_INSTALLED_ROOT) {
-        const installed = relative(
-          process.env.GIT_NATIVE_UI_INSTALLED_ROOT,
-          helper,
-        );
+      if (process.env.GIT_UI_INSTALLED_ROOT) {
+        const installed = relative(process.env.GIT_UI_INSTALLED_ROOT, helper);
 
         assert.ok(
           installed && !isAbsolute(installed) && !installed.startsWith('..'),
@@ -411,9 +409,9 @@ describe('native squash menu workflow', () => {
           (await rows.first().getAttribute('data-vscode-context')) ?? '{}',
         ) as Record<string, unknown>;
 
-        assert.equal(context.gitNativeUICommitCanDrop, true);
+        assert.equal(context.commitCanDrop, true);
         pending = vscode.commands.executeCommand(
-          'gitNativeUI.drop-commits',
+          commandId('drop-commits'),
           context,
         );
         void Promise.resolve(pending).catch(() => {});

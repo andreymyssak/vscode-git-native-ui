@@ -11,7 +11,7 @@ import { createFixture } from '../fixtures/repository';
 
 describe('tracked branch Update', () => {
   it('reads every local upstream count and fast-forwards without pushing, creating a merge commit or stashing', async () => {
-    const fixture = await createFixture({ prefix: 'git-native-ui-update-' });
+    const fixture = await createFixture({ prefix: 'git-ui-native-update-' });
     let adapter: GitAdapter | undefined;
     const remote = fixture.root + '-remote.git';
 

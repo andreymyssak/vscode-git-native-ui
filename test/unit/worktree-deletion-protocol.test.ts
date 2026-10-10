@@ -63,11 +63,11 @@ test('the controller rejects unknown worktree targets before confirming or writi
 });
 test('native worktree menus bind the active row, group count and repository generation', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUIWorktreeId: 'a',
-    gitNativeUIWorktreeIds: ['a', 'b'],
-    gitNativeUIWorktreeSelectionCount: 2,
+    repositoryId: 'one',
+    generation: 1,
+    worktreeId: 'a',
+    worktreeIds: ['a', 'b'],
+    worktreeSelectionCount: 2,
   };
 
   expect(worktreeMenuRequest('delete-worktrees', context)?.body).toStrictEqual({
@@ -76,10 +76,10 @@ test('native worktree menus bind the active row, group count and repository gene
   });
   expect(worktreeMenuRequest('open-worktree-new', context)).toBe(null);
   for (const altered of [
-    { gitNativeUIWorktreeId: 'foreign' },
-    { gitNativeUIWorktreeSelectionCount: 1 },
-    { gitNativeUIGeneration: -1 },
-    { gitNativeUIWorktreeIds: ['a', 'a'] },
+    { worktreeId: 'foreign' },
+    { worktreeSelectionCount: 1 },
+    { generation: -1 },
+    { worktreeIds: ['a', 'a'] },
   ])
     expect(
       worktreeMenuRequest('delete-worktrees', { ...context, ...altered }),
@@ -87,8 +87,8 @@ test('native worktree menus bind the active row, group count and repository gene
   expect(
     worktreeMenuRequest('open-worktree-current', {
       ...context,
-      gitNativeUIWorktreeIds: ['a'],
-      gitNativeUIWorktreeSelectionCount: 1,
+      worktreeIds: ['a'],
+      worktreeSelectionCount: 1,
     })?.body,
   ).toStrictEqual({ kind: 'open-worktree', worktreeId: 'a', newWindow: false });
 });

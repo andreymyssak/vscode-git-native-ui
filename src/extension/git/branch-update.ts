@@ -1,5 +1,6 @@
 import { realpath } from 'node:fs/promises';
 
+import { extensionIdentity } from '../../shared/extension-identity';
 import type { GitRepository } from './api';
 import type { BranchUpdate, UpdateCheckout } from './branch-update-target';
 import { updateCheckout, validateUpdateTarget } from './branch-update-target';
@@ -105,7 +106,7 @@ export async function updateBranch(
             'update-ref',
             '--no-deref',
             '-m',
-            'Git UI: fast-forward tracked branch',
+            `${extensionIdentity.displayName}: fast-forward tracked branch`,
             action.refId,
             fetched,
             action.expectedSha,

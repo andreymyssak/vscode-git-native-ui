@@ -38,11 +38,11 @@ for (const choice of [
     });
     session.select(sha);
     const request = commitMenuRequest('drop-commits', {
-      gitNativeUIRepositoryId: 'repo',
-      gitNativeUIGeneration: 1,
-      gitNativeUICommitSha: sha,
-      gitNativeUICommitShas: [sha],
-      gitNativeUICommitSelectionCount: 1,
+      repositoryId: 'repo',
+      generation: 1,
+      commitSha: sha,
+      commitShas: [sha],
+      commitSelectionCount: 1,
     });
 
     assert.ok(request?.body.kind === 'action');

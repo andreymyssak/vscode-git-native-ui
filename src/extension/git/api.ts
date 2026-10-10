@@ -6,6 +6,7 @@ import { basename } from 'node:path';
 
 import * as vscode from 'vscode';
 
+import { extensionIdentity } from '../../shared/extension-identity';
 import type { RepositoryInfo } from '../../shared/model';
 import type { GitApiInitialization } from './api-initialization';
 import { waitForGitInitialization } from './api-initialization';
@@ -133,7 +134,9 @@ export async function getGitApi(): Promise<GitApiAccess> {
       )
         throw new Error('Enable Git and trust this workspace through VS Code.');
       if (!repository)
-        throw new Error('Repository is no longer available. Refresh Git UI.');
+        throw new Error(
+          `Repository is no longer available. Refresh ${extensionIdentity.displayName}.`,
+        );
 
       return repository;
     },

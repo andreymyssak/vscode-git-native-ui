@@ -19,7 +19,7 @@ async function withRepository(
   ) => Promise<void>,
 ) {
   const fixture = await createFixture({
-    prefix: 'git-native-ui commit actions ',
+    prefix: 'git-ui-native commit actions ',
   });
   let adapter: GitAdapter | undefined;
 

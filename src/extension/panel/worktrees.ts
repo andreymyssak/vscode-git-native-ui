@@ -1,3 +1,4 @@
+import { extensionIdentity } from '../../shared/extension-identity';
 import type { Request, RequestBody } from '../../shared/messages';
 import type { GitAction, Reference, WorktreeInfo } from '../../shared/model';
 import { canOpenWorktree } from '../../shared/worktree-selection';
@@ -67,7 +68,9 @@ export async function prepareNewWorktree(
 ): Promise<GitAction | null> {
   const check = () => {
     if (!session.current(request.repositoryId, request.generation))
-      throw new Error('The Git UI view changed. Choose Create Worktree again.');
+      throw new Error(
+        `The ${extensionIdentity.displayName} view changed. Choose Create Worktree again.`,
+      );
   };
 
   check();

@@ -16,7 +16,7 @@ import { createFixture } from '../fixtures/repository';
 describe('deleted branch recovery with the installed Git API', () => {
   it('Restore recreates the deleted branch and upstream while retaining dirty work and checkout', async () => {
     const f = await createFixture({
-      prefix: 'git-native-ui native branch restore ',
+      prefix: 'git-ui-native native branch restore ',
     });
     let adapter: GitAdapter | undefined;
 

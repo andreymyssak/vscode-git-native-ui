@@ -107,9 +107,9 @@ test('row gestures retain Shift and context semantics without giving inactive ra
   });
   const context = JSON.parse(row.getAttribute('data-vscode-context')!);
 
-  expect(context.gitNativeUICommitShas).toEqual([b, c, d]);
-  expect(context.gitNativeUICommitSelectionCount).toBe(3);
-  expect(context.gitNativeUICommitCanCherryPick).toBe(true);
+  expect(context.commitShas).toEqual([b, c, d]);
+  expect(context.commitSelectionCount).toBe(3);
+  expect(context.commitCanCherryPick).toBe(true);
 });
 
 test('the controller sends the full loaded range while keeping temporary range state out of saved data', () => {

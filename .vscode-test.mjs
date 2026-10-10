@@ -14,7 +14,7 @@ const base = {
     GIT_CONFIG_GLOBAL: gitConfig,
     GIT_CONFIG_NOSYSTEM: '1',
     GIT_TERMINAL_PROMPT: '0',
-    GIT_NATIVE_UI_TEST_ARTIFACTS: resolve('.artifacts'),
+    GIT_UI_TEST_ARTIFACTS: resolve('.artifacts'),
   },
   version: process.env.VSCODE_TEST_VERSION ?? 'stable',
   platform: 'desktop',

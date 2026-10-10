@@ -24,6 +24,7 @@ import {
   probeSquashRuntime,
 } from '../../src/extension/git/squash-editor';
 import type { runSquashEditor as RunSquashEditor } from '../../src/extension/git/squash-helper';
+import { extensionIdentity } from '../../src/shared/extension-identity';
 import { buildHelperFixture } from '../fixtures/helper-build';
 
 const execute = promisify(execFile);
@@ -54,7 +55,7 @@ let built: Awaited<ReturnType<typeof buildHelperFixture<'helper'>>>;
 beforeAll(async () => {
   built = await buildHelperFixture(
     { helper: 'src/extension/git/squash-helper.ts' },
-    "git-native-ui helper ü ' ",
+    "git-ui-native helper ü ' ",
   );
   root = built.directory;
   helperPath = built.paths.helper;
@@ -216,7 +217,7 @@ test('probe identifies the standalone helper without changing the global environ
     env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
   });
 
-  expect(result.stdout).toBe('git-native-ui-squash-helper\n');
+  expect(result.stdout).toBe('git-ui-native-squash-helper\n');
   expect(process.env.ELECTRON_RUN_AS_NODE).toBe(electronMode);
 });
 
@@ -286,6 +287,7 @@ test('the Windows path API still produces forward-slash Git editor commands', as
     entryPoints: [resolve('src/extension/git/squash-editor.ts')],
     outfile: editorPath,
     bundle: true,
+    define: { __EXTENSION_IDENTITY__: JSON.stringify(extensionIdentity) },
     platform: 'node',
     format: 'cjs',
     target: 'es2022',

@@ -122,38 +122,37 @@ export function branchMenuRequest(
 
   if (kind === 'delete-branches') {
     if (
-      !isBranchDeletionSelection(value.gitNativeUIRefIds) ||
-      value.gitNativeUIRefSelectionCount !== value.gitNativeUIRefIds.length ||
-      !value.gitNativeUIRefIds.includes(String(value.gitNativeUIRefId))
+      !isBranchDeletionSelection(value.refIds) ||
+      value.refSelectionCount !== value.refIds.length ||
+      !value.refIds.includes(String(value.refId))
     )
       return null;
 
     return parseRequest({
       requestId: 'branch-menu',
-      repositoryId: value.gitNativeUIRepositoryId,
-      generation: value.gitNativeUIGeneration,
+      repositoryId: value.repositoryId,
+      generation: value.generation,
       body: {
         kind: 'action',
-        action: { kind, refIds: value.gitNativeUIRefIds },
+        action: { kind, refIds: value.refIds },
       },
     });
   }
 
   if (
-    (value.gitNativeUIRefSelectionCount !== undefined &&
-      value.gitNativeUIRefSelectionCount !== 1) ||
-    (value.gitNativeUIRefIds !== undefined &&
-      (!Array.isArray(value.gitNativeUIRefIds) ||
-        value.gitNativeUIRefIds.length !== 1 ||
-        value.gitNativeUIRefIds[0] !== value.gitNativeUIRefId))
+    (value.refSelectionCount !== undefined && value.refSelectionCount !== 1) ||
+    (value.refIds !== undefined &&
+      (!Array.isArray(value.refIds) ||
+        value.refIds.length !== 1 ||
+        value.refIds[0] !== value.refId))
   )
     return null;
 
   return parseRequest({
     requestId: 'branch-menu',
-    repositoryId: value.gitNativeUIRepositoryId,
-    generation: value.gitNativeUIGeneration,
-    body: { kind: 'action', action: { kind, refId: value.gitNativeUIRefId } },
+    repositoryId: value.repositoryId,
+    generation: value.generation,
+    body: { kind: 'action', action: { kind, refId: value.refId } },
   });
 }
 
@@ -167,49 +166,48 @@ export function commitMenuRequest(
     kind === 'squash-commits' ||
     kind === 'drop-commits' ||
     (kind === 'cherry-pick' &&
-      value.gitNativeUICommitSelectionCount !== 1 &&
-      value.gitNativeUICommitShas !== undefined)
+      value.commitSelectionCount !== 1 &&
+      value.commitShas !== undefined)
   ) {
     if (
-      !Array.isArray(value.gitNativeUICommitShas) ||
-      value.gitNativeUICommitSelectionCount !==
-        value.gitNativeUICommitShas.length
+      !Array.isArray(value.commitShas) ||
+      value.commitSelectionCount !== value.commitShas.length
     )
       return null;
 
     return parseRequest({
       requestId: 'commit-menu',
-      repositoryId: value.gitNativeUIRepositoryId,
-      generation: value.gitNativeUIGeneration,
+      repositoryId: value.repositoryId,
+      generation: value.generation,
       body: {
         kind: 'action',
         action: {
           kind: kind === 'cherry-pick' ? 'cherry-pick-commits' : kind,
-          shas: value.gitNativeUICommitShas,
-          activeSha: value.gitNativeUICommitSha,
+          shas: value.commitShas,
+          activeSha: value.commitSha,
         },
       },
     });
   }
 
   if (
-    value.gitNativeUICommitSelectionCount !== undefined &&
-    value.gitNativeUICommitSelectionCount !== 1
+    value.commitSelectionCount !== undefined &&
+    value.commitSelectionCount !== 1
   )
     return null;
   if (
-    value.gitNativeUICommitShas !== undefined &&
-    (!Array.isArray(value.gitNativeUICommitShas) ||
-      value.gitNativeUICommitShas.length !== 1 ||
-      value.gitNativeUICommitShas[0] !== value.gitNativeUICommitSha)
+    value.commitShas !== undefined &&
+    (!Array.isArray(value.commitShas) ||
+      value.commitShas.length !== 1 ||
+      value.commitShas[0] !== value.commitSha)
   )
     return null;
 
   return parseRequest({
     requestId: 'commit-menu',
-    repositoryId: value.gitNativeUIRepositoryId,
-    generation: value.gitNativeUIGeneration,
-    body: { kind: 'action', action: { kind, sha: value.gitNativeUICommitSha } },
+    repositoryId: value.repositoryId,
+    generation: value.generation,
+    body: { kind: 'action', action: { kind, sha: value.commitSha } },
   });
 }
 
@@ -328,28 +326,27 @@ export function worktreeMenuRequest(
 ): Request<RequestBody> | null {
   if (
     !isRecord(value) ||
-    !isWorktreeSelection(value.gitNativeUIWorktreeIds) ||
-    value.gitNativeUIWorktreeSelectionCount !==
-      value.gitNativeUIWorktreeIds.length ||
-    !value.gitNativeUIWorktreeIds.includes(String(value.gitNativeUIWorktreeId))
+    !isWorktreeSelection(value.worktreeIds) ||
+    value.worktreeSelectionCount !== value.worktreeIds.length ||
+    !value.worktreeIds.includes(String(value.worktreeId))
   )
     return null;
-  if (kind !== 'delete-worktrees' && value.gitNativeUIWorktreeIds.length !== 1)
+  if (kind !== 'delete-worktrees' && value.worktreeIds.length !== 1)
     return null;
 
   return parseRequest({
     requestId: 'worktree-menu',
-    repositoryId: value.gitNativeUIRepositoryId,
-    generation: value.gitNativeUIGeneration,
+    repositoryId: value.repositoryId,
+    generation: value.generation,
     body:
       kind === 'delete-worktrees'
         ? {
             kind: 'action',
-            action: { kind, worktreeIds: value.gitNativeUIWorktreeIds },
+            action: { kind, worktreeIds: value.worktreeIds },
           }
         : {
             kind: 'open-worktree',
-            worktreeId: value.gitNativeUIWorktreeId,
+            worktreeId: value.worktreeId,
             newWindow: kind === 'open-worktree-new',
           },
   });

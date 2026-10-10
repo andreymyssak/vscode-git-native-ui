@@ -2,6 +2,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { extensionIdentity } from '../../shared/extension-identity';
 import type { GitAction } from '../../shared/model';
 import type { GitApiAccess } from './api';
 import type { GitCli } from './cli';
@@ -172,7 +173,9 @@ export async function editCommitMessage(
     }
   }
 
-  const directory = await mkdtemp(join(tmpdir(), 'git-native-ui-message-'));
+  const directory = await mkdtemp(
+    join(tmpdir(), `${extensionIdentity.name}-message-`),
+  );
   const before = await readCommit(cli, id, action.sha);
 
   try {

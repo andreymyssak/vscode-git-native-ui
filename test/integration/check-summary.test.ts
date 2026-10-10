@@ -13,7 +13,7 @@ test.each([
 ])(
   'the summary command reports $status and exits with $exit',
   async ({ status, exit, label }) => {
-    const root = await mkdtemp(join(tmpdir(), 'git-native-ui-check-summary-'));
+    const root = await mkdtemp(join(tmpdir(), 'git-ui-native-check-summary-'));
     const path = join(root, 'summary.md');
 
     try {

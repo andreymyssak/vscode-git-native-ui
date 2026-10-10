@@ -2,8 +2,6 @@
 
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
-[View on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=andreymyssak.git-ui-native)
-
 **Finally, a proper Git UI for VS Code.**
 
 Git UI is a free, focused alternative to [GitLens](https://github.com/gitkraken/vscode-gitlens) for browsing history, managing branches and worktrees, and inspecting changes. It uses familiar VS Code styling, follows your chosen theme, and opens file comparisons in VS Code's native diff editor.
@@ -12,7 +10,7 @@ Inspired by the Git tool window in JetBrains' [IntelliJ IDEA Community Edition](
 
 **Completely free and open source. No subscriptions or paid tiers.**
 
-![Git UI in VS Code's Dark Modern theme, showing branches, a commit graph, and changed files](assets/readme/log-dark.png)
+![Demo of commit selection, opening a changed file in VS Code's diff editor, history search, and worktrees in Git UI](assets/readme/browsing.gif)
 
 ## What you can do
 
@@ -24,21 +22,19 @@ Inspired by the Git tool window in JetBrains' [IntelliJ IDEA Community Edition](
 
 Branch, commit, and worktree lists support multiple selection. Use VS Code's Source Control and editors to resolve conflicts.
 
-## See it in action
+## Fits your VS Code theme
 
-Select commits, inspect merge parents, open changed files in the diff editor, filter history, and switch to worktrees:
+The panel follows your VS Code theme. Here it is in Dark Modern:
 
-![Demo of commit selection, opening a changed file in VS Code's diff editor, history search, and worktrees in Git UI](assets/readme/browsing.gif)
+![Git UI in VS Code's Dark Modern theme, showing branches, a commit graph, and changed files](assets/readme/log-dark.png)
 
-The panel follows your VS Code theme. Here it is in Light Modern:
+And in Light Modern:
 
 ![Git UI in VS Code's Light Modern theme](assets/readme/log-light.png)
 
-## Get started
+## Open Git UI
 
-1. Open a local Git repository in VS Code.
-2. Run **View: Open View...** from the Command Palette and choose **Git UI**.
-3. Select a commit, or double-click a branch to browse its history. Browsing a branch keeps your checkout unchanged.
+After installing Git UI, open a Git repository in VS Code. Show the bottom panel and select the **Git UI** tab. Your branches and commit history load automatically.
 
 ## Your repositories stay yours
 

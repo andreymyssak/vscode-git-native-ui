@@ -45,11 +45,11 @@ test('batch deletion accepts distinct branch IDs and rejects supplied write targ
 });
 test('a multi-branch context cannot run a single-branch command', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUIRefId: 'refs/heads/alpha',
-    gitNativeUIRefSelectionCount: 2,
-    gitNativeUIRefIds: ['refs/heads/alpha', 'refs/heads/beta'],
+    repositoryId: 'one',
+    generation: 1,
+    refId: 'refs/heads/alpha',
+    refSelectionCount: 2,
+    refIds: ['refs/heads/alpha', 'refs/heads/beta'],
   };
 
   expect(branchMenuRequest('checkout', context)).toBe(null);
@@ -57,21 +57,21 @@ test('a multi-branch context cannot run a single-branch command', () => {
 });
 test('native batch request requires matching count and active membership', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUIRefId: 'refs/heads/alpha',
-    gitNativeUIRefSelectionCount: 2,
-    gitNativeUIRefIds: ['refs/heads/alpha', 'refs/heads/beta'],
+    repositoryId: 'one',
+    generation: 1,
+    refId: 'refs/heads/alpha',
+    refSelectionCount: 2,
+    refIds: ['refs/heads/alpha', 'refs/heads/beta'],
   };
 
   expect(branchMenuRequest('delete-branches', context)?.body).toStrictEqual({
     kind: 'action',
-    action: { kind: 'delete-branches', refIds: context.gitNativeUIRefIds },
+    action: { kind: 'delete-branches', refIds: context.refIds },
   });
   for (const override of [
-    { gitNativeUIRefSelectionCount: 3 },
-    { gitNativeUIRefId: 'refs/heads/other' },
-    { gitNativeUIRefIds: ['refs/heads/alpha', 'refs/heads/alpha'] },
+    { refSelectionCount: 3 },
+    { refId: 'refs/heads/other' },
+    { refIds: ['refs/heads/alpha', 'refs/heads/alpha'] },
   ])
     expect(
       branchMenuRequest('delete-branches', { ...context, ...override }),
@@ -81,9 +81,9 @@ test('native batch request requires matching count and active membership', () =>
   assert.ok(
     branchMenuRequest('delete-branches', {
       ...context,
-      gitNativeUIRefId: refIds[0],
-      gitNativeUIRefSelectionCount: refIds.length,
-      gitNativeUIRefIds: refIds,
+      refId: refIds[0],
+      refSelectionCount: refIds.length,
+      refIds: refIds,
     }),
   );
 });

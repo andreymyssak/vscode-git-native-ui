@@ -6,13 +6,14 @@ import { expect, type Frame } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser, refreshNativeHistory } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('native graph interactions', () => {
   it('marks the checkout and opens details through graph dots without a hover popup', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui graph hover ',
+      prefix: 'git-ui-native graph hover ',
     });
     const rootUri = vscode.Uri.file(fixture.root);
 
@@ -32,7 +33,7 @@ describe('native graph interactions', () => {
 
       await access.api.openRepository(rootUri);
       await access.repository(rootUri.toString()).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       let frame: Frame | undefined;
 

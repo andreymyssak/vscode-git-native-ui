@@ -204,9 +204,9 @@ test('worktree range menus retain targets and icon tooltips appear promptly with
   await beta.click({ button: 'right' });
   const context = JSON.parse((await beta.getAttribute('data-vscode-context'))!);
 
-  expect(context.gitNativeUIWorktreeIds).toEqual(['alpha', 'beta']);
-  expect(context.gitNativeUIWorktreeSelectionCount).toBe(2);
-  expect(context.gitNativeUIWorktreeCanOpen).toBe(false);
+  expect(context.worktreeIds).toEqual(['alpha', 'beta']);
+  expect(context.worktreeSelectionCount).toBe(2);
+  expect(context.worktreeCanOpen).toBe(false);
   await beta.press('Delete');
   expect((await page.evaluate(() => window.__requests)).at(-1)?.body).toEqual({
     kind: 'action',

@@ -182,8 +182,7 @@ test('Shift selects a range for deletion, context keeps that group, and current 
 
   await user.click(current);
   expect(
-    JSON.parse(current.getAttribute('data-vscode-context')!)
-      .gitNativeUIWorktreeCanOpen,
+    JSON.parse(current.getAttribute('data-vscode-context')!).worktreeCanOpen,
   ).toBe(false);
   await user.keyboard('{Enter}');
   expect(request).not.toHaveBeenCalled();
@@ -197,8 +196,7 @@ test('Shift selects a range for deletion, context keeps that group, and current 
   expect(alpha).toHaveAttribute('aria-selected', 'true');
   expect(beta).toHaveAttribute('aria-selected', 'true');
   expect(
-    JSON.parse(beta.getAttribute('data-vscode-context')!)
-      .gitNativeUIWorktreeIds,
+    JSON.parse(beta.getAttribute('data-vscode-context')!).worktreeIds,
   ).toEqual(['alpha', 'beta']);
   await user.keyboard('{Delete}');
   expect(request).toHaveBeenLastCalledWith({

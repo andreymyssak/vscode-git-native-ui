@@ -41,13 +41,9 @@ for (const reverse of [false, true])
         JSON.parse((await middle.getAttribute('data-vscode-context')) ?? '{}'),
       )
       .toMatchObject({
-        gitNativeUIRefSelectionCount: 3,
-        gitNativeUIRefIds: [
-          'refs/heads/alpha',
-          'refs/heads/beta',
-          'refs/heads/gamma',
-        ],
-        gitNativeUIRefsCanDelete: true,
+        refSelectionCount: 3,
+        refIds: ['refs/heads/alpha', 'refs/heads/beta', 'refs/heads/gamma'],
+        refsCanDelete: true,
       });
     await page
       .locator('[data-ref="refs/heads/main"]')
@@ -73,7 +69,7 @@ test('branch range prunes search-hidden targets and disables current-branch dele
     .poll(
       async () =>
         JSON.parse((await beta.getAttribute('data-vscode-context')) ?? '{}')
-          .gitNativeUIRefsCanDelete,
+          .refsCanDelete,
     )
     .toBe(false);
   await page.getByRole('searchbox', { name: 'Branch or tag' }).fill('beta');
@@ -82,7 +78,7 @@ test('branch range prunes search-hidden targets and disables current-branch dele
     .poll(
       async () =>
         JSON.parse((await beta.getAttribute('data-vscode-context')) ?? '{}')
-          .gitNativeUIRefIds,
+          .refIds,
     )
     .toEqual(['refs/heads/beta']);
   await page.getByRole('searchbox', { name: 'Branch or tag' }).fill('');
@@ -158,8 +154,8 @@ test('a branch range containing a remote disables batch deletion', async ({
     (await remote.getAttribute('data-vscode-context'))!,
   );
 
-  expect(context.gitNativeUIRefSelectionCount).toBeGreaterThan(1);
-  expect(context.gitNativeUIRefsCanDelete).toBe(false);
+  expect(context.refSelectionCount).toBeGreaterThan(1);
+  expect(context.refsCanDelete).toBe(false);
 });
 
 test('repository switches do not resurrect a previous branch range', async ({
@@ -202,7 +198,7 @@ test('native integration context permits other local/remote branches and exclude
       .poll(
         async () =>
           JSON.parse((await item.getAttribute('data-vscode-context')) ?? '{}')
-            .gitNativeUIRefCanIntegrate,
+            .refCanIntegrate,
       )
       .toBe(expected);
   }
@@ -216,7 +212,7 @@ test('native integration context permits other local/remote branches and exclude
           (await page
             .locator('[data-ref="refs/heads/topic"]')
             .getAttribute('data-vscode-context')) ?? '{}',
-        ).gitNativeUIRefCanIntegrate,
+        ).refCanIntegrate,
     )
     .toBe(false);
   expect(
@@ -239,11 +235,11 @@ test('right-click selects the target and exposes a native branch menu context', 
 
   expect(context).toMatchObject({
     webviewSection: 'branch',
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIRefId: 'refs/heads/topic',
-    gitNativeUIRefKind: 'local',
-    gitNativeUIRefCurrent: false,
-    gitNativeUIGeneration: 1,
+    repositoryId: 'one',
+    refId: 'refs/heads/topic',
+    refKind: 'local',
+    refCurrent: false,
+    generation: 1,
     preventDefaultContextMenuItems: true,
   });
   await expect(topic).toBeFocused();
@@ -277,10 +273,10 @@ test('a saved empty selection defaults to the current local branch', async ({
   page,
 }) => {
   await page.evaluate(() => {
-    const saved = JSON.parse(sessionStorage.getItem('git-native-ui-state')!);
+    const saved = JSON.parse(sessionStorage.getItem('git-ui-native-state')!);
 
     saved.selectedRefId = null;
-    sessionStorage.setItem('git-native-ui-state', JSON.stringify(saved));
+    sessionStorage.setItem('git-ui-native-state', JSON.stringify(saved));
   });
   await page.reload();
   await expect(

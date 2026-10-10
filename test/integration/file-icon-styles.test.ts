@@ -17,7 +17,7 @@ function deferred() {
 }
 
 test('live theme stylesheet storage retains only the two latest saved files', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui-icon-styles-'));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native-icon-styles-'));
   const styles = new FileIconStyles({
     write: (name, css) => writeFile(join(root, name), css),
     remove: (name) => rm(join(root, name), { force: true }),
@@ -48,7 +48,7 @@ test('live theme stylesheet storage retains only the two latest saved files', as
   }
 });
 test('a late stylesheet write is deleted after a newer theme starts', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui-icon-styles-'));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native-icon-styles-'));
   let finish: (() => void) | undefined;
   const styles = new FileIconStyles({
     write: async (name, css) => {
@@ -83,7 +83,7 @@ test('a late stylesheet write is deleted after a newer theme starts', async () =
   }
 });
 test('an older pending publication cannot delete the newer stylesheet awaiting delivery', async (t) => {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui-icon-styles-'));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native-icon-styles-'));
   const styles = new FileIconStyles({
     write: (name, css) => writeFile(join(root, name), css),
     remove: (name) => rm(join(root, name), { force: true }),

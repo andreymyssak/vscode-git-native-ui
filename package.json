@@ -156,7 +156,7 @@
     "vscode.git"
   ],
   "activationEvents": [
-    "onView:gitNativeUI.log"
+    "onView:gitUI.log"
   ],
   "categories": [
     "SCM Providers"
@@ -165,16 +165,16 @@
     "viewsContainers": {
       "panel": [
         {
-          "id": "gitNativeUI",
+          "id": "gitUI",
           "title": "Git UI",
           "icon": "assets/git-ui-native.svg"
         }
       ]
     },
     "views": {
-      "gitNativeUI": [
+      "gitUI": [
         {
-          "id": "gitNativeUI.log",
+          "id": "gitUI.log",
           "name": "Git UI",
           "type": "webview"
         }
@@ -182,283 +182,283 @@
     },
     "commands": [
       {
-        "command": "gitNativeUI.merge-branch",
+        "command": "gitUI.merge-branch",
         "title": "Merge Selected Branch into Current Branch",
-        "enablement": "gitNativeUIRefCanIntegrate"
+        "enablement": "refCanIntegrate"
       },
       {
-        "command": "gitNativeUI.rebase-branch",
+        "command": "gitUI.rebase-branch",
         "title": "Rebase Current Branch on Selected Branch",
-        "enablement": "gitNativeUIRefCanIntegrate"
+        "enablement": "refCanIntegrate"
       },
       {
-        "command": "gitNativeUI.create-worktree",
+        "command": "gitUI.create-worktree",
         "title": "New Worktree from Selected Branch…",
-        "enablement": "gitNativeUIRefKind != tag"
+        "enablement": "refKind != tag"
       },
       {
-        "command": "gitNativeUI.update-branch",
+        "command": "gitUI.update-branch",
         "title": "Update Branch",
-        "enablement": "gitNativeUIRefCanUpdate"
+        "enablement": "refCanUpdate"
       },
       {
-        "command": "gitNativeUI.checkout",
+        "command": "gitUI.checkout",
         "title": "Checkout",
-        "enablement": "gitNativeUIRefKind != tag && !gitNativeUIRefCurrent"
+        "enablement": "refKind != tag && !refCurrent"
       },
       {
-        "command": "gitNativeUI.create-branch",
+        "command": "gitUI.create-branch",
         "title": "New Branch from Here…"
       },
       {
-        "command": "gitNativeUI.rename-branch",
+        "command": "gitUI.rename-branch",
         "title": "Rename…",
-        "enablement": "gitNativeUIRefKind == local"
+        "enablement": "refKind == local"
       },
       {
-        "command": "gitNativeUI.delete-branch",
+        "command": "gitUI.delete-branch",
         "title": "Delete",
-        "enablement": "gitNativeUIRefKind == local && !gitNativeUIRefCurrent"
+        "enablement": "refKind == local && !refCurrent"
       },
       {
-        "command": "gitNativeUI.delete-branches",
+        "command": "gitUI.delete-branches",
         "title": "Delete Selected Branches",
-        "enablement": "gitNativeUIRefsCanDelete && gitNativeUIRefSelectionCount > 1"
+        "enablement": "refsCanDelete && refSelectionCount > 1"
       },
       {
-        "command": "gitNativeUI.copy-branch",
+        "command": "gitUI.copy-branch",
         "title": "Copy Branch Name"
       },
       {
-        "command": "gitNativeUI.copy-sha",
+        "command": "gitUI.copy-sha",
         "title": "Copy Revision Number"
       },
       {
-        "command": "gitNativeUI.cherry-pick",
+        "command": "gitUI.cherry-pick",
         "title": "Cherry-Pick",
-        "enablement": "gitNativeUICommitCanCherryPick"
+        "enablement": "commitCanCherryPick"
       },
       {
-        "command": "gitNativeUI.edit-commit-message",
+        "command": "gitUI.edit-commit-message",
         "title": "Edit Commit Message…",
-        "enablement": "gitNativeUICommitCanEdit"
+        "enablement": "commitCanEdit"
       },
       {
-        "command": "gitNativeUI.squash-commits",
+        "command": "gitUI.squash-commits",
         "title": "Squash Commits…",
-        "enablement": "gitNativeUICommitCanSquash"
+        "enablement": "commitCanSquash"
       },
       {
-        "command": "gitNativeUI.branch-from-commit",
+        "command": "gitUI.branch-from-commit",
         "title": "New Branch…"
       },
       {
-        "command": "gitNativeUI.tag-from-commit",
+        "command": "gitUI.tag-from-commit",
         "title": "New Tag…"
       },
       {
-        "command": "gitNativeUI.drop-commits",
+        "command": "gitUI.drop-commits",
         "title": "Drop Commits…",
-        "enablement": "gitNativeUICommitCanDrop"
+        "enablement": "commitCanDrop"
       },
       {
-        "command": "gitNativeUI.open-worktree-new",
+        "command": "gitUI.open-worktree-new",
         "title": "Open in New Window",
-        "enablement": "gitNativeUIWorktreeCanOpen"
+        "enablement": "worktreeCanOpen"
       },
       {
-        "command": "gitNativeUI.open-worktree-current",
+        "command": "gitUI.open-worktree-current",
         "title": "Open in This Window",
-        "enablement": "gitNativeUIWorktreeCanOpen"
+        "enablement": "worktreeCanOpen"
       },
       {
-        "command": "gitNativeUI.delete-worktrees",
+        "command": "gitUI.delete-worktrees",
         "title": "Delete",
-        "enablement": "gitNativeUIWorktreeCanDelete"
+        "enablement": "worktreeCanDelete"
       }
     ],
     "menus": {
       "webview/context": [
         {
-          "command": "gitNativeUI.rebase-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.rebase-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "2_integrate@1"
         },
         {
-          "command": "gitNativeUI.merge-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.merge-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "2_integrate@2"
         },
         {
-          "command": "gitNativeUI.create-worktree",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.create-worktree",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "2_worktree@1"
         },
         {
-          "command": "gitNativeUI.checkout",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.checkout",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "1_branch@1"
         },
         {
-          "command": "gitNativeUI.create-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.create-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "1_branch@2"
         },
         {
-          "command": "gitNativeUI.update-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.update-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "1_branch@3"
         },
         {
-          "command": "gitNativeUI.rename-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.rename-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "2_manage@1"
         },
         {
-          "command": "gitNativeUI.delete-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.delete-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "2_manage@2"
         },
         {
-          "command": "gitNativeUI.delete-branches",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount > 1",
+          "command": "gitUI.delete-branches",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount > 1",
           "group": "2_manage@2"
         },
         {
-          "command": "gitNativeUI.copy-branch",
-          "when": "webviewId == gitNativeUI.log && webviewSection == branch && gitNativeUIRefSelectionCount == 1",
+          "command": "gitUI.copy-branch",
+          "when": "webviewId == gitUI.log && webviewSection == branch && refSelectionCount == 1",
           "group": "3_copy@1"
         },
         {
-          "command": "gitNativeUI.copy-sha",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "command": "gitUI.copy-sha",
+          "when": "webviewId == gitUI.log && webviewSection == commit && commitSelectionCount == 1",
           "group": "1_commit@1"
         },
         {
-          "command": "gitNativeUI.cherry-pick",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit",
+          "command": "gitUI.cherry-pick",
+          "when": "webviewId == gitUI.log && webviewSection == commit",
           "group": "2_commit@1"
         },
         {
-          "command": "gitNativeUI.edit-commit-message",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "command": "gitUI.edit-commit-message",
+          "when": "webviewId == gitUI.log && webviewSection == commit && commitSelectionCount == 1",
           "group": "3_commit@1"
         },
         {
-          "command": "gitNativeUI.squash-commits",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount > 1",
+          "command": "gitUI.squash-commits",
+          "when": "webviewId == gitUI.log && webviewSection == commit && commitSelectionCount > 1",
           "group": "3_commit@1"
         },
         {
-          "command": "gitNativeUI.branch-from-commit",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "command": "gitUI.branch-from-commit",
+          "when": "webviewId == gitUI.log && webviewSection == commit && commitSelectionCount == 1",
           "group": "4_create@1"
         },
         {
-          "command": "gitNativeUI.tag-from-commit",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit && gitNativeUICommitSelectionCount == 1",
+          "command": "gitUI.tag-from-commit",
+          "when": "webviewId == gitUI.log && webviewSection == commit && commitSelectionCount == 1",
           "group": "4_create@2"
         },
         {
-          "command": "gitNativeUI.drop-commits",
-          "when": "webviewId == gitNativeUI.log && webviewSection == commit",
+          "command": "gitUI.drop-commits",
+          "when": "webviewId == gitUI.log && webviewSection == commit",
           "group": "3_commit@2"
         },
         {
-          "command": "gitNativeUI.open-worktree-new",
-          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "command": "gitUI.open-worktree-new",
+          "when": "webviewId == gitUI.log && webviewSection == worktree",
           "group": "1_worktree@1"
         },
         {
-          "command": "gitNativeUI.open-worktree-current",
-          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "command": "gitUI.open-worktree-current",
+          "when": "webviewId == gitUI.log && webviewSection == worktree",
           "group": "1_worktree@2"
         },
         {
-          "command": "gitNativeUI.delete-worktrees",
-          "when": "webviewId == gitNativeUI.log && webviewSection == worktree",
+          "command": "gitUI.delete-worktrees",
+          "when": "webviewId == gitUI.log && webviewSection == worktree",
           "group": "1_worktree@3"
         }
       ],
       "commandPalette": [
         {
-          "command": "gitNativeUI.merge-branch",
+          "command": "gitUI.merge-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.rebase-branch",
+          "command": "gitUI.rebase-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.create-worktree",
+          "command": "gitUI.create-worktree",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.checkout",
+          "command": "gitUI.checkout",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.create-branch",
+          "command": "gitUI.create-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.rename-branch",
+          "command": "gitUI.rename-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.delete-branch",
+          "command": "gitUI.delete-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.delete-branches",
+          "command": "gitUI.delete-branches",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.copy-branch",
+          "command": "gitUI.copy-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.copy-sha",
+          "command": "gitUI.copy-sha",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.cherry-pick",
+          "command": "gitUI.cherry-pick",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.edit-commit-message",
+          "command": "gitUI.edit-commit-message",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.squash-commits",
+          "command": "gitUI.squash-commits",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.update-branch",
+          "command": "gitUI.update-branch",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.branch-from-commit",
+          "command": "gitUI.branch-from-commit",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.tag-from-commit",
+          "command": "gitUI.tag-from-commit",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.drop-commits",
+          "command": "gitUI.drop-commits",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.open-worktree-new",
+          "command": "gitUI.open-worktree-new",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.open-worktree-current",
+          "command": "gitUI.open-worktree-current",
           "when": "false"
         },
         {
-          "command": "gitNativeUI.delete-worktrees",
+          "command": "gitUI.delete-worktrees",
           "when": "false"
         }
       ]

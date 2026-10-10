@@ -5,6 +5,8 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import type { PluginOptions } from 'babel-plugin-react-compiler';
 import { defineConfig } from 'vite';
 
+import { extensionDefines } from './scripts/shared/extension.ts';
+
 const compilerOptions = {
   target: '19',
   panicThreshold: 'all',
@@ -24,6 +26,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   define: {
+    ...extensionDefines,
     __DEV__: String(mode !== 'production'),
     'process.env.NODE_ENV': JSON.stringify(
       mode === 'production' ? 'production' : 'development',

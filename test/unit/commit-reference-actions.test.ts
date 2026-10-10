@@ -26,11 +26,11 @@ for (const kind of ['branch-from-commit', 'tag-from-commit'] as const) {
       authorEmail: null,
     });
     const context = {
-      gitNativeUIRepositoryId: 'repo',
-      gitNativeUIGeneration: 1,
-      gitNativeUICommitSha: sha,
-      gitNativeUICommitShas: [sha],
-      gitNativeUICommitSelectionCount: 1,
+      repositoryId: 'repo',
+      generation: 1,
+      commitSha: sha,
+      commitShas: [sha],
+      commitSelectionCount: 1,
     };
     const request = commitMenuRequest(kind, context);
 
@@ -64,8 +64,8 @@ for (const kind of ['branch-from-commit', 'tag-from-commit'] as const) {
     expect(
       commitMenuRequest(kind, {
         ...context,
-        gitNativeUICommitShas: [sha, 'b'.repeat(40)],
-        gitNativeUICommitSelectionCount: 2,
+        commitShas: [sha, 'b'.repeat(40)],
+        commitSelectionCount: 2,
       }),
     ).toBe(null);
   });

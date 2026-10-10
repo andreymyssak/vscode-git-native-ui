@@ -12,7 +12,7 @@ import { createOperations } from '../../src/extension/git/operations';
 let root: string;
 
 beforeAll(async () => {
-  root = await mkdtemp(join(tmpdir(), 'git-native-ui-update-state-'));
+  root = await mkdtemp(join(tmpdir(), 'git-ui-native-update-state-'));
 });
 afterAll(async () => {
   if (root) await rm(root, { recursive: true, force: true });
@@ -447,7 +447,7 @@ test('Update rejects a symbolic local branch rather than moving its checked-out 
 test('Update refuses a branch owned by a detached bisect in another worktree', async (t) => {
   const f = updateFixture();
   const directory = await mkdtemp(
-    join(tmpdir(), 'git-native-ui-update-bisect-'),
+    join(tmpdir(), 'git-ui-native-update-bisect-'),
   );
 
   t.onTestFinished(() => rm(directory, { recursive: true, force: true }));

@@ -17,6 +17,7 @@ import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
 import type { SquashRuntime } from '../../src/extension/git/squash-editor';
+import { extensionIdentity } from '../../src/shared/extension-identity';
 import type { CommitRangeTarget } from '../../src/shared/model';
 import type { Fixture } from '../fixtures/repository';
 import { createFixture } from '../fixtures/repository';
@@ -33,11 +34,11 @@ describe('queued squash through the installed Git API and bundled runtime', () =
 
   beforeEach(async () => {
     assert.ok(process.versions.electron, 'exercise the actual VS Code host');
-    fixture = await createFixture({ prefix: 'git-native-ui native squash ü ' });
-    owned = await mkdtemp(join(tmpdir(), 'git-native-ui squash storage ü '));
+    fixture = await createFixture({ prefix: 'git-ui-native native squash ü ' });
+    owned = await mkdtemp(join(tmpdir(), 'git-ui-native squash storage ü '));
     storageDirectory = join(owned, 'recovery');
     const extension = vscode.extensions.all.find(
-      (entry) => entry.packageJSON.name === 'git-ui-native',
+      (entry) => entry.packageJSON.name === extensionIdentity.name,
     );
 
     assert.ok(extension);

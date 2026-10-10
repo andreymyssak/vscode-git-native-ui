@@ -13,6 +13,7 @@ import type { GitAdapter } from '../../src/extension/git/adapter';
 import { createGitAdapter } from '../../src/extension/git/adapter';
 import { getGitApi } from '../../src/extension/git/api';
 import { openWorktree } from '../../src/extension/native/worktrees';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import {
   nativeBrowser,
   refreshNativeHistory,
@@ -22,7 +23,7 @@ import { createFixture } from '../fixtures/repository';
 
 describe('existing worktrees', () => {
   it('current marker follows root rather than main flag and detached worktree is labeled', async () => {
-    const f = await createFixture({ prefix: 'git-native-ui worktrees ü ' });
+    const f = await createFixture({ prefix: 'git-ui-native worktrees ü ' });
     let adapter: GitAdapter | undefined;
     const linked = f.root + '.linked';
     const detached = f.root + '.detached';
@@ -89,7 +90,7 @@ describe('existing worktrees', () => {
 
   it('native worktrees create through the plus button and preserve selection after refreshing', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui worktree table ',
+      prefix: 'git-ui-native worktree table ',
     });
     const linked = fixture.root + '.linked';
     const second = fixture.root + '.second';
@@ -104,7 +105,7 @@ describe('existing worktrees', () => {
 
       await access.api.openRepository(uri);
       await access.repository(uri.toString()).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
 
       frame = await selectNativeRepository(uri.toString());
@@ -201,7 +202,7 @@ describe('existing worktrees', () => {
   });
   it('native creation picker cancels without changes and Terminal return paints only Worktrees', async () => {
     const f = await createFixture({
-      prefix: 'git-native-ui worktree lifecycle ',
+      prefix: 'git-ui-native worktree lifecycle ',
     });
     const linked = f.root + '.linked';
     let frame: Frame | undefined;
@@ -219,7 +220,7 @@ describe('existing worktrees', () => {
       await vscode.window.showTextDocument(
         vscode.Uri.joinPath(uri, 'sample.txt'),
       );
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       const findFrame = async () => {
         for (const context of browser.contexts())
@@ -320,7 +321,7 @@ describe('existing worktrees', () => {
         workbench.locator('.terminal-wrapper').first(),
       ).toBeVisible();
       selections.length = 0;
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await expect
         .poll(async () => {
           frame = await findFrame();
@@ -391,7 +392,7 @@ describe('existing worktrees', () => {
 
   it('native worktree menus protect the current checkout and delete a Shift-selected group after confirmation', async () => {
     const f = await createFixture({
-      prefix: 'git-native-ui native worktree deletion ',
+      prefix: 'git-ui-native native worktree deletion ',
     });
     const alpha = f.root + '.alpha';
     const beta = f.root + '.beta';
@@ -416,7 +417,7 @@ describe('existing worktrees', () => {
       await vscode.window.showTextDocument(
         vscode.Uri.joinPath(uri, 'sample.txt'),
       );
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
 
       frame = await selectNativeRepository(uri.toString());
@@ -434,8 +435,8 @@ describe('existing worktrees', () => {
         (await current.getAttribute('data-vscode-context'))!,
       );
 
-      assert.equal(currentContext.gitNativeUIWorktreeCanOpen, false);
-      assert.equal(currentContext.gitNativeUIWorktreeCanDelete, false);
+      assert.equal(currentContext.worktreeCanOpen, false);
+      assert.equal(currentContext.worktreeCanDelete, false);
       const row = (name: string) =>
         frame!
           .locator('[data-worktree]')

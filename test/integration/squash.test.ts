@@ -421,13 +421,13 @@ test('a rejecting pre-rebase hook is attempted once and never falls back or rewr
 
     await writeFile(
       hook,
-      '#!/bin/sh\nprintf "attempt\\n" >> "$GIT_NATIVE_UI_TEST_HOOK_RECORD"\nexit 1\n',
+      '#!/bin/sh\nprintf "attempt\\n" >> "$GIT_UI_TEST_HOOK_RECORD"\nexit 1\n',
     );
     await chmod(hook, 0o755);
     await fixture.runGit(['config', 'core.hooksPath', hookDirectory]);
-    const previous = process.env.GIT_NATIVE_UI_TEST_HOOK_RECORD;
+    const previous = process.env.GIT_UI_TEST_HOOK_RECORD;
 
-    process.env.GIT_NATIVE_UI_TEST_HOOK_RECORD = record;
+    process.env.GIT_UI_TEST_HOOK_RECORD = record;
     try {
       const before = await fixture.state();
       const { run, action } = operation(fixture);
@@ -440,9 +440,8 @@ test('a rejecting pre-rebase hook is attempted once and never falls back or rewr
         [],
       );
     } finally {
-      if (previous === undefined)
-        delete process.env.GIT_NATIVE_UI_TEST_HOOK_RECORD;
-      else process.env.GIT_NATIVE_UI_TEST_HOOK_RECORD = previous;
+      if (previous === undefined) delete process.env.GIT_UI_TEST_HOOK_RECORD;
+      else process.env.GIT_UI_TEST_HOOK_RECORD = previous;
     }
   });
 });

@@ -5,7 +5,7 @@ import type { Fixture } from './repository';
 import { createFixture } from './repository';
 
 export async function createLargeHistory(count = 30000): Promise<Fixture> {
-  const fixture = await createFixture({ prefix: 'git-native-ui 30k ' });
+  const fixture = await createFixture({ prefix: 'git-ui-native 30k ' });
 
   try {
     const base = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();

@@ -2,6 +2,8 @@ import { execFile } from 'node:child_process';
 import { isAbsolute, win32 } from 'node:path';
 import { promisify } from 'node:util';
 
+import { SQUASH_HELPER_ID } from '../../shared/extension-identity';
+
 /** The executable is VS Code's process.execPath; the helper belongs to its installed extension. */
 export interface SquashRuntime {
   executable: string;
@@ -23,7 +25,7 @@ export interface SquashEditors {
   GIT_EDITOR: string;
 }
 
-export const SQUASH_HELPER_ID = 'git-native-ui-squash-helper';
+export { SQUASH_HELPER_ID } from '../../shared/extension-identity';
 
 const execute = promisify(execFile);
 

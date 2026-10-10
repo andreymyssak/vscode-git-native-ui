@@ -187,14 +187,14 @@ for (const palette of [
       (await current.getAttribute('data-vscode-context'))!,
     );
 
-    expect(currentContext.gitNativeUIRefCanUpdate).toBe(true);
+    expect(currentContext.refCanUpdate).toBe(true);
     await page.getByRole('treeitem', { name: 'topic', exact: true }).click();
     const topic = page.locator('[data-ref="refs/heads/topic"]');
     const context = JSON.parse(
       (await topic.getAttribute('data-vscode-context'))!,
     );
 
-    expect(context.gitNativeUIRefCanUpdate).toBe(true);
+    expect(context.refCanUpdate).toBe(true);
     await topic.locator('[data-incoming]').hover();
     await expect(tooltip).toHaveText('1 incoming commit');
     await expect(topic.locator('[data-outgoing]')).toHaveCount(0);

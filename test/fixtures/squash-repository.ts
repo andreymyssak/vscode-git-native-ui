@@ -44,7 +44,7 @@ export async function createSquashFixture(
   objectFormat: 'sha1' | 'sha256' = 'sha1',
 ) {
   const directory = await mkdtemp(
-    join(tmpdir(), 'git-native-ui squash preflight ü '),
+    join(tmpdir(), 'git-ui-native squash preflight ü '),
   );
 
   try {

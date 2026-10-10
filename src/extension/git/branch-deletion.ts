@@ -1,4 +1,5 @@
 import { isBranchDeletionSelection } from '../../shared/branch-selection';
+import { extensionIdentity } from '../../shared/extension-identity';
 import type {
   BranchDeletionTarget,
   OperationResult,
@@ -111,7 +112,7 @@ export async function deleteBranches(
   try {
     await access.repository(id).status();
   } catch {
-    refresh = ' Git UI could not refresh. Use Refresh to reload it.';
+    refresh = ` ${extensionIdentity.displayName} could not refresh. Use Refresh to reload it.`;
   }
 
   const message = `${deleted.length ? `Deleted ${deleted.length} branch${deleted.length === 1 ? '' : 'es'}.` : 'No branches were deleted.'}${failures.length ? ` Could not delete: ${failures.join('; ')}` : ''}${refresh}`;

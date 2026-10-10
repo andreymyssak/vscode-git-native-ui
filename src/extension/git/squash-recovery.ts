@@ -19,14 +19,18 @@ import {
   resolve,
 } from 'node:path';
 
+import { SQUASH_RECOVERY_OWNER } from '../../shared/extension-identity';
 import { hasErrorCode, isRecord } from '../../shared/validation';
 import type { GitCli } from './cli';
 import type { SquashSnapshot } from './squash';
 import { validateSquashMessage } from './squash';
 import type { SquashEditorInput } from './squash-editor';
 
+// Versions through 0.1.2 wrote this marker. Read their unfinished operations.
+const LEGACY_RECOVERY_OWNER = 'git-native-ui-squash';
+
 interface OwnedRecord {
-  owner: 'git-native-ui-squash';
+  owner: string;
   repositoryId: string;
   root: string;
   statePaths: [string, string];
@@ -55,7 +59,8 @@ function isOwnedRecord(value: unknown): value is OwnedRecord {
     typeof record.observedRebase === 'boolean' &&
     Object.keys(record).sort().join(',') ===
       'directory,observedRebase,owner,repositoryId,root,statePaths' &&
-    record.owner === 'git-native-ui-squash' &&
+    (record.owner === SQUASH_RECOVERY_OWNER ||
+      record.owner === LEGACY_RECOVERY_OWNER) &&
     typeof record.repositoryId === 'string' &&
     record.repositoryId.length > 0 &&
     typeof record.root === 'string' &&
@@ -137,7 +142,7 @@ export class SquashRecovery {
     this.preparing.add(directory);
     const inputPath = join(directory, 'input.json');
     const record: OwnedRecord = {
-      owner: 'git-native-ui-squash',
+      owner: SQUASH_RECOVERY_OWNER,
       repositoryId: id,
       ...identity,
       directory,

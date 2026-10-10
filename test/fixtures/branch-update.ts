@@ -8,7 +8,7 @@ import { createFixture } from './repository';
 
 export async function divergentFixture(branch: string, conflict = false) {
   const fixture = await createFixture({
-    prefix: 'git-native-ui-divergent-update-',
+    prefix: 'git-ui-native-divergent-update-',
   });
   const remote = fixture.root + '-remote.git';
 

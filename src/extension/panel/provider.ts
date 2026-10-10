@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 
 import * as vscode from 'vscode';
 
+import { extensionIdentity } from '../../shared/extension-identity';
 import type {
   BranchActionKind,
   CommitActionKind,
@@ -39,7 +40,7 @@ import {
   worktreeMenuRequest,
 } from './protocol';
 
-export class GitNativeUIProvider implements vscode.WebviewViewProvider {
+export class GitViewProvider implements vscode.WebviewViewProvider {
   private menuAction:
     ((kind: BranchActionKind, value: unknown) => Promise<void>) | null = null;
 
@@ -68,7 +69,9 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
     value: unknown,
   ): Promise<void> {
     if (!this.menuAction)
-      throw new Error('Open Git UI and select a branch first.');
+      throw new Error(
+        `Open ${extensionIdentity.displayName} and select a branch first.`,
+      );
     await this.menuAction(kind, value);
   }
 
@@ -77,7 +80,9 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
     value: unknown,
   ): Promise<void> {
     if (!this.commitMenuAction)
-      throw new Error('Open Git UI and select a commit first.');
+      throw new Error(
+        `Open ${extensionIdentity.displayName} and select a commit first.`,
+      );
     await this.commitMenuAction(kind, value);
   }
 
@@ -289,7 +294,9 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
       const request = branchMenuRequest(kind, value);
 
       if (!request)
-        throw new Error('Select a branch in Git UI before using this action.');
+        throw new Error(
+          `Select a branch in ${extensionIdentity.displayName} before using this action.`,
+        );
       initializing ??= initialize();
       await (await initializing).handle(request);
     };
@@ -299,7 +306,9 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
       const request = commitMenuRequest(kind, value);
 
       if (!request)
-        throw new Error('Select a commit in Git UI before using this action.');
+        throw new Error(
+          `Select a commit in ${extensionIdentity.displayName} before using this action.`,
+        );
       initializing ??= initialize();
       await (await initializing).handle(request);
     };
@@ -326,7 +335,7 @@ export class GitNativeUIProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(
             error instanceof Error
               ? error.message
-              : 'Git UI initialization failed.',
+              : `${extensionIdentity.displayName} initialization failed.`,
             'Dismiss',
           ),
         );

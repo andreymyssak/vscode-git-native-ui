@@ -77,11 +77,11 @@ test('right-click and keyboard menus preserve the full selected range before nat
   expect(
     await page.evaluate(() => Reflect.get(window, 'rangeNativeContext')),
   ).toMatchObject({
-    gitNativeUICommitSha: sha(3),
-    gitNativeUICommitShas: [sha(2), sha(3), sha(4)],
-    gitNativeUICommitSelectionCount: 3,
-    gitNativeUICommitCanEdit: false,
-    gitNativeUICommitCanCherryPick: true,
+    commitSha: sha(3),
+    commitShas: [sha(2), sha(3), sha(4)],
+    commitSelectionCount: 3,
+    commitCanEdit: false,
+    commitCanCherryPick: true,
   });
   await row(page, 3).press('Shift+F10');
   expect(await selected(page)).toEqual([sha(2), sha(3), sha(4)]);
@@ -91,8 +91,8 @@ test('right-click and keyboard menus preserve the full selected range before nat
   expect(
     await page.evaluate(() => Reflect.get(window, 'rangeNativeContext')),
   ).toMatchObject({
-    gitNativeUICommitShas: [sha(1)],
-    gitNativeUICommitSelectionCount: 1,
+    commitShas: [sha(1)],
+    commitSelectionCount: 1,
   });
 });
 

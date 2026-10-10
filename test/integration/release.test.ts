@@ -17,7 +17,7 @@ import { createFixture } from '../fixtures/repository';
 const execute = promisify(execFile);
 
 async function fixture(message = 'feat: add branch filtering') {
-  const f = await createFixture({ prefix: 'git-native-ui release ' });
+  const f = await createFixture({ prefix: 'git-ui-native release ' });
 
   onTestFinished(f.dispose);
   const remote = join(f.root, '.artifacts', 'remote.git');

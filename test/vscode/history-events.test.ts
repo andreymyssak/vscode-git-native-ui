@@ -10,7 +10,7 @@ import { createFixture } from '../fixtures/repository';
 
 describe('history subscriptions during native message review', () => {
   it('ignores repeated status checks while detecting a real new branch', async () => {
-    const f = await createFixture({ prefix: 'git-native-ui history status ' });
+    const f = await createFixture({ prefix: 'git-ui-native history status ' });
     let adapter: GitAdapter | undefined;
     let subscription: vscode.Disposable | undefined;
 

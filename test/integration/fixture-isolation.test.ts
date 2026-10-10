@@ -9,14 +9,14 @@ import { createSquashFixture } from '../fixtures/squash-repository';
 test.each([
   {
     name: 'repository',
-    create: () => createFixture({ prefix: 'git-native-ui-isolated-' }),
+    create: () => createFixture({ prefix: 'git-ui-native-isolated-' }),
   },
   { name: 'squash', create: () => createSquashFixture() },
 ])(
   '$name fixtures ignore inherited Git routing and config without changing another repository',
   async ({ create }) => {
     const other = await createFixture({
-      prefix: 'git-native-ui-routing-target-',
+      prefix: 'git-ui-native-routing-target-',
     });
 
     onTestFinished(() => other.dispose());

@@ -7,6 +7,7 @@ import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser, refreshNativeHistory } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
@@ -24,7 +25,7 @@ declare global {
 describe('changed file opening latency', () => {
   it('opens cold file previews promptly while an editor is visible', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui diff latency ',
+      prefix: 'git-ui-native diff latency ',
     });
     const rootUri = vscode.Uri.file(fixture.root);
     const gitConfig = vscode.workspace.getConfiguration('git');
@@ -50,7 +51,7 @@ describe('changed file opening latency', () => {
       await vscode.window.showTextDocument(
         vscode.Uri.file(join(fixture.root, '.gitignore')),
       );
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       let frame: Frame | undefined;
 
@@ -204,7 +205,7 @@ describe('changed file opening latency', () => {
       }
 
       await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await vscode.commands.executeCommand(
         'workbench.action.toggleMaximizedPanel',
       );

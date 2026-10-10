@@ -11,7 +11,7 @@ import { createFixture } from '../fixtures/repository';
 
 describe('native lifecycle', () => {
   it('external ref movement preserves valid selection and restoration but clears excluded objects', async () => {
-    const f = await createFixture({ prefix: 'git-native-ui lifecycle ' });
+    const f = await createFixture({ prefix: 'git-ui-native lifecycle ' });
     let controller: PanelController | null = null;
 
     try {

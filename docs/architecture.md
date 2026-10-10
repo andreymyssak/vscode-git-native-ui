@@ -21,6 +21,8 @@ The Git adapter uses the installed Git extension where possible and explicit Git
 
 Each webview has its own Zustand store. App owns state restoration; pages own workflow UI. Shared contracts contain no VS Code, Node or DOM dependencies.
 
+`package.json` owns extension identity. Builds inject its name, publisher, display name and command namespace into `src/shared/extension-identity.ts`, which derives command, URI, helper and recovery identifiers. Menu payloads use domain field names without a branding prefix.
+
 ## Dependencies and generated code
 
 React handles presentation. TanStack Virtual handles history virtualization, and Floating UI handles popovers. Styling is described in [DESIGN.md](../DESIGN.md).

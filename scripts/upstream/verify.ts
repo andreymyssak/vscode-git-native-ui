@@ -8,7 +8,7 @@ import { loadManifest, reproduce, safePath } from './reproduce.ts';
 export async function verify(manifestPath: string): Promise<void> {
   const { manifest, root } = await loadManifest(manifestPath);
   const temporary = await mkdtemp(
-    join(tmpdir(), 'git-native-ui-reproduction-'),
+    join(tmpdir(), 'git-ui-native-reproduction-'),
   );
 
   try {

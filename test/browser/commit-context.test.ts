@@ -11,9 +11,9 @@ test('commit context uses full identities and disables merge or detached cherry 
 
   await row.click({ button: 'right' });
   expect(await context()).toMatchObject({
-    gitNativeUICommitSha: '1'.padStart(40, '0'),
-    gitNativeUICommitShas: ['1'.padStart(40, '0')],
-    gitNativeUICommitCanCherryPick: true,
+    commitSha: '1'.padStart(40, '0'),
+    commitShas: ['1'.padStart(40, '0')],
+    commitCanCherryPick: true,
   });
   await page.evaluate(() => {
     const r = window.__requests.at(-1)!;
@@ -34,12 +34,10 @@ test('commit context uses full identities and disables merge or detached cherry 
       },
     });
   });
-  await expect
-    .poll(context)
-    .toMatchObject({ gitNativeUICommitCanCherryPick: false });
+  await expect.poll(context).toMatchObject({ commitCanCherryPick: false });
   await page.reload();
   await expect(row).toBeVisible();
-  const generation = (await context()).gitNativeUIGeneration as number;
+  const generation = (await context()).generation as number;
 
   await page.evaluate((generation) => {
     const request = window.__requests.at(-1)!;
@@ -80,9 +78,7 @@ test('commit context uses full identities and disables merge or detached cherry 
     });
   }, generation);
   await row.click({ button: 'right' });
-  await expect
-    .poll(context)
-    .toMatchObject({ gitNativeUICommitCanCherryPick: false });
+  await expect.poll(context).toMatchObject({ commitCanCherryPick: false });
 });
 
 test('Shift selection supplies every full commit identity to the native menu', async ({
@@ -99,9 +95,9 @@ test('Shift selection supplies every full commit identity to the native menu', a
   );
 
   expect(context).toMatchObject({
-    gitNativeUICommitSha: '2'.padStart(40, '0'),
-    gitNativeUICommitShas: ['1'.padStart(40, '0'), '2'.padStart(40, '0')],
-    gitNativeUICommitSelectionCount: 2,
-    gitNativeUICommitCanCherryPick: true,
+    commitSha: '2'.padStart(40, '0'),
+    commitShas: ['1'.padStart(40, '0'), '2'.padStart(40, '0')],
+    commitSelectionCount: 2,
+    commitCanCherryPick: true,
   });
 });

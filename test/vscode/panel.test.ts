@@ -5,12 +5,13 @@ import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { commandId, LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('actual panel', () => {
   it('native webview browses a branch without checkout and shows commit details', async () => {
-    const fixture = await createFixture({ prefix: 'git-native-ui panel ' });
+    const fixture = await createFixture({ prefix: 'git-ui-native panel ' });
     let clipboard: string | undefined;
 
     try {
@@ -34,7 +35,7 @@ describe('actual panel', () => {
       await (
         await getGitApi()
       ).api.openRepository(vscode.Uri.file(fixture.root));
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       let frame: Frame | undefined;
 
       for (let attempt = 0; attempt < 100 && !frame; attempt++) {
@@ -99,7 +100,7 @@ describe('actual panel', () => {
 
       assert.ok(context);
       await vscode.commands.executeCommand(
-        'gitNativeUI.copy-branch',
+        commandId('copy-branch'),
         JSON.parse(context),
       );
       assert.equal(await vscode.env.clipboard.readText(), 'topic');
@@ -110,7 +111,7 @@ describe('actual panel', () => {
 
       assert.ok(commitContext);
       await vscode.commands.executeCommand(
-        'gitNativeUI.copy-sha',
+        commandId('copy-sha'),
         JSON.parse(commitContext),
       );
       assert.equal(await vscode.env.clipboard.readText(), topic);

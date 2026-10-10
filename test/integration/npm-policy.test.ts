@@ -8,10 +8,10 @@ import { promisify } from 'node:util';
 import { assert, expect, onTestFinished, test } from 'vitest';
 
 const execute = promisify(execFile);
-const name = 'git-native-ui-policy-fixture';
+const name = 'git-ui-native-policy-fixture';
 
 async function fixture(versions: Record<string, string>) {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui npm-policy '));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native npm-policy '));
   const server = createServer((request, response) => {
     if (request.url !== `/${name}`) {
       response.writeHead(404).end();

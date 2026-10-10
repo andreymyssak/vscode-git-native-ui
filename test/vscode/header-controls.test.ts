@@ -6,6 +6,7 @@ import { expect, type Frame } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import {
   refreshNativeHistory,
   selectNativeRepository,
@@ -14,7 +15,7 @@ import { createFixture } from '../fixtures/repository';
 
 describe('native header controls', () => {
   it('reveals current history, presents commit references and applies both filters', async () => {
-    const fixture = await createFixture({ prefix: 'git-native-ui header ' });
+    const fixture = await createFixture({ prefix: 'git-ui-native header ' });
     const rootUri = vscode.Uri.file(fixture.root);
     let frame: Frame | undefined;
     let stage = 'open fixture';
@@ -30,7 +31,7 @@ describe('native header controls', () => {
 
       await access.api.openRepository(rootUri);
       await access.repository(rootUri.toString()).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       frame = await selectNativeRepository(rootUri.toString());
       await frame.page().bringToFront();
       const search = frame.getByRole('searchbox', { name: 'Text or hash' });
@@ -196,7 +197,7 @@ describe('native header controls', () => {
     } catch (error) {
       await writeFile(
         join(
-          process.env.GIT_NATIVE_UI_TEST_ARTIFACTS ?? '.artifacts',
+          process.env.GIT_UI_TEST_ARTIFACTS ?? '.artifacts',
           'header-native-failure.json',
         ),
         JSON.stringify(

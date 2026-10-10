@@ -7,7 +7,7 @@ import { EmptyDocumentProvider } from '../../src/extension/native/empty-document
 test('empty document provider supplies an empty comparison side', () => {
   expect(
     new EmptyDocumentProvider().provideTextDocumentContent({
-      scheme: 'git-native-ui-empty',
+      scheme: 'git-ui-native-empty',
     } as Uri),
   ).toBe('');
 });

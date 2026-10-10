@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+import { extensionMetadata } from '../shared/extension.ts';
 import { hasErrorCode, isRecord } from '../shared/validation.ts';
 
 function readResult(value: unknown) {
@@ -57,13 +58,13 @@ export async function runInstalledActions({
   writeFileSync(
     join(driver, 'package.json'),
     JSON.stringify({
-      name: 'git-ui-native-installed-actions-driver',
+      name: `${extensionMetadata.name}-installed-actions-driver`,
       publisher: 'local-fixture',
       version: '0.0.0',
       engines: { vscode: '^1.140.0' },
       main: './extension.cjs',
       activationEvents: ['onStartupFinished'],
-      extensionDependencies: ['andreymyssak.git-ui-native'],
+      extensionDependencies: [extensionMetadata.id],
     }),
   );
   writeFileSync(

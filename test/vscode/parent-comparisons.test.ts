@@ -6,6 +6,7 @@ import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import {
   refreshNativeHistory,
   selectNativeRepository,
@@ -15,7 +16,7 @@ import { createFixture } from '../fixtures/repository';
 describe('native parent comparisons', () => {
   it('loads collapsed counts, opens the exact parent diff, and explains a valid empty parent', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui parent comparisons ',
+      prefix: 'git-ui-native parent comparisons ',
     });
     const rootUri = vscode.Uri.file(fixture.root);
 
@@ -77,7 +78,7 @@ describe('native parent comparisons', () => {
 
       await access.api.openRepository(rootUri);
       await access.repository(rootUri.toString()).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const frame = await selectNativeRepository(rootUri.toString());
 
       await frame.page().bringToFront();

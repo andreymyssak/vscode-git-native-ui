@@ -10,6 +10,7 @@ import {
   resolveCliPathFromVSCodeExecutablePath,
 } from '@vscode/test-electron';
 
+import { extensionMetadata } from '../shared/extension.ts';
 import { isRecord } from '../shared/validation.ts';
 import { runInstalledActions } from './installed-actions.ts';
 
@@ -157,7 +158,7 @@ if (prepared.kind === 'restricted') {
     process.platform === 'win32' ? `"${cli}"` : cli,
     [
       '--install-extension',
-      resolve('.artifacts/git-ui-native.vsix'),
+      resolve(`.artifacts/${extensionMetadata.name}.vsix`),
       '--extensions-dir',
       extensions,
       '--user-data-dir',
@@ -181,13 +182,13 @@ if (prepared.kind === 'restricted') {
   writeFileSync(
     join(driver, 'package.json'),
     JSON.stringify({
-      name: 'git-ui-native-installed-test-driver',
+      name: `${extensionMetadata.name}-installed-test-driver`,
       publisher: 'local-fixture',
       version: '0.0.0',
       engines: { vscode: '^1.140.0' },
     }),
   );
-  const env = { ...prepared.env, GIT_NATIVE_UI_INSTALLED_ROOT: extensions };
+  const env = { ...prepared.env, GIT_UI_INSTALLED_ROOT: extensions };
 
   process.exitCode = await runWorkbench({
     executable,

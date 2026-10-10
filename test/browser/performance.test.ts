@@ -66,7 +66,7 @@ test('loading indicator updates within 100 ms independently of Git duration', as
     300,
   );
   const duration = await page.evaluate(
-    () => performance.getEntriesByName('git-native-ui.render').at(-1)?.duration,
+    () => performance.getEntriesByName('git-ui-native.render').at(-1)?.duration,
   );
 
   expect(duration).toBeLessThanOrEqual(100);

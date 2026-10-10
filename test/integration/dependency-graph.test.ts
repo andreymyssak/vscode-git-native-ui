@@ -14,7 +14,7 @@ import { dirname, join, resolve } from 'node:path';
 import { assert, expect, test } from 'vitest';
 
 test('generated dependency graph connects aliases to the actual page and contract modules', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui-graph-'));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native-graph-'));
 
   try {
     await symlink(

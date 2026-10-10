@@ -21,7 +21,7 @@ test.each(cases)('$name', async (item) => {
   const cli = resolve(
     'node_modules/dependency-cruiser/bin/dependency-cruiser.mjs',
   );
-  const root = await mkdtemp(join(tmpdir(), 'git-native-ui-fsd-case-'));
+  const root = await mkdtemp(join(tmpdir(), 'git-ui-native-fsd-case-'));
 
   try {
     const files: Record<string, string> = {

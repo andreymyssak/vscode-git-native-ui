@@ -6,21 +6,25 @@ import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import {
+  commandId,
+  EXTENSION_ID,
+  extensionIdentity,
+  LOG_VIEW_ID,
+} from '../../src/shared/extension-identity';
 import { nativeBrowser } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('private package', () => {
   it('registered extension activates on the tested VS Code runtime', async () => {
-    const extension = vscode.extensions.getExtension(
-      'andreymyssak.git-ui-native',
-    );
+    const extension = vscode.extensions.getExtension(EXTENSION_ID);
 
     assert.ok(extension);
     await extension.activate();
     assert.equal(extension.isActive, true);
-    if (process.env.GIT_NATIVE_UI_INSTALLED_ROOT) {
+    if (process.env.GIT_UI_INSTALLED_ROOT) {
       const local = relative(
-        process.env.GIT_NATIVE_UI_INSTALLED_ROOT,
+        process.env.GIT_UI_INSTALLED_ROOT,
         extension.extensionPath,
       );
 
@@ -30,19 +34,24 @@ describe('private package', () => {
       );
     }
 
-    assert.equal(extension.packageJSON.displayName, 'Git UI');
+    assert.equal(
+      extension.packageJSON.displayName,
+      extensionIdentity.displayName,
+    );
     assert.equal(
       extension.packageJSON.contributes.viewsContainers.panel[0].title,
       extension.packageJSON.displayName,
     );
     assert.equal(
-      extension.packageJSON.contributes.views.gitNativeUI[0].name,
+      extension.packageJSON.contributes.views[
+        extensionIdentity.commandNamespace
+      ][0].name,
       extension.packageJSON.displayName,
     );
     assert.equal(extension.packageJSON.engines.vscode, '^1.140.0');
     assert.equal(extension.packageJSON.private, true);
     assert.equal(extension.packageJSON.main, './dist/extension.cjs');
-    await vscode.commands.executeCommand('gitNativeUI.log.focus');
+    await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
     const browser = await nativeBrowser();
     const workbench = browser
       .contexts()
@@ -51,10 +60,13 @@ describe('private package', () => {
 
     assert.ok(workbench);
     await expect(
-      workbench.getByRole('tab', { name: 'Git UI', exact: true }),
+      workbench.getByRole('tab', {
+        name: extensionIdentity.displayName,
+        exact: true,
+      }),
     ).toBeVisible();
   });
-  if (process.env.GIT_NATIVE_UI_INSTALLED_ROOT)
+  if (process.env.GIT_UI_INSTALLED_ROOT)
     it('installed bundle preserves geometry, context routing and native diffs', async () => {
       const browser = await nativeBrowser();
       let frame: Frame | undefined;
@@ -76,7 +88,7 @@ describe('private package', () => {
         'workbench.action.closeAuxiliaryBar',
       );
       const fixture = await createFixture({
-        prefix: 'git-native-ui installed ',
+        prefix: 'git-ui-native installed ',
       });
       let clipboard: string | undefined;
 
@@ -235,8 +247,8 @@ describe('private package', () => {
         });
 
         for (const [target, command, expected] of [
-          [branch, 'gitNativeUI.copy-branch', 'topic'],
-          [row, 'gitNativeUI.copy-sha', head],
+          [branch, commandId('copy-branch'), 'topic'],
+          [row, commandId('copy-sha'), head],
         ] as const) {
           // Exercise the compiled handler and native command without opening an unattended OS menu.
           await target.evaluate((node) => {

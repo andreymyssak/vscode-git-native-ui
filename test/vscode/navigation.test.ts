@@ -12,7 +12,7 @@ import { commitWithDate, createFixture } from '../fixtures/repository';
 describe('native navigation', () => {
   it('reveals distant targets with progress and preserves scope when a scope change is declined', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui navigation ',
+      prefix: 'git-ui-native navigation ',
     });
     let controller: PanelController | null = null;
 

@@ -1,4 +1,5 @@
 import { isBranchDeletionSelection } from '../../shared/branch-selection';
+import { extensionIdentity } from '../../shared/extension-identity';
 import type { Request, RequestBody, UserAction } from '../../shared/messages';
 import type {
   GitAction,
@@ -416,7 +417,7 @@ export class PanelActions {
         return null;
       if (!this.session.current(request.repositoryId, request.generation))
         throw new Error(
-          'The Git UI view changed. Select the branch and action again.',
+          `The ${extensionIdentity.displayName} view changed. Select the branch and action again.`,
         );
 
       return {

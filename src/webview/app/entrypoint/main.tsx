@@ -4,13 +4,15 @@ import '../styles/global.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { extensionIdentity } from '@contracts/extension-identity';
 import { getVsCodeBridge } from '@webview/shared/api';
 
 import { App } from '../layout/App';
 
 const mount = document.getElementById('app');
 
-if (!mount) throw new Error('Git UI root is unavailable.');
+if (!mount)
+  throw new Error(`${extensionIdentity.displayName} root is unavailable.`);
 const bridge = getVsCodeBridge();
 const root = createRoot(mount);
 

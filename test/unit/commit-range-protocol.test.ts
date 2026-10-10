@@ -60,11 +60,11 @@ test('range protocol accepts only distinct full commit identities with an active
 });
 test('native range menu sends the whole selection and refuses single actions on multiple members', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUICommitSha: b,
-    gitNativeUICommitShas: [a, b],
-    gitNativeUICommitSelectionCount: 2,
+    repositoryId: 'one',
+    generation: 1,
+    commitSha: b,
+    commitShas: [a, b],
+    commitSelectionCount: 2,
   };
 
   expect(commitMenuRequest('squash-commits', context)?.body).toStrictEqual({
@@ -76,16 +76,16 @@ test('native range menu sends the whole selection and refuses single actions on 
   expect(
     commitMenuRequest('squash-commits', {
       ...context,
-      gitNativeUICommitSelectionCount: 3,
+      commitSelectionCount: 3,
     }),
   ).toBe(null);
 });
 test('a native single-commit action cannot conceal a range with a forged or missing count', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUICommitSha: a,
-    gitNativeUICommitShas: [a, b],
+    repositoryId: 'one',
+    generation: 1,
+    commitSha: a,
+    commitShas: [a, b],
   };
 
   for (const kind of ['copy-sha', 'edit-commit-message'] as const) {
@@ -93,28 +93,28 @@ test('a native single-commit action cannot conceal a range with a forged or miss
     expect(
       commitMenuRequest(kind, {
         ...context,
-        gitNativeUICommitSelectionCount: 1,
+        commitSelectionCount: 1,
       }),
     ).toBe(null);
   }
 });
 test('native Cherry-Pick and Drop reject mismatched counts and forged range fields', () => {
   const context = {
-    gitNativeUIRepositoryId: 'one',
-    gitNativeUIGeneration: 1,
-    gitNativeUICommitSha: a,
-    gitNativeUICommitShas: [a, b],
-    gitNativeUICommitSelectionCount: 2,
+    repositoryId: 'one',
+    generation: 1,
+    commitSha: a,
+    commitShas: [a, b],
+    commitSelectionCount: 2,
   };
 
   for (const kind of ['cherry-pick', 'drop-commits'] as const) {
     assert.ok(commitMenuRequest(kind, context));
     for (const changed of [
-      { gitNativeUICommitSelectionCount: 1 },
-      { gitNativeUICommitSelectionCount: undefined },
-      { gitNativeUICommitSha: c },
-      { gitNativeUICommitShas: [a, a] },
-      { gitNativeUICommitShas: [a, '--reset'] },
+      { commitSelectionCount: 1 },
+      { commitSelectionCount: undefined },
+      { commitSha: c },
+      { commitShas: [a, a] },
+      { commitShas: [a, '--reset'] },
     ])
       expect(commitMenuRequest(kind, { ...context, ...changed })).toBe(null);
   }

@@ -30,7 +30,7 @@ for (const route of ['/', '/development.html']) {
     await page.addInitScript(
       ({ sha, parentSha }) => {
         sessionStorage.setItem(
-          'git-native-ui-state',
+          'git-ui-native-state',
           JSON.stringify({
             repositoryId: 'one',
             activeView: 'log',
@@ -55,7 +55,7 @@ for (const route of ['/', '/development.html']) {
       .poll(() =>
         page.evaluate(
           () =>
-            JSON.parse(sessionStorage.getItem('git-native-ui-state')!)
+            JSON.parse(sessionStorage.getItem('git-ui-native-state')!)
               .selection,
         ),
       )

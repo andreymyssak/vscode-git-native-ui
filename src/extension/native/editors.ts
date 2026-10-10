@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 
+import { EMPTY_DOCUMENT_SCHEME } from '../../shared/extension-identity';
 import type { GitApiAccess } from '../git/api';
 import type { FileHandle } from '../panel/queries';
 
@@ -25,7 +26,7 @@ export function changeUris(
 
   const empty = (side: string) =>
     vscode.Uri.from({
-      scheme: 'git-native-ui-empty',
+      scheme: EMPTY_DOCUMENT_SCHEME,
       path: `/${handle.sha}/${side}/${handle.file.newPath ?? handle.file.oldPath ?? 'file'}`,
       query: handle.file.id,
     });

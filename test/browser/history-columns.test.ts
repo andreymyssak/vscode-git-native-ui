@@ -204,10 +204,10 @@ test('oversized restored columns fit a narrow pane and resize from their visible
 }) => {
   await page.setViewportSize({ width: 960, height: 280 });
   await page.addInitScript(() => {
-    const saved = JSON.parse(sessionStorage.getItem('git-native-ui-state')!);
+    const saved = JSON.parse(sessionStorage.getItem('git-ui-native-state')!);
 
     saved.historyColumnWidths = [900, 800];
-    sessionStorage.setItem('git-native-ui-state', JSON.stringify(saved));
+    sessionStorage.setItem('git-ui-native-state', JSON.stringify(saved));
   });
   await page.reload();
   const divider = page.getByRole('separator', {
@@ -221,7 +221,7 @@ test('oversized restored columns fit a narrow pane and resize from their visible
   expect(
     await page.evaluate(
       () =>
-        JSON.parse(sessionStorage.getItem('git-native-ui-state')!)
+        JSON.parse(sessionStorage.getItem('git-ui-native-state')!)
           .historyColumnWidths,
     ),
   ).toEqual([900, 800]);

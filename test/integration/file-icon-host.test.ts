@@ -41,7 +41,7 @@ class Uri {
 }
 
 async function harness() {
-  const directory = await mkdtemp(join(tmpdir(), 'git-native-ui-icon-host-'));
+  const directory = await mkdtemp(join(tmpdir(), 'git-ui-native-icon-host-'));
   const globalKey = 'iconHost' + directory;
   const globals = globalThis as unknown as Record<string, unknown>;
   let icons: ReturnType<typeof attachFileIcons> | undefined;

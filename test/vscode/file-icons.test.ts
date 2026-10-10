@@ -8,13 +8,14 @@ import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
 import { safeIconResource } from '../../src/extension/panel/file-icon-host';
+import { EXTENSION_ID, LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('installed file icon themes', () => {
   it('Seti fonts and Minimal images load under the native policy while live theme changes preserve the document', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui file-icons ',
+      prefix: 'git-ui-native file-icons ',
     });
     const configuration = vscode.workspace.getConfiguration('workbench');
     const scmConfiguration = vscode.workspace.getConfiguration('scm');
@@ -22,9 +23,7 @@ describe('installed file icon themes', () => {
       scmConfiguration.inspect('defaultViewMode')?.globalValue;
     const previousIcon = configuration.inspect('iconTheme')?.globalValue;
     const previousColor = configuration.inspect('colorTheme')?.globalValue;
-    const extension = vscode.extensions.getExtension(
-      'andreymyssak.git-ui-native',
-    );
+    const extension = vscode.extensions.getExtension(EXTENSION_ID);
 
     try {
       assert.ok(extension);
@@ -65,7 +64,7 @@ describe('installed file icon themes', () => {
         vscode.ConfigurationTarget.Global,
       );
       await vscode.commands.executeCommand('workbench.view.scm');
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       const workbench = browser
         .contexts()
@@ -312,7 +311,7 @@ describe('installed file icon themes', () => {
   });
 
   it('an installed-extension asset symlink cannot escape its owning directory', async () => {
-    const fixture = await createFixture({ prefix: 'git-native-ui icon-root ' });
+    const fixture = await createFixture({ prefix: 'git-ui-native icon-root ' });
 
     try {
       await mkdir(join(fixture.root, 'owner'));

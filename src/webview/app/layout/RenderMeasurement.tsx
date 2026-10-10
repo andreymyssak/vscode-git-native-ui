@@ -1,5 +1,7 @@
 import { useLayoutEffect } from 'react';
 
+import { RENDER_MEASUREMENT } from '@contracts/extension-identity';
+
 import type { ViewState } from '../model/state';
 
 export function RenderMeasurement({ snapshot }: { snapshot: ViewState }) {
@@ -8,8 +10,8 @@ export function RenderMeasurement({ snapshot }: { snapshot: ViewState }) {
   const start = performance.now();
 
   useLayoutEffect(() => {
-    performance.clearMeasures('git-native-ui.render');
-    performance.measure('git-native-ui.render', {
+    performance.clearMeasures(RENDER_MEASUREMENT);
+    performance.measure(RENDER_MEASUREMENT, {
       start,
       end: performance.now(),
     });

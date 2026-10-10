@@ -1,10 +1,15 @@
 import * as vscode from 'vscode';
 
+import {
+  commandId,
+  EMPTY_DOCUMENT_SCHEME,
+  LOG_VIEW_ID,
+} from '../shared/extension-identity';
 import { EmptyDocumentProvider } from './native/empty-document';
-import { GitNativeUIProvider } from './panel/provider';
+import { GitViewProvider } from './panel/provider';
 
 export function activate(context: vscode.ExtensionContext): void {
-  const provider = new GitNativeUIProvider(
+  const provider = new GitViewProvider(
     context.extensionUri,
     context.globalStorageUri,
   );
@@ -23,7 +28,7 @@ export function activate(context: vscode.ExtensionContext): void {
   ] as const)
     context.subscriptions.push(
       vscode.commands.registerCommand(
-        `gitNativeUI.${kind}`,
+        commandId(kind),
         async (value: unknown) => {
           try {
             await provider.executeBranchAction(kind, value);
@@ -47,7 +52,7 @@ export function activate(context: vscode.ExtensionContext): void {
   ] as const)
     context.subscriptions.push(
       vscode.commands.registerCommand(
-        `gitNativeUI.${kind}`,
+        commandId(kind),
         async (value: unknown) => {
           try {
             await provider.executeCommitAction(kind, value);
@@ -67,7 +72,7 @@ export function activate(context: vscode.ExtensionContext): void {
   ] as const)
     context.subscriptions.push(
       vscode.commands.registerCommand(
-        `gitNativeUI.${kind}`,
+        commandId(kind),
         async (value: unknown) => {
           try {
             await provider.executeWorktreeAction(kind, value);
@@ -82,9 +87,9 @@ export function activate(context: vscode.ExtensionContext): void {
     );
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(
-      'git-native-ui-empty',
+      EMPTY_DOCUMENT_SCHEME,
       new EmptyDocumentProvider(),
     ),
-    vscode.window.registerWebviewViewProvider('gitNativeUI.log', provider),
+    vscode.window.registerWebviewViewProvider(LOG_VIEW_ID, provider),
   );
 }

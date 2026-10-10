@@ -17,7 +17,7 @@ for (const path of ['/', '/development.html']) {
         .locator('[data-ref]')
         .first()
         .getAttribute('data-vscode-context'))!,
-    ).gitNativeUIGeneration as number;
+    ).generation as number;
     const locals = [
       ...Array.from({ length: 80 }, (_, index) => `folder-${index}/other`),
       'topic',
@@ -573,12 +573,9 @@ test('obsolete tree restoration cannot steal the new repository viewport', async
   await fresh.press('Shift+F10');
   await expect(fresh).toHaveAttribute(
     'data-vscode-context',
-    /"gitNativeUIRepositoryId":"two"/,
+    /"repositoryId":"two"/,
   );
-  await expect(fresh).toHaveAttribute(
-    'data-vscode-context',
-    /"gitNativeUIGeneration":2/,
-  );
+  await expect(fresh).toHaveAttribute('data-vscode-context', /"generation":2/);
 });
 
 test('branch gutters stay compact and fixed before and after references load', async ({

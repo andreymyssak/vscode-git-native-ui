@@ -174,19 +174,17 @@ export function WorktreesPage({
                 data-vscode-context={JSON.stringify({
                   webviewSection: 'worktree',
                   preventDefaultContextMenuItems: true,
-                  gitNativeUIRepositoryId: repositoryId,
-                  gitNativeUIGeneration: generation,
-                  gitNativeUIWorktreeId: item.id,
-                  gitNativeUIWorktreeIds: ids.includes(item.id)
-                    ? ids
-                    : [item.id],
-                  gitNativeUIWorktreeSelectionCount: ids.includes(item.id)
+                  repositoryId: repositoryId,
+                  generation: generation,
+                  worktreeId: item.id,
+                  worktreeIds: ids.includes(item.id) ? ids : [item.id],
+                  worktreeSelectionCount: ids.includes(item.id)
                     ? ids.length
                     : 1,
-                  gitNativeUIWorktreeCanOpen: ids.includes(item.id)
+                  worktreeCanOpen: ids.includes(item.id)
                     ? openable
                     : canOpenWorktree(item),
-                  gitNativeUIWorktreeCanDelete: ids.includes(item.id)
+                  worktreeCanDelete: ids.includes(item.id)
                     ? deletable
                     : canDeleteWorktree(item),
                 })}

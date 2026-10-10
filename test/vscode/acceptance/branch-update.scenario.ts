@@ -6,6 +6,11 @@ import type { Frame } from '@playwright/test';
 import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
+import {
+  commandId,
+  extensionIdentity,
+  LOG_VIEW_ID,
+} from '../../../src/shared/extension-identity';
 import { divergentFixture } from '../../fixtures/branch-update';
 import { nativeBrowser } from '../../fixtures/native-panel';
 
@@ -13,13 +18,13 @@ import { nativeBrowser } from '../../fixtures/native-panel';
 // commands and native notifications in a normal, isolated workbench.
 export async function run() {
   const extension = vscode.extensions.all.find(
-    (entry) => entry.packageJSON.name === 'git-ui-native',
+    (entry) => entry.packageJSON.name === extensionIdentity.name,
   );
 
   assert.ok(extension);
-  assert.ok(process.env.GIT_NATIVE_UI_INSTALLED_ROOT);
+  assert.ok(process.env.GIT_UI_INSTALLED_ROOT);
   const location = relative(
-    process.env.GIT_NATIVE_UI_INSTALLED_ROOT,
+    process.env.GIT_UI_INSTALLED_ROOT,
     extension.extensionPath,
   );
 
@@ -91,7 +96,7 @@ export async function run() {
 
       await f.access.repository(f.id).status();
 
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await expect
         .poll(async () => {
           for (const context of browser.contexts())
@@ -104,8 +109,7 @@ export async function run() {
                       .getAttribute('data-vscode-context')) ?? '{}',
                   );
 
-                  if (context.gitNativeUIRepositoryId === f.id)
-                    frame = candidate;
+                  if (context.repositoryId === f.id) frame = candidate;
                 }
 
           return Boolean(frame);
@@ -129,10 +133,10 @@ export async function run() {
         (await branch.getAttribute('data-vscode-context')) ?? '{}',
       );
 
-      assert.equal(context.gitNativeUIRefCurrent, current);
-      assert.equal(context.gitNativeUIRefCanUpdate, true);
+      assert.equal(context.refCurrent, current);
+      assert.equal(context.refCanUpdate, true);
       operation = Promise.resolve(
-        vscode.commands.executeCommand('gitNativeUI.update-branch', context),
+        vscode.commands.executeCommand(commandId('update-branch'), context),
       );
       void operation.then(
         () => {
@@ -207,7 +211,7 @@ export async function run() {
         );
         if (choice === 'Fast-forward') {
           const invalid = vscode.commands.executeCommand(
-            'gitNativeUI.update-branch',
+            commandId('update-branch'),
             {},
           );
           const error = workbench.getByRole('dialog', {

@@ -45,10 +45,10 @@ test('commit menu exposes every selected identity and refuses a merge member', (
     JSON.parse(screen.getByRole('row').getAttribute('data-vscode-context')!);
 
   expect(context()).toMatchObject({
-    gitNativeUICommitSha: a,
-    gitNativeUICommitShas: [a, b],
-    gitNativeUICommitSelectionCount: 2,
-    gitNativeUICommitCanCherryPick: true,
+    commitSha: a,
+    commitShas: [a, b],
+    commitSelectionCount: 2,
+    commitCanCherryPick: true,
   });
   view.rerender(
     <HistoryRow
@@ -56,7 +56,7 @@ test('commit menu exposes every selected identity and refuses a merge member', (
       data={{ ...data, details: { ...data.commits[0]!, parents: [a, b] } }}
     />,
   );
-  expect(context().gitNativeUICommitCanCherryPick).toBe(false);
+  expect(context().commitCanCherryPick).toBe(false);
   view.rerender(
     <HistoryRow
       {...props}
@@ -66,5 +66,5 @@ test('commit menu exposes every selected identity and refuses a merge member', (
       }}
     />,
   );
-  expect(context().gitNativeUICommitCanCherryPick).toBe(false);
+  expect(context().commitCanCherryPick).toBe(false);
 });

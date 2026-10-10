@@ -2,6 +2,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { build } from 'esbuild';
 
+import { extensionDefines } from '../shared/extension.ts';
+
 await mkdir('dist', { recursive: true });
 await mkdir('.artifacts', { recursive: true });
 const [host, squashHelper] = await Promise.all([
@@ -9,6 +11,7 @@ const [host, squashHelper] = await Promise.all([
     entryPoints: ['src/extension/activate.ts'],
     outfile: 'dist/extension.cjs',
     bundle: true,
+    define: extensionDefines,
     platform: 'node',
     format: 'cjs',
     target: 'es2022',
@@ -20,6 +23,7 @@ const [host, squashHelper] = await Promise.all([
     entryPoints: ['src/extension/git/squash-helper.ts'],
     outfile: 'dist/squash-helper.cjs',
     bundle: true,
+    define: extensionDefines,
     platform: 'node',
     format: 'cjs',
     target: 'es2022',

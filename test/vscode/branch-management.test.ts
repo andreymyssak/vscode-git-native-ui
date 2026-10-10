@@ -10,7 +10,7 @@ import { createFixture } from '../fixtures/repository';
 describe('local branch management', () => {
   it('renames the selected branch without switching or overwriting another branch', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui branch rename ',
+      prefix: 'git-ui-native branch rename ',
     });
     let adapter: GitAdapter | undefined;
 
@@ -117,7 +117,7 @@ describe('local branch management', () => {
 
   it('deletes merged branches but preserves current, unmerged and worktree branches', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui branch delete ',
+      prefix: 'git-ui-native branch delete ',
     });
     let adapter: GitAdapter | undefined;
 

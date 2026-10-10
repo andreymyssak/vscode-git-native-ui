@@ -6,13 +6,14 @@ import { expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser, refreshNativeHistory } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('file activation gesture', () => {
   it('maximized panel remains stationary until the double-click opens one regular diff', async () => {
     const fixture = await createFixture({
-      prefix: 'git-native-ui file gesture ',
+      prefix: 'git-ui-native file gesture ',
     });
     const gitConfig = vscode.workspace.getConfiguration('git');
     const autoRefresh = gitConfig.inspect<boolean>('autorefresh')?.globalValue;
@@ -30,7 +31,7 @@ describe('file activation gesture', () => {
       await access.api.openRepository(rootUri);
       await access.repository(rootUri.toString()).status();
       await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       let frame: Frame | undefined;
 
@@ -98,7 +99,7 @@ describe('file activation gesture', () => {
       assert.equal(diffs().length, 1);
       assert.equal(diffs()[0]!.isPreview, false);
       await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       await vscode.commands.executeCommand(
         'workbench.action.toggleMaximizedPanel',
       );
@@ -110,7 +111,7 @@ describe('file activation gesture', () => {
           'click',
           (event) => {
             Object.assign(window, {
-              gitNativeUIGestureClick: {
+              gestureClick: {
                 detail: (event as MouseEvent).detail,
                 target: (event.target as HTMLElement).outerHTML,
               },
@@ -130,8 +131,8 @@ describe('file activation gesture', () => {
               {
                 click: await frame!.evaluate(
                   () =>
-                    (window as unknown as { gitNativeUIGestureClick?: unknown })
-                      .gitNativeUIGestureClick,
+                    (window as unknown as { gestureClick?: unknown })
+                      .gestureClick,
                 ),
                 status: await frame!.locator('#status').textContent(),
                 details: await frame!

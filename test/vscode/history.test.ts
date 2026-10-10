@@ -19,7 +19,7 @@ describe('history and identity', () => {
   let prefix: string;
 
   before(async () => {
-    fixture = await createFixture({ prefix: 'git-native-ui history ü ' });
+    fixture = await createFixture({ prefix: 'git-ui-native history ü ' });
     initial = (await fixture.runGit(['rev-parse', 'HEAD'])).trim();
     prefix = initial.slice(0, 7);
     const tree = (await fixture.runGit(['rev-parse', 'HEAD^{tree}'])).trim();

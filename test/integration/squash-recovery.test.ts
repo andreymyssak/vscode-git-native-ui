@@ -21,6 +21,7 @@ import { createOperations } from '../../src/extension/git/operations';
 import { validateSquash } from '../../src/extension/git/squash';
 import { SquashRecovery } from '../../src/extension/git/squash-recovery';
 import type { OperationResult } from '../../src/shared/model';
+import { isRecord } from '../../src/shared/validation';
 import { buildHelperFixture } from '../fixtures/helper-build';
 import { createSquashFixture } from '../fixtures/squash-repository';
 
@@ -68,8 +69,8 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
   const previous = {
     global: process.env.GIT_CONFIG_GLOBAL,
     system: process.env.GIT_CONFIG_NOSYSTEM,
-    ready: process.env.GIT_NATIVE_UI_RECOVERY_READY,
-    release: process.env.GIT_NATIVE_UI_RECOVERY_RELEASE,
+    ready: process.env.GIT_UI_RECOVERY_READY,
+    release: process.env.GIT_UI_RECOVERY_RELEASE,
   };
   const ready = join(fixture.directory, 'hook-ready');
   const release = join(fixture.directory, 'hook-release');
@@ -77,8 +78,8 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
 
   process.env.GIT_CONFIG_GLOBAL = join(fixture.directory, 'gitconfig');
   process.env.GIT_CONFIG_NOSYSTEM = '1';
-  process.env.GIT_NATIVE_UI_RECOVERY_READY = ready;
-  process.env.GIT_NATIVE_UI_RECOVERY_RELEASE = release;
+  process.env.GIT_UI_RECOVERY_READY = ready;
+  process.env.GIT_UI_RECOVERY_RELEASE = release;
   fixture.access.repository('fixture').status = async () => {};
 
   try {
@@ -89,7 +90,7 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
 
     await writeFile(
       hook,
-      '#!/bin/sh\nprintf "ready\\n" > "$GIT_NATIVE_UI_RECOVERY_READY"\nwhile test ! -f "$GIT_NATIVE_UI_RECOVERY_RELEASE"; do sleep 0.05; done\n',
+      '#!/bin/sh\nprintf "ready\\n" > "$GIT_UI_RECOVERY_READY"\nwhile test ! -f "$GIT_UI_RECOVERY_RELEASE"; do sleep 0.05; done\n',
     );
     await chmod(hook, 0o755);
     await fixture.runGit(['config', 'core.hooksPath', hooks]);
@@ -167,8 +168,8 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
       for (const [key, value] of [
         ['GIT_CONFIG_GLOBAL', previous.global],
         ['GIT_CONFIG_NOSYSTEM', previous.system],
-        ['GIT_NATIVE_UI_RECOVERY_READY', previous.ready],
-        ['GIT_NATIVE_UI_RECOVERY_RELEASE', previous.release],
+        ['GIT_UI_RECOVERY_READY', previous.ready],
+        ['GIT_UI_RECOVERY_RELEASE', previous.release],
       ]) {
         if (value === undefined) delete process.env[key!];
         else process.env[key!] = value;
@@ -178,6 +179,53 @@ test('another process cannot remove active squash editors while a pre-rebase hoo
     }
   }
 }, 60000);
+test.each([
+  { owner: 'git-ui-native-squash', cleanup: true },
+  { owner: 'git-native-ui-squash', cleanup: true },
+  { owner: 'another-extension', cleanup: false },
+])(
+  'recovery cleanup after native abort respects ownership $owner',
+  async ({ owner, cleanup }) => {
+    const fixture = await createSquashFixture();
+
+    try {
+      const storage = join(fixture.directory, 'storage');
+      const recovery = new SquashRecovery(storage, fixture.cli);
+      const snapshot = await validateSquash(
+        fixture.access,
+        fixture.cli,
+        'fixture',
+        fixture.target,
+      );
+      const owned = await recovery.create('fixture', snapshot, 'Reviewed');
+      const recordPath = join(owned.directory, 'record.json');
+      const record: unknown = JSON.parse(await readFile(recordPath, 'utf8'));
+
+      assert.ok(isRecord(record));
+      await writeFile(recordPath, JSON.stringify({ ...record, owner }));
+      await expect(
+        fixture.runGit([
+          'rebase',
+          '--force-rebase',
+          '--exec',
+          'false',
+          fixture.initial,
+        ]),
+      ).rejects.toThrow();
+      await recovery.settle('fixture', owned.directory);
+      await stat(owned.inputPath);
+      await fixture.runGit(['rebase', '--abort']);
+      await new SquashRecovery(storage, fixture.cli).reconcile();
+      if (cleanup)
+        await expect(stat(owned.directory)).rejects.toMatchObject({
+          code: 'ENOENT',
+        });
+      else await stat(owned.inputPath);
+    } finally {
+      await fixture.dispose();
+    }
+  },
+);
 test('fresh recovery retains an unobserved orphan rather than assuming absent state proves completion', async (t) => {
   const fixture = await createSquashFixture();
 

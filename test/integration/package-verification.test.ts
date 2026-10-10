@@ -1,9 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
+import { build } from 'esbuild';
 import { expect, test } from 'vitest';
 
 import * as verifier from '../../scripts/package/verify.ts';
 import { isRecord } from '../../scripts/shared/validation.ts';
+import { extensionIdentity } from '../../src/shared/extension-identity';
 
 const inputs = (...paths: string[]) => ({
   inputs: Object.fromEntries(paths.map((path) => [path, {}])),
@@ -208,7 +210,7 @@ test('release verification refuses missing support, source, license or icon meta
       ...manifest,
       repository: {
         type: 'git',
-        url: 'https://github.com/example/git-native-ui.git',
+        url: 'https://github.com/example/git-ui-native.git',
       },
     }),
   ).toThrow(/repository/i);
@@ -263,6 +265,29 @@ test('the private helper is a separate Node-only bundle with its own entry point
       /helper.*external|helper.*runtime/i,
     );
   }
+});
+test('the private helper accepts bundled identity metadata while refusing an external identity runtime', async () => {
+  const result = await build({
+    entryPoints: ['src/extension/git/squash-helper.ts'],
+    outfile: 'dist/squash-helper.cjs',
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    write: false,
+    metafile: true,
+    define: { __EXTENSION_IDENTITY__: JSON.stringify(extensionIdentity) },
+  });
+
+  verifier.verifySquashHelperInputs(result.metafile);
+  const helper = helperMetafile();
+
+  helper.outputs['dist/squash-helper.cjs'].imports.push({
+    path: '<define:__EXTENSION_IDENTITY__>',
+    external: true,
+  });
+  expect(() => verifier.verifySquashHelperInputs(helper)).toThrow(
+    /external.*runtime/i,
+  );
 });
 test('the private helper refuses bundled VS Code, UI libraries and development tooling', async () => {
   for (const dependency of [

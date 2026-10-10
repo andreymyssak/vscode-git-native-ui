@@ -4,20 +4,20 @@ import type { Browser, Frame, Locator } from '@playwright/test';
 import { chromium, expect } from '@playwright/test';
 import * as vscode from 'vscode';
 
+import { EXTENSION_ID } from '../../src/shared/extension-identity';
+
 declare global {
-  var gitNativeUINativeTestBrowser: Browser | undefined;
+  var nativeTestBrowser: Browser | undefined;
 }
 export async function nativeBrowser(): Promise<Browser> {
-  const extension = vscode.extensions.getExtension(
-    'andreymyssak.git-ui-native',
-  );
+  const extension = vscode.extensions.getExtension(EXTENSION_ID);
 
   if (!extension) throw new Error('Git UI is not installed in the test host.');
   await extension.activate();
-  globalThis.gitNativeUINativeTestBrowser ??= await chromium.connectOverCDP(
+  globalThis.nativeTestBrowser ??= await chromium.connectOverCDP(
     `http://127.0.0.1:${process.env.VSCODE_TEST_DEBUG_PORT ?? ''}`,
   );
-  const workbench = globalThis.gitNativeUINativeTestBrowser
+  const workbench = globalThis.nativeTestBrowser
     .contexts()
     .flatMap((context) => context.pages())
     .find((page) => page.url().includes('/workbench/workbench.html'));
@@ -25,7 +25,7 @@ export async function nativeBrowser(): Promise<Browser> {
   if (!workbench) throw new Error('Native VS Code workbench did not load.');
   await workbench.bringToFront();
 
-  return globalThis.gitNativeUINativeTestBrowser;
+  return globalThis.nativeTestBrowser;
 }
 
 export async function nativePanel(repositoryId: string): Promise<Frame> {
@@ -49,10 +49,10 @@ export async function nativePanel(repositoryId: string): Promise<Frame> {
 
             if (!encoded) continue;
             const current = JSON.parse(encoded) as {
-              gitNativeUIRepositoryId: string;
+              repositoryId: string;
             };
 
-            if (current.gitNativeUIRepositoryId === repositoryId) {
+            if (current.repositoryId === repositoryId) {
               frame = candidate;
 
               return true;
@@ -199,7 +199,7 @@ export async function refreshNativeHistory(
     .first();
   const previous = JSON.parse(
     (await row.getAttribute('data-vscode-context'))!,
-  ) as { gitNativeUIGeneration: number };
+  ) as { generation: number };
 
   // Fixture cleanup can leave native toasts over the webview's toolbar.
   await vscode.commands.executeCommand('notifications.hideToasts');
@@ -208,13 +208,11 @@ export async function refreshNativeHistory(
     .poll(async () => {
       const context = JSON.parse(
         (await row.getAttribute('data-vscode-context'))!,
-      ) as { gitNativeUIGeneration: number; gitNativeUIRepositoryId: string };
+      ) as { generation: number; repositoryId: string };
 
-      return context.gitNativeUIRepositoryId === repositoryId
-        ? context.gitNativeUIGeneration
-        : 0;
+      return context.repositoryId === repositoryId ? context.generation : 0;
     })
-    .toBeGreaterThan(previous.gitNativeUIGeneration);
+    .toBeGreaterThan(previous.generation);
 
   return row;
 }

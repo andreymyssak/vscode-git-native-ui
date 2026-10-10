@@ -8,6 +8,7 @@ import { pathToFileURL } from 'node:url';
 import type { Metafile } from 'esbuild';
 import yauzl from 'yauzl';
 
+import { extensionMetadata } from '../shared/extension.ts';
 import { isRecord } from '../shared/validation.ts';
 
 const allowed = new Set([
@@ -125,13 +126,13 @@ export function verifyReleaseManifest(manifest: unknown): void {
   assert.ok(isRecord(manifest), 'Invalid release manifest');
   assert.equal(
     manifest.name,
-    'git-ui-native',
-    'Release extension name must be git-ui-native',
+    extensionMetadata.name,
+    'Release extension name must match package.json',
   );
   assert.equal(
     manifest.publisher,
-    'andreymyssak',
-    'Release publisher must match andreymyssak',
+    extensionMetadata.publisher,
+    'Release publisher must match package.json',
   );
   assert.ok(
     typeof manifest.version === 'string',
@@ -209,10 +210,18 @@ export function verifySquashHelperInputs(value: unknown): void {
     );
   }
 
-  for (const imports of [
-    ...helper.inputs.values(),
+  const importsToCheck = [
+    // esbuild records object-valued defines as virtual input imports. Their
+    // values are bundled; output imports still require real Node builtins.
+    ...Array.from(helper.inputs.values(), (imports) =>
+      imports.filter(
+        (imported) => imported.path !== '<define:__EXTENSION_IDENTITY__>',
+      ),
+    ),
     ...Array.from(helper.outputs.values(), (output) => output.imports),
-  ]) {
+  ];
+
+  for (const imports of importsToCheck) {
     for (const imported of imports) {
       if (!imported.external) continue;
 
@@ -458,5 +467,5 @@ if (
   import.meta.url === pathToFileURL(resolve(process.argv[1])).href
 )
   await verifyPackage(
-    resolve(process.argv[2] ?? '.artifacts/git-ui-native.vsix'),
+    resolve(process.argv[2] ?? `.artifacts/${extensionMetadata.name}.vsix`),
   );

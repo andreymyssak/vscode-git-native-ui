@@ -36,11 +36,11 @@ test('native cherry-pick range uses the whole owned selection in reversed histor
   session.historyShas = [b, a];
   session.selectRange([b, a], b);
   const request = commitMenuRequest('cherry-pick', {
-    gitNativeUIRepositoryId: 'repo',
-    gitNativeUIGeneration: 1,
-    gitNativeUICommitSha: b,
-    gitNativeUICommitShas: [b, a],
-    gitNativeUICommitSelectionCount: 2,
+    repositoryId: 'repo',
+    generation: 1,
+    commitSha: b,
+    commitShas: [b, a],
+    commitSelectionCount: 2,
   });
 
   assert.ok(request?.body.kind === 'action');

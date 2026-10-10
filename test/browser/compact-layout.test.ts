@@ -299,10 +299,10 @@ test('restored oversized panes resize immediately from their visible divider', a
   await page.setViewportSize({ width: 960, height: 280 });
   await page.goto('/');
   await page.evaluate(() => {
-    const saved = JSON.parse(sessionStorage.getItem('git-native-ui-state')!);
+    const saved = JSON.parse(sessionStorage.getItem('git-ui-native-state')!);
 
     saved.paneWidths = [600, 350];
-    sessionStorage.setItem('git-native-ui-state', JSON.stringify(saved));
+    sessionStorage.setItem('git-ui-native-state', JSON.stringify(saved));
   });
   await page.reload();
   const branches = page.locator('#branch-pane');

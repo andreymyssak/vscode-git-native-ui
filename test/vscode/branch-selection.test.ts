@@ -6,13 +6,14 @@ import { expect, type Frame } from '@playwright/test';
 import * as vscode from 'vscode';
 
 import { getGitApi } from '../../src/extension/git/api';
+import { LOG_VIEW_ID } from '../../src/shared/extension-identity';
 import { nativeBrowser, refreshNativeHistory } from '../fixtures/native-panel';
 import { createFixture } from '../fixtures/repository';
 
 describe('native branch multiselection', () => {
   it('registered batch Delete uses the selected group and native Restore without a confirmation', async () => {
     const f = await createFixture({
-      prefix: 'git-native-ui native branch range ',
+      prefix: 'git-ui-native native branch range ',
     });
     const root = vscode.Uri.file(f.root);
     const id = root.toString();
@@ -33,7 +34,7 @@ describe('native branch multiselection', () => {
 
       await access.api.openRepository(root);
       await access.repository(id).status();
-      await vscode.commands.executeCommand('gitNativeUI.log.focus');
+      await vscode.commands.executeCommand(`${LOG_VIEW_ID}.focus`);
       const browser = await nativeBrowser();
       let frame: Frame | undefined;
 

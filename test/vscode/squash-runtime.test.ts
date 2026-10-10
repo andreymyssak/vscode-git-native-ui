@@ -25,6 +25,7 @@ import {
   createSquashEditors,
   probeSquashRuntime,
 } from '../../src/extension/git/squash-editor';
+import { extensionIdentity } from '../../src/shared/extension-identity';
 import type { Fixture } from '../fixtures/repository';
 import { createFixture } from '../fixtures/repository';
 
@@ -41,7 +42,7 @@ describe('squash helper on the installed VS Code runtime', () => {
       'must exercise VS Code Electron, not a development Node executable',
     );
     const extension = vscode.extensions.all.find(
-      (candidate) => candidate.packageJSON.name === 'git-ui-native',
+      (candidate) => candidate.packageJSON.name === extensionIdentity.name,
     );
 
     assert.ok(
@@ -56,7 +57,7 @@ describe('squash helper on the installed VS Code runtime', () => {
 
     await access(packagedHelper);
     privateRoot = await mkdtemp(
-      join(tmpdir(), "git-native-ui native helper ' ü "),
+      join(tmpdir(), "git-ui-native native helper ' ü "),
     );
     const helperDirectory = join(privateRoot, "helper ' ü $() &");
 
@@ -66,7 +67,7 @@ describe('squash helper on the installed VS Code runtime', () => {
     await copyFile(packagedHelper, helperPath);
     runtime = { executable: process.execPath, helperPath };
     fixture = await createFixture({
-      prefix: 'git-native-ui squash runtime ü ',
+      prefix: 'git-ui-native squash runtime ü ',
     });
   });
   after(async () => {
@@ -85,7 +86,7 @@ describe('squash helper on the installed VS Code runtime', () => {
       { env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' } },
     );
 
-    assert.equal(result.stdout, 'git-native-ui-squash-helper\n');
+    assert.equal(result.stdout, 'git-ui-native-squash-helper\n');
   });
 
   it('Git launches the quoted sequence editor and preserves the literal approved message', async () => {

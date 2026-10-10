@@ -21,11 +21,11 @@ let output: {
 
 beforeAll(async () => {
   other = await createFixture({
-    prefix: 'git-native-ui-demo-isolation-',
+    prefix: 'git-ui-native-demo-isolation-',
   });
   cleanup.push(() => other.dispose());
   before = (await other.runGit(['rev-parse', 'HEAD'])).trim();
-  const directory = await mkdtemp(join(tmpdir(), 'git-native-ui graph-demo '));
+  const directory = await mkdtemp(join(tmpdir(), 'git-ui-native graph-demo '));
 
   cleanup.push(() =>
     rm(directory, { recursive: true, force: true, maxRetries: 5 }),
